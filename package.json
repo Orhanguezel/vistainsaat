@@ -1,0 +1,16 @@
+{
+  "name": "vistainsaat-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "frontend"
+  ],
+  "scripts": {
+    "dev:frontend": "npm run --prefix frontend dev",
+    "build:frontend": "npm run --prefix frontend build",
+    "start:frontend": "npm run --prefix frontend start",
+    "dev:backend": "npm run --prefix backend dev",
+    "build:backend": "npm run --prefix backend build",
+    "start:backend": "npm run --prefix backend start"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "title": "Vista İnşaat",
+  "fullName": "Vista İnşaat — Kurumsal Web Sitesi",
+  "category": "CORPORATE WEBSITE",
+  "summary": "İnşaat ve proje geliştirme sektöründe faaliyet gösteren Vista İnşaat firması için geliştirilen Next.js tabanlı kurumsal tanıtım ve müşteri kazanım platformu. TR/EN çok dilli yapı, proje galerisi, blog, iletişim/teklif formu ve teknik SEO altyapısı içermektedir.",
+  "techs": [
+    "Next.js",
+    "TypeScript",
+    "Tailwind CSS",
+    "next-intl",
+    "React Query",
+    "Zod",
+    "React Hook Form",
+    "Zustand",
+    "Radix UI",
+    "Node.js",
+    "Fastify",
+    "MySQL",
+    "Drizzle ORM"
+  ],
+  "features": [
+    "TR/EN multilingual (next-intl)",
+    "Project catalog with galleries",
+    "Blog",
+    "Contact and offer form",
+    "Technical SEO (canonical, hreflang, JSON-LD, sitemap)",
+    "Admin panel (content management)",
+    "Token-based theme system",
+    "SSL + Nginx deployment"
+  ],
+  "websiteUrl": "http://vistainsaat.com",
+  "domainTarget": "https://www.vistainsaat.com",
+  "devPort": 3030,
+  "status": "in-development",
+  "client": "Vista İnşaat",
+  "featured": false
+}
