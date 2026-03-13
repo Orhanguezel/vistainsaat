@@ -1,0 +1,329 @@
+{
+  "nav": {
+    "home": "Ana Sayfa",
+    "projects": "Projeler",
+    "services": "Hizmetler",
+    "about": "Hakkımızda",
+    "gallery": "Galeri",
+    "blog": "Haberler",
+    "contact": "İletişim",
+    "offer": "Teklif Al",
+    "login": "Giriş Yap",
+    "register": "Kayıt Ol"
+  },
+  "footer": {
+    "description": "Konut, ticari ve karma kullanım projelerinde güvenilir inşaat ve mimarlık çözümleri.",
+    "rights": "Tüm hakları saklıdır",
+    "privacy": "Gizlilik Politikası",
+    "terms": "Kullanım Koşulları",
+    "sections": {
+      "explore": "Keşfet",
+      "company": "Şirket",
+      "legal": "Yasal",
+      "quickLinks": "Hızlı Bağlantılar"
+    }
+  },
+  "common": {
+    "loading": "Yükleniyor...",
+    "error": "Bir hata oluştu",
+    "readMore": "Devamını Oku",
+    "viewAll": "Tümünü Gör",
+    "contactUs": "Bize Ulaşın",
+    "backToTop": "Yukarı",
+    "requestOffer": "Teklif Al",
+    "offerCtaTitle": "Projeniz İçin Ücretsiz Keşif ve Teklif Hazırlayalım",
+    "offerCtaDescription": "Konut, ticari veya karma kullanım projeleriniz için proje kapsamı, termin ve bütçe beklentilerinizi birlikte netleştirip size özel teklif hazırlayalım.",
+    "freeOfObligation": "Ücretsiz ve bağlayıcı değildir",
+    "send": "Gönder",
+    "name": "Ad Soyad",
+    "email": "E-posta",
+    "phone": "Telefon",
+    "company": "Firma",
+    "message": "Mesaj",
+    "subject": "Konu",
+    "required": "Zorunlu alan",
+    "success": "Başarılı",
+    "noResults": "Sonuç bulunamadı",
+    "relatedProducts": "İlgili Projeler",
+    "relatedGallery": "İlgili Galeriler",
+    "relatedArticles": "İlgili Yazılar"
+  },
+  "home": {
+    "hero": {
+      "title": "İnşaat ve Mimarlıkta Güvenilir Çözüm Ortağı",
+      "subtitle": "Konut, ticari ve karma kullanım projelerinde tasarımdan teslimata kaliteli, zamanında ve şeffaf bir inşaat deneyimi sunuyoruz.",
+      "cta": "Projelerimizi İnceleyin",
+      "ctaSecondary": "Teklif Alın",
+      "badge": "Vista İnşaat",
+      "workflowLabel": "Proje Süreci",
+      "workflowTitle": "Projenize özel planlama ve uygulama",
+      "workflowBadgeTitle": "Şeffaf",
+      "workflowBadgeSubtitle": "Süreç ve iletişim",
+      "metrics": {
+        "prototypeTitle": "Ön Proje",
+        "prototypeDesc": "Fizibilite, konsept tasarım ve ilk maliyet tahmini",
+        "productionTitle": "Uygulama",
+        "productionDesc": "Kalite kontrolü, termin takibi ve şeffaf iletişim",
+        "engineeringTitle": "Mühendislik",
+        "engineeringDesc": "Statik, zemin etüdü ve teknik çözüm desteği"
+      },
+      "steps": {
+        "oneTitle": "1. Proje gereksinim analizi",
+        "oneDesc": "Lokasyon, kullanım amacı, alan, bütçe ve termin beklentilerinizi birlikte netleştiriyoruz.",
+        "twoTitle": "2. Tasarım ve mühendislik",
+        "twoDesc": "Mimari tasarım, statik proje ve mühendislik çözümlerini hazırlıyoruz.",
+        "threeTitle": "3. Uygulama ve teslim",
+        "threeDesc": "Ruhsattan teslimata tüm süreci yönetiyor, kalite ve terminé uyumu sağlıyoruz."
+      },
+      "stats": {
+        "stepsValue": "3+",
+        "stepsLabel": "Temel proje aşaması",
+        "b2bValue": "15+",
+        "b2bLabel": "Yıllık sektör deneyimi"
+      }
+    },
+    "projects": {
+      "title": "Öne Çıkan Projeler",
+      "subtitle": "Konut, ticari ve karma kullanım alanlarında tamamlanan ve devam eden projelerimizden seçkiler"
+    },
+    "services": {
+      "title": "Hizmetlerimiz",
+      "subtitle": "Mimari tasarımdan inşaata, proje yönetiminden teslimata kapsamlı çözümler"
+    },
+    "whyUs": {
+      "title": "Neden Vista İnşaat?",
+      "subtitle": "Kalite, güven ve zamanında teslim odaklı inşaat anlayışıyla her projede fark yaratıyoruz",
+      "quality": "Yüksek Kalite",
+      "qualityDesc": "Malzeme seçiminden işçiliğe, her aşamada kalite standartlarına tam uyum",
+      "experience": "Deneyim",
+      "experienceDesc": "15 yılı aşkın sektör deneyimi ve tamamlanan 100+ proje ile güvenilir ortağınız",
+      "custom": "Özel Çözümler",
+      "customDesc": "Her projeye özgü tasarım ve uygulama yaklaşımı; standart değil, size özel",
+      "delivery": "Zamanında Teslim",
+      "deliveryDesc": "Proje başından teslimata kadar termin taahhüdü ve şeffaf süreç yönetimi"
+    },
+    "gallery": {
+      "title": "Galeri",
+      "subtitle": "Tamamlanan projelerimizden ve inşaat süreçlerimizden seçilen fotoğraflar"
+    },
+    "blog": {
+      "title": "Haberler ve İçerikler",
+      "subtitle": "İnşaat sektörü, mimarlık trendleri ve proje deneyimlerimizden derlenen güncel içerikler",
+      "featuredLabel": "Öne Çıkan İçerik",
+      "spotlightTitle": "Sürdürülebilir İnşaat: Yeşil Bina Sertifikasyonu ve LEED Standartları",
+      "spotlightBodyPrimary": "Sürdürülebilir inşaat, enerji verimliliği, su tasarrufu ve sağlıklı iç mekan koşulları açısından giderek daha önemli bir standart haline gelmektedir. LEED (Leadership in Energy and Environmental Design) sertifikasyonu, binaların çevre dostu olduğunu belgeleyen uluslararası bir referans sistemdir.",
+      "spotlightBodySecondary": "Vista İnşaat olarak, sürdürülebilir malzeme seçimi ve enerji verimli tasarım ilkelerini her projemize entegre etmeyi hedefliyoruz. Doğru planlama yapılmadan sürdürülebilirlik hedeflerine ulaşmak mümkün değil; bu nedenle her proje için çevre dostu yaklaşımı baştan planlarız.",
+      "insightLabel": "Bu yazıda ne var?",
+      "insightText": "Yeşil bina standartları, sertifikasyon süreci ve projenize kattığı değer",
+      "archiveLabel": "Diğer İçerikler",
+      "archiveSubtitle": "İnşaat sektörü, mimarlık ve proje yönetimi hakkındaki diğer içerikler"
+    },
+    "newsletter": {
+      "title": "Bültenimize Abone Olun",
+      "subtitle": "Yeni projeler ve sektörel gelişmelerden haberdar olun.",
+      "placeholder": "E-posta adresiniz",
+      "subscribe": "Abone Ol",
+      "success": "Başarıyla abone oldunuz!",
+      "error": "Bir hata oluştu, lütfen tekrar deneyin."
+    },
+    "contact": {
+      "title": "Bizimle İletişime Geçin",
+      "subtitle": "Proje fikrinizi, teklif talebinizi veya sorularınızı bize iletin"
+    }
+  },
+  "projects": {
+    "title": "Projelerimiz",
+    "description": "Konut, ticari ve karma kullanım alanlarında tamamlanan ve devam eden projelerimiz; kalite, estetik ve işlevselliği bir arada sunuyor.",
+    "categories": "Kategoriler",
+    "allCategories": "Tüm Projeler",
+    "search": "Proje Ara...",
+    "noProjects": "Bu kategoride henüz proje bulunmuyor.",
+    "specs": "Proje Detayları",
+    "requestOffer": "Bu Proje Hakkında Bilgi Alın",
+    "filters": {
+      "type": "Proje Tipi",
+      "city": "Şehir",
+      "year": "Yıl",
+      "status": "Durum",
+      "all": "Tümü",
+      "residential": "Konut",
+      "commercial": "Ticari",
+      "mixed": "Karma Kullanım",
+      "completed": "Tamamlandı",
+      "ongoing": "Devam Ediyor"
+    },
+    "detail": {
+      "location": "Lokasyon",
+      "area": "Alan",
+      "year": "Yıl",
+      "type": "Tip",
+      "status": "Durum",
+      "client": "İşveren",
+      "architect": "Mimar",
+      "floors": "Kat Sayısı",
+      "units": "Daire/Birim Sayısı"
+    }
+  },
+  "services": {
+    "title": "Hizmetlerimiz",
+    "description": "Mimari tasarımdan inşaata, röleve ve restorasyon çalışmalarından proje yönetimine kadar kapsamlı inşaat ve mimarlık hizmetleri.",
+    "viewAll": "Tüm Hizmetler",
+    "noServices": "Henüz hizmet bulunmuyor.",
+    "requestService": "Bu Hizmet İçin Teklif Alın",
+    "items": {
+      "residential": "Konut Projeleri",
+      "commercial": "Ticari Projeler",
+      "restoration": "Restorasyon",
+      "projectManagement": "Proje Yönetimi",
+      "architecturalDesign": "Mimari Tasarım",
+      "interiorDesign": "İç Mimari"
+    }
+  },
+  "gallery": {
+    "title": "Galeri",
+    "description": "Tamamlanan projelerimizden, inşaat süreçlerimizden ve mimari detaylardan derlenen fotoğraf galerisi.",
+    "viewAll": "Tüm Görseller",
+    "noGalleries": "Henüz galeri bulunmuyor."
+  },
+  "blog": {
+    "title": "Haberler",
+    "description": "İnşaat sektörü haberleri, mimarlık trendleri, proje güncellemeleri ve sektörel içerikler.",
+    "noPosts": "Henüz yazı bulunmuyor.",
+    "readMore": "Devamını Oku",
+    "publishedAt": "Yayın Tarihi",
+    "categories": "Kategoriler",
+    "engagement": {
+      "title": "Yorumlar",
+      "subtitle": "Bu içerik hakkındaki görüşler",
+      "likeButton": "Beğen",
+      "emptyTitle": "Henüz yorum yok",
+      "emptyText": "İlk yorumu bırakarak içeriğe katkı sağlayabilirsiniz.",
+      "formLabel": "Yorum Gönder",
+      "formTitle": "Bu içerik hakkında ne düşünüyorsunuz?",
+      "formDescription": "Görüşünüzü, deneyiminizi veya eklemek istediğiniz notu paylaşabilirsiniz.",
+      "namePlaceholder": "Ad Soyad",
+      "emailPlaceholder": "ornek@email.com",
+      "commentPlaceholder": "Yorumunuzu yazın...",
+      "moderationNote": "Gönderilen yorumlar yayınlanmadan önce kontrol edilir.",
+      "submit": "Yorumu Gönder",
+      "submitSuccess": "Yorumunuz alındı. Onay sonrası yayına alınacaktır.",
+      "submitError": "Yorum gönderilemedi. Lütfen tekrar deneyin."
+    },
+    "share": {
+      "label": "Paylaş",
+      "copyLink": "Linki Kopyala",
+      "copied": "Link kopyalandı.",
+      "copyError": "Link kopyalanamadı.",
+      "buttonTitle": "Paylaş:"
+    }
+  },
+  "contact": {
+    "title": "İletişim",
+    "description": "Proje fikriniz, teklif talebiniz veya sorularınız için ekibimizle iletişime geçin; birlikte en uygun çözümü bulalım.",
+    "form": {
+      "title": "Mesaj Gönderin",
+      "namePlaceholder": "Adınız Soyadınız",
+      "emailPlaceholder": "ornek@email.com",
+      "phonePlaceholder": "+90 5XX XXX XX XX",
+      "companyPlaceholder": "Firma Adı (opsiyonel)",
+      "subjectPlaceholder": "Konu",
+      "messagePlaceholder": "Mesajınızı buraya yazın...",
+      "submit": "Gönder",
+      "success": "Mesajınız başarıyla gönderildi. En kısa sürede sizinle iletişime geçeceğiz.",
+      "error": "Mesaj gönderilemedi. Lütfen tekrar deneyin."
+    },
+    "info": {
+      "title": "İletişim Bilgileri",
+      "address": "Adres",
+      "phone": "Telefon",
+      "email": "E-posta",
+      "hours": "Çalışma Saatleri"
+    },
+    "response": {
+      "title": "İletişim Sürecimiz",
+      "items": {
+        "one": "Talebinizi inceliyor; proje kapsamı, lokasyon, kullanım amacı ve bütçe beklentilerini netleştiriyoruz.",
+        "two": "Gerekirse proje detayları, teknik şartname veya ek bilgi talep ediyoruz.",
+        "three": "Size özel teklif, fizibilite değerlendirmesi ve proje planını en kısa sürede sunuyoruz."
+      }
+    }
+  },
+  "offer": {
+    "title": "Teklif Talebi",
+    "description": "Proje tipi, lokasyon, alan, bütçe ve termin beklentilerinize göre size özel keşif ve teklif hazırlayalım.",
+    "benefits": {
+      "title": "Teklifte Neleri Netleştiriyoruz?",
+      "items": {
+        "one": "Proje tipi: konut, ticari, karma kullanım veya restorasyon",
+        "two": "Kapsam: mimari tasarım, inşaat, proje yönetimi veya komple anahtar teslim",
+        "three": "Bütçe aralığı, termin beklentisi, lokasyon ve teknik gereksinimler"
+      }
+    },
+    "form": {
+      "productInterest": "İlgilenilen Hizmet",
+      "quantity": "Alan (m²)",
+      "deadline": "Hedef Termin",
+      "details": "Proje Detayları",
+      "detailsPlaceholder": "Projeniz hakkında bize bilgi verin (lokasyon, kullanım amacı, bütçe aralığı vb.)",
+      "attachFile": "Dosya Ekle (ön proje, vaziyet planı, teknik şartname vb.)",
+      "submit": "Teklif İste",
+      "success": "Teklif talebiniz alındı. Ekibimiz en kısa sürede sizinle iletişime geçecek.",
+      "error": "Talep gönderilemedi. Lütfen tekrar deneyin."
+    }
+  },
+  "about": {
+    "title": "Hakkımızda",
+    "description": "Vista İnşaat, konut ve ticari projelerde tasarımdan teslimata güvenilir, kaliteli ve zamanında inşaat hizmetleri sunar.",
+    "intro": "Ekibimiz; mimari tasarım, mühendislik çözümleri ve sahada deneyimli uygulama kadrosuyla her projeyi özenle yönetir. Müşteri memnuniyeti, kalite ve zamanında teslim temel değerlerimizdir.",
+    "sections": {
+      "expertiseTitle": "Uzmanlık Alanlarımız",
+      "expertiseItems": {
+        "one": "Konut projeleri: villa, apartman, rezidans ve toplu konut",
+        "two": "Ticari projeler: ofis, alışveriş merkezi ve karma kullanım yapıları",
+        "three": "Restorasyon, tadilat ve güçlendirme projeleri"
+      },
+      "processTitle": "Çalışma Modelimiz",
+      "processItems": {
+        "one": "Proje gereksinimlerini ve müşteri beklentilerini anlama",
+        "two": "Mimari tasarım, mühendislik ve izin süreçlerini yönetme",
+        "three": "Kalite kontrolü ile zamanında ve eksiksiz teslim"
+      },
+      "sectorsTitle": "Hizmet Verdiğimiz Alanlar",
+      "sectorsItems": {
+        "one": "Bireysel konut yatırımcıları ve aileler",
+        "two": "Ticari gayrimenkul geliştiricileri ve kurumlar",
+        "three": "Kamu projeleri ve kentsel dönüşüm uygulamaları"
+      }
+    }
+  },
+  "auth": {
+    "loginTitle": "Vista İnşaat Hesabınıza Giriş Yapın",
+    "loginSubtitle": "Projelerinizi takip edin, teklif durumunuzu görüntüleyin ve size özel içeriklere erişin.",
+    "registerTitle": "Vista İnşaat Hesabınızı Oluşturun",
+    "registerSubtitle": "Projelerinizi takip edin, teklif durumunuzu görüntüleyin ve size özel içeriklere erişin.",
+    "continueWithGoogle": "Google ile devam et",
+    "orUseEmail": "veya e-posta adresinizi kullanın",
+    "email": "E-posta",
+    "password": "Şifre",
+    "forgotPassword": "Şifrenizi mi unuttunuz?",
+    "continueWithEmail": "E-posta ile devam et",
+    "noAccount": "Hesabınız yok mu?",
+    "signUp": "Kayıt Ol",
+    "hasAccount": "Zaten bir hesabınız veya planınız var mı?",
+    "logIn": "Giriş Yap",
+    "termsAgreement": "Devam ederek, <terms>Kullanım Koşulları</terms> ve <privacy>Gizlilik Politikası</privacy>'nı kabul etmiş olursunuz.",
+    "termsOfService": "Kullanım Koşulları",
+    "privacyPolicy": "Gizlilik Politikası",
+    "step": "Adım {current} / {total}"
+  },
+  "legal": {
+    "title": "Yasal",
+    "privacy": "Gizlilik Politikası",
+    "terms": "Kullanım Koşulları"
+  },
+  "seo": {
+    "defaultTitle": "Vista İnşaat | Güvenilir İnşaat ve Mimarlık Hizmetleri",
+    "defaultDescription": "Konut, ticari ve karma kullanım projelerinde kaliteli, zamanında ve güvenilir inşaat çözümleri. Vista İnşaat ile hayalinizdeki projeyi hayata geçirin.",
+    "keywords": "inşaat, mimarlık, konut projeleri, ticari projeler, villa, apartman, proje yönetimi, anahtar teslim"
+  }
+}

@@ -1,0 +1,225 @@
+// src/db/seed/index.ts
+
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import mysql from 'mysql2/promise';
+import bcrypt from 'bcryptjs';
+import { env } from '@/core/env';
+import { cleanSql, splitStatements, logStep } from './utils';
+
+// ESM için __dirname/__filename
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+type Flags = {
+  noDrop?: boolean;
+  only?: string[]; // ör: ["40","41","50"] -> sadece o dosyalar
+  profile?: 'vistainsaat';
+};
+
+function parseFlags(argv: string[]): Flags {
+  const flags: Flags = {};
+  for (const a of argv.slice(2)) {
+    if (a === '--no-drop') flags.noDrop = true;
+    else if (a.startsWith('--only=')) {
+      flags.only = a.replace('--only=', '').split(',').map(s => s.trim());
+    } else if (a.startsWith('--profile=')) {
+      const profile = a.replace('--profile=', '').trim();
+      if (profile === 'vistainsaat') flags.profile = 'vistainsaat';
+    }
+  }
+  return flags;
+}
+
+const PROFILE_PREFIXES: Record<NonNullable<Flags['profile']>, string[]> = {
+  vistainsaat: [
+    // ── Temel şema dosyaları (CREATE TABLE) ──────────────────────────────
+    '001', '002', '003', '004', '005', '006', '007',
+    '010', '012', '013', '017', '018',  // 012: sub_categories tablo şeması (FK için gerekli)
+    '020',
+    '030', '031', '032',
+    '040',  // site_settings şema + 040.1 (301 override eder)
+    '050', '060', '070', '080', '095',
+    '100', '110', '120', '130', '140', '150', '160', '170', '180', '190',
+    '200', '201', '220', '230',
+    // ── Vista İnşaat'a özgü veri dosyaları ───────────────────────────────
+    '299', '300', '301', '302', '303', '304', '305', '306', '307', '308', '310',
+    // 309 (auth_role_patch) atlandı: role kolonu artık 001_auth_schema.sql'de mevcut
+    // Atlananlar (Ensotek-özgü veri): 011,012,021-024,051-055,071,101,
+    //   121,131,141,151,161,171,181,191,202,203,211,212,231-233
+  ],
+};
+
+function assertSafeToDrop(dbName: string) {
+  const allowDrop = process.env.ALLOW_DROP === 'true';
+  const isProd = process.env.NODE_ENV === 'production';
+  const isSystem = ['mysql','information_schema','performance_schema','sys'].includes(dbName.toLowerCase());
+  if (isSystem) throw new Error(`Sistem DB'si drop edilemez: ${dbName}`);
+  if (isProd && !allowDrop) throw new Error('Prod ortamda DROP için ALLOW_DROP=true bekleniyor.');
+}
+
+async function dropAndCreate(root: mysql.Connection) {
+  assertSafeToDrop(env.DB.name);
+  await root.query(`DROP DATABASE IF EXISTS \`${env.DB.name}\`;`);
+  await root.query(
+    `CREATE DATABASE \`${env.DB.name}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`
+  );
+}
+
+async function createRoot(): Promise<mysql.Connection> {
+  return mysql.createConnection({
+    host: env.DB.host,
+    port: env.DB.port,
+    user: env.DB.user,
+    password: env.DB.password,
+    multipleStatements: true,
+  });
+}
+
+async function createConnToDb(): Promise<mysql.Connection> {
+  return mysql.createConnection({
+    host: env.DB.host,
+    port: env.DB.port,
+    user: env.DB.user,
+    password: env.DB.password,
+    database: env.DB.name,
+    multipleStatements: true,
+    // unicode_ci ile uyumlu
+    charset: 'utf8mb4_unicode_ci',
+  });
+}
+
+function shouldRun(file: string, flags: Flags) {
+  const activeOnly = flags.only?.length
+    ? flags.only
+    : flags.profile
+      ? PROFILE_PREFIXES[flags.profile]
+      : undefined;
+  if (!activeOnly?.length) return true;
+  const m = path.basename(file).match(/^(\d+)/);
+  const prefix = m?.[1];
+  return prefix ? activeOnly.includes(prefix) : false;
+}
+
+/** admin değişkenlerini ENV'den oku + bcrypt üret */
+function getAdminVars() {
+  const email = (process.env.ADMIN_EMAIL || 'orhanguzell@gmail.com').trim();
+  const id = (process.env.ADMIN_ID || '4f618a8d-6fdb-498c-898a-395d368b2193').trim();
+  const plainPassword = process.env.ADMIN_PASSWORD || 'admin123';
+  const passwordHash = bcrypt.hashSync(plainPassword, 12);
+  return { email, id, passwordHash };
+}
+
+/** SQL string güvenli tek tırnak escape */
+function sqlStr(v: string) {
+  return v.replaceAll("'", "''");
+}
+
+/** Dosyayı oku, temizle, admin değişkenleri enjekte et ve opsiyonel yer tutucu değiştir */
+function prepareSqlForRun(rawSql: string, admin: { email: string; id: string; passwordHash: string }) {
+  // Dosyadaki comment/boşluk temizliği
+  let sql = cleanSql(rawSql);
+
+  // Header ile session değişkenlerini set et (dosyada COALESCE olsa bile önce biz set ediyoruz)
+  const header = [
+    `SET @ADMIN_EMAIL := '${sqlStr(admin.email)}';`,
+    `SET @ADMIN_ID := '${sqlStr(admin.id)}';`,
+    `SET @ADMIN_PASSWORD_HASH := '${sqlStr(admin.passwordHash)}';`
+  ].join('\n');
+
+  // Eski yer tutucu kalıplarını da destekle (örn: {{ADMIN_BCRYPT}})
+  sql = sql
+    .replaceAll('{{ADMIN_BCRYPT}}', admin.passwordHash)
+    .replaceAll('{{ADMIN_PASSWORD_HASH}}', admin.passwordHash)
+    .replaceAll('{{ADMIN_EMAIL}}', admin.email)
+    .replaceAll('{{ADMIN_ID}}', admin.id);
+
+  // En üstte header'ı ekle
+  sql = `${header}\n${sql}`;
+
+  return sql;
+}
+
+async function runSqlFile(conn: mysql.Connection, absPath: string, adminVars: { email: string; id: string; passwordHash: string }) {
+  const name = path.basename(absPath);
+  logStep(`⏳ ${name} çalışıyor...`);
+  const raw = fs.readFileSync(absPath, 'utf8');
+
+  const sql = prepareSqlForRun(raw, adminVars);
+  const statements = splitStatements(sql);
+
+  // bağlantı karakter seti & timezone
+  await conn.query('SET NAMES utf8mb4;');
+  await conn.query("SET time_zone = '+00:00';");
+
+  for (const stmt of statements) {
+    if (!stmt) continue;
+    try {
+      await conn.query(stmt);
+    } catch (err: any) {
+      // 1060: Duplicate column name -> "ADD COLUMN" idempotent yapmak için
+      // 1061: Duplicate key name -> "ADD INDEX" idempotent yapmak için
+      // 1050: Table already exists -> "CREATE TABLE" (genelde IF NOT EXISTS varsa fırlamaz ama yine de)
+      if (err.errno === 1060 || err.errno === 1061) {
+        // debug log isteğe bağlı, şimdilik sessiz geç
+      } else {
+        throw err;
+      }
+    }
+  }
+  logStep(`✅ ${name} bitti`);
+}
+
+async function main() {
+  const flags = parseFlags(process.argv);
+
+  // 1) Root ile drop + create (opsiyonel)
+  const root = await createRoot();
+  try {
+    if (!flags.noDrop) {
+      logStep('💣 DROP + CREATE başlıyor');
+      await dropAndCreate(root);
+      logStep('🆕 DB oluşturuldu');
+    } else {
+      logStep('⤵️ --no-drop: DROP/CREATE atlanıyor');
+    }
+  } finally {
+    await root.end();
+  }
+
+  // 2) DB bağlantısı
+  const conn = await createConnToDb();
+
+  try {
+    // 3) Admin değişkenlerini hazırla (tek sefer)
+    const ADMIN = getAdminVars();
+
+    // 4) SQL klasörünü bul (öncelik env, sonra dist/sql, yoksa src/sql)
+    const envDir = process.env.SEED_SQL_DIR && process.env.SEED_SQL_DIR.trim();
+    const distSql = path.resolve(__dirname, 'sql');
+    const srcSql  = path.resolve(__dirname, '../../../src/db/seed/sql');
+    const sqlDir  = envDir ? path.resolve(envDir) : (fs.existsSync(distSql) ? distSql : srcSql);
+
+    const files = fs.readdirSync(sqlDir)
+      .filter(f => f.endsWith('.sql'))
+      .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+
+    for (const f of files) {
+      const abs = path.join(sqlDir, f);
+      if (!shouldRun(abs, flags)) {
+        logStep(`⏭️ ${f} atlandı (--only filtresi)`);
+        continue;
+      }
+      await runSqlFile(conn, abs, ADMIN);
+    }
+    logStep('🎉 Seed tamamlandı.');
+  } finally {
+    await conn.end();
+  }
+}
+
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
