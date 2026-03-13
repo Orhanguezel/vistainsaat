@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
+import { usePathname } from 'next/navigation';
 import { Menu, X, Search } from 'lucide-react';
 import { localizedPath } from '@/seo';
 
@@ -44,28 +45,40 @@ export function Header({
   locale: string;
 }) {
   const t = useTranslations('nav');
+  const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const expandedRef = useRef<HTMLDivElement>(null);
   const compactRef = useRef<HTMLDivElement>(null);
   const items = normalizeItems(menuItems);
 
+  // Expanded header only on homepage (e.g. /tr, /en, /tr/, /en/)
+  const isHome = /^\/[a-z]{2}\/?$/.test(pathname);
+  const compactOnly = !isHome;
+
   const onScroll = useCallback(() => {
-    if (!expandedRef.current || !compactRef.current) return;
+    if (!compactRef.current) return;
+    if (compactOnly) {
+      compactRef.current.style.transform = 'translateY(0)';
+      return;
+    }
+    if (!expandedRef.current) return;
     const gone = expandedRef.current.getBoundingClientRect().bottom <= 0;
     compactRef.current.style.transform = gone ? 'translateY(0)' : 'translateY(-100%)';
-  }, []);
+  }, [compactOnly]);
 
   useEffect(() => {
     onScroll();
+    if (compactOnly) return;
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
-  }, [onScroll]);
+  }, [onScroll, compactOnly]);
 
   return (
     <div>
       {/* ══════════════════════════════════════════
           EXPANDED  —  sayfa tepesi, normal akışta (sticky değil)
       ══════════════════════════════════════════ */}
+      {!compactOnly && (
       <header ref={expandedRef} style={{ background: 'var(--color-bg)' }}>
 
         {/* Row 1: utility | logo | simetri */}
@@ -281,6 +294,7 @@ export function Header({
           </nav>
         )}
       </header>
+      )}
 
       {/* ══════════════════════════════════════════
           COMPACT  —  expanded kaybolunca fixed olarak kayarak gelir
@@ -295,8 +309,8 @@ export function Header({
           zIndex: 50,
           background: 'var(--color-bg)',
           borderBottom: '1px solid var(--color-border)',
-          transform: 'translateY(-100%)',
-          transition: 'transform 0.25s ease',
+          transform: compactOnly ? 'translateY(0)' : 'translateY(-100%)',
+          transition: compactOnly ? 'none' : 'transform 0.25s ease',
         }}
       >
         {/* Desktop compact */}
@@ -428,6 +442,9 @@ export function Header({
           </div>
         </div>
       </div>
+
+      {/* Spacer for fixed compact header on non-home pages */}
+      {compactOnly && <div style={{ height: 48 }} className="lg:!h-[44px]" />}
     </div>
   );
 }

@@ -30,11 +30,11 @@ INSERT INTO `products`
   `review_count`
 )
 VALUES
-  ('kd010001-7001-4001-9001-dddddddd0001', 'vistainsaat', 'cccc0001-4001-4001-8001-cccccccc0001', NULL, 0.00, '/media/gallery-placeholder.svg', NULL, JSON_ARRAY('/media/gallery-placeholder.svg'), JSON_ARRAY(), 1, 1, 10, 'VIS-KNT-001', 0, 5.00, 0),
-  ('kd010002-7002-4002-9002-dddddddd0002', 'vistainsaat', 'cccc0002-4002-4002-8002-cccccccc0002', NULL, 0.00, '/media/gallery-placeholder.svg', NULL, JSON_ARRAY('/media/gallery-placeholder.svg'), JSON_ARRAY(), 1, 1, 20, 'VIS-TIC-001', 0, 5.00, 0),
-  ('kd010003-7003-4003-9003-dddddddd0003', 'vistainsaat', 'cccc0003-4003-4003-8003-cccccccc0003', NULL, 0.00, '/media/gallery-placeholder.svg', NULL, JSON_ARRAY('/media/gallery-placeholder.svg'), JSON_ARRAY(), 1, 1, 30, 'VIS-KRM-001', 0, 5.00, 0),
-  ('kd010004-7004-4004-9004-dddddddd0004', 'vistainsaat', 'cccc0004-4004-4004-8004-cccccccc0004', NULL, 0.00, '/media/gallery-placeholder.svg', NULL, JSON_ARRAY('/media/gallery-placeholder.svg'), JSON_ARRAY(), 1, 0, 40, 'VIS-RST-001', 0, 5.00, 0),
-  ('kd010005-7005-4005-9005-dddddddd0005', 'vistainsaat', 'cccc0006-4006-4006-8006-cccccccc0006', NULL, 0.00, '/media/gallery-placeholder.svg', NULL, JSON_ARRAY('/media/gallery-placeholder.svg'), JSON_ARRAY(), 1, 0, 50, 'VIS-END-001', 0, 5.00, 0)
+  ('kd010001-7001-4001-9001-dddddddd0001', 'vistainsaat', 'cccc0001-4001-4001-8001-cccccccc0001', NULL, 0.00, 'https://picsum.photos/seed/vista-res/800/600', NULL, JSON_ARRAY('https://picsum.photos/seed/vista-res/800/600','https://picsum.photos/seed/vista-res2/800/600'), JSON_ARRAY(), 1, 1, 10, 'VIS-KNT-001', 0, 5.00, 0),
+  ('kd010002-7002-4002-9002-dddddddd0002', 'vistainsaat', 'cccc0002-4002-4002-8002-cccccccc0002', NULL, 0.00, 'https://picsum.photos/seed/vista-office/800/600', NULL, JSON_ARRAY('https://picsum.photos/seed/vista-office/800/600','https://picsum.photos/seed/vista-office2/800/600'), JSON_ARRAY(), 1, 1, 20, 'VIS-TIC-001', 0, 5.00, 0),
+  ('kd010003-7003-4003-9003-dddddddd0003', 'vistainsaat', 'cccc0003-4003-4003-8003-cccccccc0003', NULL, 0.00, 'https://picsum.photos/seed/vista-mixed/800/600', NULL, JSON_ARRAY('https://picsum.photos/seed/vista-mixed/800/600','https://picsum.photos/seed/vista-mixed2/800/600'), JSON_ARRAY(), 1, 1, 30, 'VIS-KRM-001', 0, 5.00, 0),
+  ('kd010004-7004-4004-9004-dddddddd0004', 'vistainsaat', 'cccc0004-4004-4004-8004-cccccccc0004', NULL, 0.00, 'https://picsum.photos/seed/vista-resto/800/600', NULL, JSON_ARRAY('https://picsum.photos/seed/vista-resto/800/600','https://picsum.photos/seed/vista-resto2/800/600'), JSON_ARRAY(), 1, 0, 40, 'VIS-RST-001', 0, 5.00, 0),
+  ('kd010005-7005-4005-9005-dddddddd0005', 'vistainsaat', 'cccc0006-4006-4006-8006-cccccccc0006', NULL, 0.00, 'https://picsum.photos/seed/vista-logi/800/600', NULL, JSON_ARRAY('https://picsum.photos/seed/vista-logi/800/600','https://picsum.photos/seed/vista-logi2/800/600'), JSON_ARRAY(), 1, 0, 50, 'VIS-END-001', 0, 5.00, 0)
 ON DUPLICATE KEY UPDATE
   `item_type` = VALUES(`item_type`),
   `category_id` = VALUES(`category_id`),

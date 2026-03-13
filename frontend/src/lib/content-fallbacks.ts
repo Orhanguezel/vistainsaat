@@ -1,6 +1,8 @@
 type FallbackItem = {
   title: string;
   description: string;
+  image_url?: string;
+  category_name?: string;
 };
 
 type FallbackGalleryItem = FallbackItem & {
@@ -12,38 +14,78 @@ type LocaleKey = 'tr' | 'en';
 const fallbackProjects: Record<LocaleKey, FallbackItem[]> = {
   tr: [
     {
-      title: 'Bosphorus Residence',
-      description: 'İstanbul Boğazı manzaralı 42 konutluk lüks rezidans projesi. Modern mimari dil, yüksek kaliteli malzeme seçimleri ve peyzaj tasarımıyla tamamlanan örnek bir konut projesi.',
+      title: 'Boğaz Manzaralı Rezidans',
+      description: 'İstanbul Boğazı manzaralı 18 bağımsız bölümden oluşan lüks konut projesi.',
+      image_url: 'https://picsum.photos/seed/vista-res/800/600',
+      category_name: 'Konut',
     },
     {
-      title: 'Maslak Ofis Kulesi',
-      description: 'A+ ofis standardında, LEED sertifikalı 28 katlı karma kullanım projesi. Sürdürülebilir enerji sistemleri ve akıllı bina teknolojisiyle donatılmıştır.',
+      title: 'Levent Ofis Kulesi',
+      description: 'A sınıfı ofis standardında 12 katlı yeşil sertifikalı ticari yapı.',
+      image_url: 'https://picsum.photos/seed/vista-office/800/600',
+      category_name: 'Ticari',
     },
     {
-      title: 'Ataşehir Ticaret Merkezi',
-      description: 'Toplam 18.500 m² kiralanabilir alana sahip, çok katlı ticaret ve ofis merkezi. Modüler ofis katları ve geniş ticari zemin kattaki perakende alanları.',
+      title: 'Kadıköy Karma Yapı Kompleksi',
+      description: '64 konut birimi ve 3 kat ticari alandan oluşan karma kullanımlı proje.',
+      image_url: 'https://picsum.photos/seed/vista-mixed/800/600',
+      category_name: 'Karma Kullanım',
     },
     {
-      title: 'Kavacık Villa Projesi',
-      description: 'Beykoz Kavacik\'ta dogayla ic ice 12 mustakil villadan olusan ozel konut projesi. Her villa icin bireysel peyzaj ve ozel yuzme havuzu.',
+      title: 'Tarihi Han Restorasyon',
+      description: '19. yüzyıl tarihi hanının özgün dokusu korunarak restore edilmesi.',
+      image_url: 'https://picsum.photos/seed/vista-resto/800/600',
+      category_name: 'Restorasyon',
+    },
+    {
+      title: 'Gebze Lojistik Merkezi',
+      description: '8.000 m² kapalı alana sahip prefabrik çelik yapı lojistik depo kompleksi.',
+      image_url: 'https://picsum.photos/seed/vista-logi/800/600',
+      category_name: 'Endüstriyel',
+    },
+    {
+      title: 'Beşiktaş Sahil Rezidans',
+      description: 'Sahil şeridinde konumlanan 24 daireli modern konut projesi.',
+      image_url: 'https://picsum.photos/seed/vista-shore/800/600',
+      category_name: 'Konut',
     },
   ],
   en: [
     {
-      title: 'Bosphorus Residence',
-      description: 'A luxury residential project of 42 units with Bosphorus views. Completed with a modern architectural language, premium material selections and landscape design.',
+      title: 'Bosphorus View Residences',
+      description: 'Luxury residential project of 18 units overlooking the Bosphorus.',
+      image_url: 'https://picsum.photos/seed/vista-res/800/600',
+      category_name: 'Residential',
     },
     {
-      title: 'Maslak Office Tower',
-      description: 'A 28-floor mixed-use project with A+ office standards and LEED certification. Equipped with sustainable energy systems and smart building technology.',
+      title: 'Levent Office Tower',
+      description: '12-storey class-A office tower with green building certification.',
+      image_url: 'https://picsum.photos/seed/vista-office/800/600',
+      category_name: 'Commercial',
     },
     {
-      title: 'Ataşehir Commercial Center',
-      description: 'A multi-storey commercial and office complex with 18,500 m² of leasable area. Modular office floors and retail spaces on a wide commercial ground floor.',
+      title: 'Kadıköy Mixed-Use Complex',
+      description: '64 residential units and 3 commercial floors in a mixed-use development.',
+      image_url: 'https://picsum.photos/seed/vista-mixed/800/600',
+      category_name: 'Mixed-Use',
     },
     {
-      title: 'Kavacık Villa Project',
-      description: 'An exclusive residential project of 12 detached villas in nature in Beykoz Kavacık. Individual landscaping and private pool for each villa.',
+      title: 'Historic Caravanserai Restoration',
+      description: 'Restoration of a 19th-century caravanserai preserving original character.',
+      image_url: 'https://picsum.photos/seed/vista-resto/800/600',
+      category_name: 'Restoration',
+    },
+    {
+      title: 'Gebze Logistics Centre',
+      description: '8,000 m² prefabricated steel logistics warehouse and admin building.',
+      image_url: 'https://picsum.photos/seed/vista-logi/800/600',
+      category_name: 'Industrial',
+    },
+    {
+      title: 'Beşiktaş Waterfront Residences',
+      description: 'Modern 24-unit residential project on the waterfront.',
+      image_url: 'https://picsum.photos/seed/vista-shore/800/600',
+      category_name: 'Residential',
     },
   ],
 };
