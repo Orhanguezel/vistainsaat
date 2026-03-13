@@ -15,7 +15,8 @@ import { MediaOverlayCard } from '@/components/patterns/MediaOverlayCard';
 import { SectionHeader } from '@/components/patterns/SectionHeader';
 import { Reveal } from '@/components/motion/Reveal';
 import { OptimizedImage } from '@/components/ui/OptimizedImage';
-import { getFallbackBlogPosts, getFallbackGalleries, getFallbackProjects } from '@/lib/content-fallbacks';
+import { getFallbackBlogPosts, getFallbackBrands, getFallbackGalleries, getFallbackProjects } from '@/lib/content-fallbacks';
+import { BrandCarousel } from '@/components/sections/BrandCarousel';
 import { buildMediaAlt } from '@/lib/media-seo';
 
 const GALLERY_PLACEHOLDER_SRC = '/media/gallery-placeholder.svg';
@@ -40,6 +41,20 @@ async function fetchFeaturedGalleries(locale: string) {
     const res = await fetch(
       `${API_BASE_URL}/galleries?module_key=vistainsaat&is_active=1&is_featured=1&locale=${locale}&limit=6`,
       { next: { revalidate: 300 } },
+    );
+    if (!res.ok) return [];
+    const data = await res.json();
+    return Array.isArray(data) ? data : (data as any)?.items ?? [];
+  } catch {
+    return [];
+  }
+}
+
+async function fetchReferences(locale: string) {
+  try {
+    const res = await fetch(
+      `${API_BASE_URL}/references?module_key=vistainsaat&is_active=1&locale=${locale}&limit=30`,
+      { next: { revalidate: 3600 } },
     );
     if (!res.ok) return [];
     const data = await res.json();
@@ -89,16 +104,18 @@ export default async function HomePage({
   const { locale } = await params;
   const t = await getTranslations({ locale });
 
-  const [products, galleries, blogPosts] = await Promise.all([
+  const [products, galleries, blogPosts, references] = await Promise.all([
     fetchFeaturedProducts(locale),
     fetchFeaturedGalleries(locale),
     fetchFeaturedBlogPosts(locale),
+    fetchReferences(locale),
   ]);
 
   const siteUrl = siteUrlBase();
   const heroMetrics = t.raw('home.hero.metrics') as Record<string, string>;
   const heroSteps = t.raw('home.hero.steps') as Record<string, string>;
   const heroStats = t.raw('home.hero.stats') as Record<string, string>;
+  const visibleBrands = references.length > 0 ? references : getFallbackBrands();
   const visibleProducts = products.length > 0 ? products.slice(0, 8) : getFallbackProjects(locale);
   const visibleBlogPosts = blogPosts.length > 0 ? blogPosts.slice(0, 3) : getFallbackBlogPosts(locale);
   const visibleGalleries = galleries.length > 0 ? galleries.slice(0, 6) : getFallbackGalleries(locale);
@@ -297,6 +314,22 @@ export default async function HomePage({
             </div>
           </div>
         </section>
+
+      {/* Brands / References */}
+      <section className="section-py">
+        <div className="mx-auto max-w-7xl px-4 lg:px-8">
+          <div className="motion-fade-up">
+            <SectionHeader
+              title={t('home.brands.title')}
+              description={t('home.brands.subtitle')}
+              align="center"
+            />
+          </div>
+          <div className="motion-fade-up motion-delay-2 mt-10">
+            <BrandCarousel brands={visibleBrands} />
+          </div>
+        </div>
+      </section>
 
       {/* Gallery preview */}
       <section className="section-py">

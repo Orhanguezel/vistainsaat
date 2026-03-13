@@ -102,6 +102,10 @@
       "delivery": "Zamanında Teslim",
       "deliveryDesc": "Proje başından teslimata kadar termin taahhüdü ve şeffaf süreç yönetimi"
     },
+    "brands": {
+      "title": "Referans Markalar",
+      "subtitle": "Projelerimizde birlikte çalıştığımız dünya lideri markalar"
+    },
     "gallery": {
       "title": "Galeri",
       "subtitle": "Tamamlanan projelerimizden ve inşaat süreçlerimizden seçilen fotoğraflar"

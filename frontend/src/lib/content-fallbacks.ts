@@ -116,6 +116,28 @@ const fallbackGalleries: Record<LocaleKey, FallbackGalleryItem[]> = {
   ],
 };
 
+type FallbackBrandItem = {
+  title: string;
+  logo_url: string;
+};
+
+const fallbackBrands: FallbackBrandItem[] = [
+  { title: 'Rehau', logo_url: '/brands/rehau.svg' },
+  { title: 'Weber', logo_url: '/brands/weber.svg' },
+  { title: 'Schüco', logo_url: '/brands/schuco.svg' },
+  { title: 'Villeroy & Boch', logo_url: '/brands/villeroy-boch.svg' },
+  { title: 'Grohe', logo_url: '/brands/grohe.svg' },
+  { title: 'KONE', logo_url: '/brands/kone.svg' },
+  { title: 'Laufen', logo_url: '/brands/laufen.svg' },
+  { title: 'Blum', logo_url: '/brands/blum.svg' },
+  { title: 'dormakaba', logo_url: '/brands/dorma-kaba.svg' },
+  { title: 'Knauf', logo_url: '/brands/knauf.svg' },
+  { title: 'Mapei', logo_url: '/brands/mapei.svg' },
+  { title: 'Daikin', logo_url: '/brands/daikin.svg' },
+  { title: 'Franke', logo_url: '/brands/franke.svg' },
+  { title: 'Siemens', logo_url: '/brands/siemens.svg' },
+];
+
 function normalizeLocale(locale: string): LocaleKey {
   return locale.startsWith('en') ? 'en' : 'tr';
 }
@@ -135,4 +157,8 @@ export function getFallbackBlogPosts(locale: string): FallbackItem[] {
 
 export function getFallbackGalleries(locale: string): FallbackGalleryItem[] {
   return fallbackGalleries[normalizeLocale(locale)];
+}
+
+export function getFallbackBrands(): FallbackBrandItem[] {
+  return fallbackBrands;
 }
