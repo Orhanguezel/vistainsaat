@@ -35,6 +35,14 @@ Thumbs.db
 # Lock files (bun)
 bun.lock
 
+# Coverage
+coverage/
+*.lcov
+.nyc_output/
+
+# TypeScript cache
+*.tsbuildinfo
+
 # Excluded directories
 prime-frontend-nextjs/
 technical-seo-skill/
