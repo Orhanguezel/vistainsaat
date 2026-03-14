@@ -4,25 +4,8 @@ import { useReportWebVitals } from 'next/web-vitals';
 
 export function WebVitals() {
   useReportWebVitals((metric) => {
-    // Send to analytics endpoint in production
-    if (process.env.NODE_ENV === 'production') {
-      const body = {
-        name: metric.name,
-        value: metric.value,
-        rating: metric.rating,
-        delta: metric.delta,
-        id: metric.id,
-        navigationType: metric.navigationType,
-      };
-
-      // Use sendBeacon for reliable delivery
-      if (typeof navigator.sendBeacon === 'function') {
-        navigator.sendBeacon(
-          '/api/vitals',
-          new Blob([JSON.stringify(body)], { type: 'application/json' }),
-        );
-      }
-    }
+    // Web Vitals reporting disabled — no backend endpoint available
+    // To re-enable, add POST /api/vitals to the backend
 
     // Log in development
     if (process.env.NODE_ENV === 'development') {
