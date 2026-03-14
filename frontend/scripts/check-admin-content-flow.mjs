@@ -6,7 +6,7 @@ import { spawn } from 'node:child_process';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 const BUILD_ID_FILE = path.join(ROOT, '.next', 'BUILD_ID');
-const STANDALONE_DIR = path.join(ROOT, '.next', 'standalone', 'karbonkompozit');
+const STANDALONE_DIR = path.join(ROOT, '.next', 'standalone', 'vistainsaat');
 const STANDALONE_SERVER = path.join(STANDALONE_DIR, 'server.js');
 const PREPARE_SCRIPT = path.join(ROOT, 'scripts', 'prepare-standalone.mjs');
 
@@ -16,7 +16,7 @@ const API_BASE = (process.env.SMOKE_API_BASE_URL || process.env.NEXT_PUBLIC_API_
 const API_ORIGIN = API_BASE.endsWith('/api') ? API_BASE.slice(0, -4) : API_BASE;
 const ADMIN_EMAIL = process.env.SMOKE_ADMIN_EMAIL || process.env.SEED_ADMIN_EMAIL || 'orhanguzell@gmail.com';
 const ADMIN_PASSWORD = process.env.SMOKE_ADMIN_PASSWORD || process.env.SEED_ADMIN_PASSWORD || 'admin123';
-const KOMPOZIT_CATEGORY_ID = 'cccc0001-4001-4001-8001-cccccccc0001';
+const VISTAINSAAT_CATEGORY_ID = 'cccc0001-4001-4001-8001-cccccccc0001';
 
 const created = {
   pageId: null,
@@ -211,7 +211,7 @@ async function createAdminContent() {
         method: 'POST',
         headers,
         body: JSON.stringify({
-          module_key: 'kompozit_blog',
+          module_key: 'vistainsaat_blog',
           locale: 'tr',
           title: pageTitle,
           slug: pageSlug,
@@ -252,7 +252,7 @@ async function createAdminContent() {
         method: 'POST',
         headers,
         body: JSON.stringify({
-          item_type: 'kompozit',
+          item_type: 'vistainsaat',
           locale: 'tr',
           title: productTitle,
           slug: productSlug,
@@ -260,8 +260,8 @@ async function createAdminContent() {
           image_url: `${API_ORIGIN}/media/gallery-placeholder.svg`,
           alt: `Admin flow product alt ${ts}`,
           price: 0,
-          category_id: KOMPOZIT_CATEGORY_ID,
-          tags: ['admin-flow', 'kompozit'],
+          category_id: VISTAINSAAT_CATEGORY_ID,
+          tags: ['admin-flow', 'vistainsaat'],
           meta_title: `${productTitle} Meta`,
           meta_description: `Admin flow product meta description ${ts}`,
           is_active: true,
@@ -298,7 +298,7 @@ async function createAdminContent() {
         method: 'POST',
         headers,
         body: JSON.stringify({
-          module_key: 'kompozit',
+          module_key: 'vistainsaat',
           source_type: 'standalone',
           locale: 'tr',
           title: galleryTitle,
@@ -464,10 +464,10 @@ async function main() {
   try {
     await waitForServer(proc);
 
-    await expectFrontend('/tr/about', ['MOE Kompozit', 'Karbon fiber', 'Calisma Modelimiz']);
-    await expectFrontend('/en/about', ['MOE Kompozit', 'carbon fiber', 'How We Work']);
-    await expectFrontend('/tr/legal/privacy', ['MOE Kompozit', '/tr/legal/privacy', '<link rel="canonical"']);
-    await expectFrontend('/en/legal/privacy', ['MOE Kompozit', '/en/legal/privacy', '<link rel="canonical"']);
+    await expectFrontend('/tr/about', ['Vista İnşaat', 'Karbon fiber', 'Calisma Modelimiz']);
+    await expectFrontend('/en/about', ['Vista İnşaat', 'carbon fiber', 'How We Work']);
+    await expectFrontend('/tr/legal/privacy', ['Vista İnşaat', '/tr/legal/privacy', '<link rel="canonical"']);
+    await expectFrontend('/en/legal/privacy', ['Vista İnşaat', '/en/legal/privacy', '<link rel="canonical"']);
 
     await expectFrontend(`/tr/blog/${content.blog.slug}`, [
       content.blog.tr.metaTitle,

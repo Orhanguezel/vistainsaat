@@ -34,7 +34,7 @@ export interface GalleryImage {
 export const galleryService = {
   getAll: async (params?: Record<string, unknown>): Promise<Gallery[]> => {
     const res = await api.get('/galleries', {
-      params: { module_key: 'kompozit', is_active: 1, ...params },
+      params: { module_key: 'vistainsaat', is_active: 1, ...params },
     });
     return Array.isArray(res.data) ? res.data : (res.data as any)?.items ?? [];
   },

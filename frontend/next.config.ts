@@ -11,6 +11,7 @@ const nextConfig: NextConfig = {
     formats: ['image/avif', 'image/webp'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
     minimumCacheTTL: 2592000,
+    dangerouslyAllowLocalIP: process.env.NODE_ENV === 'development',
     remotePatterns: [
       { protocol: 'https', hostname: 'res.cloudinary.com' },
       { protocol: 'https', hostname: 'vistainsaat.com' },
@@ -19,8 +20,8 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'fastly.picsum.photos' },
       ...(process.env.NODE_ENV === 'development'
         ? [
-            { protocol: 'http' as const, hostname: 'localhost' },
-            { protocol: 'http' as const, hostname: '127.0.0.1' },
+            { protocol: 'http' as const, hostname: 'localhost', port: '8086' },
+            { protocol: 'http' as const, hostname: '127.0.0.1', port: '8086' },
           ]
         : []),
     ],

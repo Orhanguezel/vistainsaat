@@ -41,8 +41,8 @@ export const DEFAULT_BRANDING: AdminBrandingConfig = {
     og_url: 'http://localhost:3004/',
     og_title: 'Vista İnşaat Admin Panel',
     og_description:
-      'Kompozit projeleri icin icerik, medya, teklif ve site ayari yonetim ekrani.',
-    og_image: '/logo/png/ensotek_logo_512.png',
+      'Vista İnşaat projeleri icin icerik, medya, teklif ve site ayari yonetim ekrani.',
+    og_image: '/logo/png/vista_logo_512.png',
     twitter_card: 'summary_large_image',
   },
 };

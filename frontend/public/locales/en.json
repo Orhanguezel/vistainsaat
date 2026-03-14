@@ -86,6 +86,10 @@
       "title": "Featured Projects",
       "subtitle": "A selection from our completed and ongoing residential, commercial and mixed-use developments"
     },
+    "latestProjects": {
+      "title": "Latest Projects",
+      "subtitle": "Discover our most recent projects"
+    },
     "services": {
       "title": "Our Services",
       "subtitle": "Comprehensive solutions from architectural design to construction, project management to handover"
@@ -146,10 +150,17 @@
     "requestOffer": "Get Information About This Project",
     "filters": {
       "type": "Project Type",
+      "location": "Location",
+      "architects": "Architects",
       "city": "City",
       "year": "Year",
+      "materials": "Materials",
+      "area": "Area",
+      "floors": "Floors",
+      "client": "Client",
       "status": "Status",
       "all": "All",
+      "search": "Search",
       "residential": "Residential",
       "commercial": "Commercial",
       "mixed": "Mixed Use",

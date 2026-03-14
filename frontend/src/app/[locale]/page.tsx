@@ -3,23 +3,28 @@ import 'server-only';
 import { getTranslations } from 'next-intl/server';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowRight, Shield, Zap, Settings, Truck } from 'lucide-react';
+import { ArrowRight, Play, Bookmark } from 'lucide-react';
 
 import { absoluteAssetUrl, API_BASE_URL } from '@/lib/utils';
 import { JsonLd, buildPageMetadata, jsonld, localizedPath, organizationJsonLd, siteUrlBase } from '@/seo';
 import { NewsletterForm } from '@/components/sections/NewsletterForm';
-import { DarkCtaPanel } from '@/components/patterns/DarkCtaPanel';
-import { FeatureCard } from '@/components/patterns/FeatureCard';
-import { ListingCard } from '@/components/patterns/ListingCard';
-import { MediaOverlayCard } from '@/components/patterns/MediaOverlayCard';
 import { SectionHeader } from '@/components/patterns/SectionHeader';
 import { Reveal } from '@/components/motion/Reveal';
 import { OptimizedImage } from '@/components/ui/OptimizedImage';
-import { getFallbackBlogPosts, getFallbackBrands, getFallbackGalleries, getFallbackProjects } from '@/lib/content-fallbacks';
-import { BrandCarousel } from '@/components/sections/BrandCarousel';
+import { HeroVideoPlayer } from '@/components/ui/HeroVideoPlayer';
+import { getFallbackBlogPosts, getFallbackBrands, getFallbackProjects } from '@/lib/content-fallbacks';
 import { buildMediaAlt } from '@/lib/media-seo';
+import { BrandCarousel } from '@/components/sections/BrandCarousel';
+import { ProjectFeed } from '@/components/sections/ProjectFeed';
 
-const GALLERY_PLACEHOLDER_SRC = '/media/gallery-placeholder.svg';
+/** Resolve image URL: local /media/ paths stay as-is, /uploads/ go through absoluteAssetUrl */
+function resolveImageUrl(value?: string | null): string | null {
+  if (!value) return null;
+  if (/^https?:\/\//i.test(value)) return value;
+  if (value.startsWith('/media/')) return value;
+  return absoluteAssetUrl(value);
+}
+
 const BLOG_PLACEHOLDER_SRC = '/media/blog-placeholder.svg';
 
 async function fetchFeaturedProducts(locale: string) {
@@ -36,11 +41,11 @@ async function fetchFeaturedProducts(locale: string) {
   }
 }
 
-async function fetchFeaturedGalleries(locale: string) {
+async function fetchReferences(locale: string) {
   try {
     const res = await fetch(
-      `${API_BASE_URL}/galleries?module_key=vistainsaat&is_active=1&is_featured=1&locale=${locale}&limit=6`,
-      { next: { revalidate: 300 } },
+      `${API_BASE_URL}/references?module_key=vistainsaat&is_active=1&locale=${locale}&limit=30`,
+      { next: { revalidate: 3600 } },
     );
     if (!res.ok) return [];
     const data = await res.json();
@@ -50,11 +55,11 @@ async function fetchFeaturedGalleries(locale: string) {
   }
 }
 
-async function fetchReferences(locale: string) {
+async function fetchAllProjects(locale: string) {
   try {
     const res = await fetch(
-      `${API_BASE_URL}/references?module_key=vistainsaat&is_active=1&locale=${locale}&limit=30`,
-      { next: { revalidate: 3600 } },
+      `${API_BASE_URL}/products?item_type=vistainsaat&is_active=1&locale=${locale}&limit=10`,
+      { next: { revalidate: 300 } },
     );
     if (!res.ok) return [];
     const data = await res.json();
@@ -104,32 +109,18 @@ export default async function HomePage({
   const { locale } = await params;
   const t = await getTranslations({ locale });
 
-  const [products, galleries, blogPosts, references] = await Promise.all([
+  const [products, blogPosts, references, allProjects] = await Promise.all([
     fetchFeaturedProducts(locale),
-    fetchFeaturedGalleries(locale),
     fetchFeaturedBlogPosts(locale),
     fetchReferences(locale),
+    fetchAllProjects(locale),
   ]);
 
   const siteUrl = siteUrlBase();
-  const heroMetrics = t.raw('home.hero.metrics') as Record<string, string>;
-  const heroSteps = t.raw('home.hero.steps') as Record<string, string>;
-  const heroStats = t.raw('home.hero.stats') as Record<string, string>;
   const visibleBrands = references.length > 0 ? references : getFallbackBrands();
   const visibleProducts = products.length > 0 ? products.slice(0, 8) : getFallbackProjects(locale);
   const visibleBlogPosts = blogPosts.length > 0 ? blogPosts.slice(0, 3) : getFallbackBlogPosts(locale);
-  const visibleGalleries = galleries.length > 0 ? galleries.slice(0, 6) : getFallbackGalleries(locale);
-  const [featuredBlogPost, ...secondaryBlogPosts] = visibleBlogPosts;
-  const featuredBlogImageSrc =
-    absoluteAssetUrl(featuredBlogPost?.image_url || featuredBlogPost?.featured_image) ||
-    BLOG_PLACEHOLDER_SRC;
-
-  const whyUsItems = [
-    { icon: Shield, key: 'quality' },
-    { icon: Zap, key: 'experience' },
-    { icon: Settings, key: 'custom' },
-    { icon: Truck, key: 'delivery' },
-  ] as const;
+  const [featuredBlogPost] = visibleBlogPosts;
 
   return (
     <>
@@ -148,172 +139,310 @@ export default async function HomePage({
         ])}
       />
 
-      {/* Hero */}
-      <section className="surface-dark-shell">
-        <div className="surface-hero-glow-brand motion-float-soft absolute left-[-8rem] top-16 h-72 w-72 rounded-full blur-3xl" />
-        <div className="surface-hero-glow-muted motion-float-soft absolute right-[-6rem] top-24 h-80 w-80 rounded-full blur-3xl" />
-        <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-16 lg:grid-cols-[minmax(0,1.1fr)_minmax(24rem,0.9fr)] lg:px-8 lg:py-24">
-          <div className="motion-fade-up max-w-3xl">
-            <span className="surface-glass-dark inline-flex rounded-full px-4 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-[var(--color-brand-light)]">
-              {t('home.hero.badge')}
-            </span>
-            <h1 className="surface-dark-heading motion-fade-up motion-delay-1 mt-6 max-w-4xl text-balance text-4xl font-bold lg:text-6xl">
-              {t('home.hero.title')}
-            </h1>
-            <p className="surface-dark-text motion-fade-up motion-delay-2 mt-6 max-w-2xl text-lg leading-8">
-              {t('home.hero.subtitle')}
-            </p>
-            <div className="motion-fade-up motion-delay-3 mt-10 flex flex-wrap gap-4">
-              <Link
-                href={localizedPath(locale, '/projeler')}
-                className="btn-primary inline-flex items-center gap-2 rounded-lg px-6 py-3 font-medium transition-colors"
-              >
-                {t('home.hero.cta')}
-                <ArrowRight className="size-4" />
-              </Link>
-              <Link
-                href={localizedPath(locale, '/teklif')}
-                className="surface-glass-dark surface-glass-hover surface-dark-heading inline-flex items-center gap-2 rounded-lg px-6 py-3 font-medium transition-colors"
-              >
-                {t('home.hero.ctaSecondary')}
-              </Link>
-            </div>
-            <div className="mt-10 grid gap-3 sm:grid-cols-3">
-              <div className="surface-glass-dark motion-fade-up motion-delay-2 rounded-2xl px-4 py-4">
-                <p className="surface-dark-heading text-2xl font-bold">{heroMetrics.prototypeTitle}</p>
-                <p className="surface-dark-text mt-1 text-sm">{heroMetrics.prototypeDesc}</p>
-              </div>
-              <div className="surface-glass-dark motion-fade-up motion-delay-3 rounded-2xl px-4 py-4">
-                <p className="surface-dark-heading text-2xl font-bold">{heroMetrics.productionTitle}</p>
-                <p className="surface-dark-text mt-1 text-sm">{heroMetrics.productionDesc}</p>
-              </div>
-              <div className="surface-glass-dark motion-fade-up motion-delay-4 rounded-2xl px-4 py-4">
-                <p className="surface-dark-heading text-2xl font-bold">{heroMetrics.engineeringTitle}</p>
-                <p className="surface-dark-text mt-1 text-sm">{heroMetrics.engineeringDesc}</p>
-              </div>
-            </div>
-          </div>
+      {/* Hero — ArchDaily editorial grid */}
+      <section className="bg-(--color-bg)">
+        <div className="mx-auto max-w-7xl px-4 pt-4 pb-6 lg:px-6">
+          <div className="grid gap-2.5 lg:grid-cols-[1.15fr_1fr]" style={{ minHeight: '560px' }}>
 
-          <div className="motion-slide-right motion-delay-2 flex items-stretch justify-center lg:justify-end">
-            <div className="surface-glass-dark shadow-hero-panel w-full max-w-xl rounded-[2rem] p-5">
-              <div className="surface-glass-dark rounded-[1.6rem] p-6">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p className="surface-dark-text text-sm font-medium uppercase tracking-[0.18em]">
-                      {t('home.hero.workflowLabel')}
+            {/* Left — Main video panel */}
+            <HeroVideoPlayer
+              src="/media/hero-video.mp4"
+              poster={absoluteAssetUrl(visibleProducts[0]?.image_url) || undefined}
+              badge={t('home.hero.badge')}
+              title={t('home.hero.title')}
+            />
+
+            {/* Right — left stack + full-height news */}
+            <div className="grid grid-cols-2 gap-2.5">
+
+              {/* Left column — stacked cards */}
+              <div className="flex flex-col gap-2.5">
+                {/* Project with play icon */}
+                {visibleProducts[0] && (
+                  <Link
+                    href={visibleProducts[0].slug ? localizedPath(locale, `/projeler/${visibleProducts[0].slug}`) : localizedPath(locale, '/projeler')}
+                    className="group relative flex-1 overflow-hidden"
+                  >
+                    <div className="absolute inset-0 bg-(--color-bg-muted)">
+                      {absoluteAssetUrl(visibleProducts[0].image_url) && (
+                        <OptimizedImage
+                          src={absoluteAssetUrl(visibleProducts[0].image_url)!}
+                          alt={buildMediaAlt({ locale, kind: 'project', title: visibleProducts[0].title })}
+                          fill
+                          sizes="(max-width: 1024px) 50vw, 18vw"
+                          className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      )}
+                    </div>
+                    <div className="absolute left-3 top-3 z-10 flex size-8 items-center justify-center rounded-full bg-white/90">
+                      <Play className="size-3.5 fill-(--color-text-primary) text-(--color-text-primary)" />
+                    </div>
+                  </Link>
+                )}
+
+                {/* Project image */}
+                {visibleProducts[1] && (
+                  <Link
+                    href={visibleProducts[1].slug ? localizedPath(locale, `/projeler/${visibleProducts[1].slug}`) : localizedPath(locale, '/projeler')}
+                    className="group relative flex-1 overflow-hidden"
+                  >
+                    <div className="absolute inset-0 bg-(--color-bg-muted)">
+                      {absoluteAssetUrl(visibleProducts[1].image_url) && (
+                        <OptimizedImage
+                          src={absoluteAssetUrl(visibleProducts[1].image_url)!}
+                          alt={buildMediaAlt({ locale, kind: 'project', title: visibleProducts[1].title })}
+                          fill
+                          sizes="(max-width: 1024px) 50vw, 18vw"
+                          className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      )}
+                    </div>
+                  </Link>
+                )}
+
+                {/* CTA button */}
+                <Link
+                  href={localizedPath(locale, '/teklif')}
+                  className="flex items-center justify-center gap-3 bg-(--color-brand) px-6 py-4 text-center transition-opacity hover:opacity-90"
+                >
+                  <p className="text-sm font-bold text-white lg:text-base" style={{ fontFamily: 'var(--font-heading)' }}>
+                    {t('home.hero.ctaSecondary')}
+                  </p>
+                  <ArrowRight className="size-4 text-white" />
+                </Link>
+              </div>
+
+              {/* Right column — full-height news card */}
+              {featuredBlogPost ? (
+                <Link
+                  href={featuredBlogPost.slug ? localizedPath(locale, `/haberler/${featuredBlogPost.slug}`) : localizedPath(locale, '/haberler')}
+                  className="group flex flex-col overflow-hidden"
+                >
+                  <div className="relative flex-1 overflow-hidden bg-(--color-bg-muted)">
+                    <OptimizedImage
+                      src={resolveImageUrl(featuredBlogPost.image_url || featuredBlogPost.featured_image) || BLOG_PLACEHOLDER_SRC}
+                      alt={featuredBlogPost.title}
+                      fill
+                      sizes="(max-width: 1024px) 50vw, 25vw"
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  </div>
+                  <div className="bg-(--color-bg) pt-3 pb-1">
+                    <p className="text-xs font-medium uppercase tracking-wider text-(--color-brand)">
+                      {locale === 'tr' ? 'Haberler' : 'News'}
                     </p>
-                    <h2 className="surface-dark-heading mt-3 text-2xl font-bold">
-                      {t('home.hero.workflowTitle')}
+                    <h2
+                      className="mt-1 text-sm font-semibold leading-snug text-(--color-brand) lg:text-base"
+                      style={{ fontFamily: 'var(--font-heading)' }}
+                    >
+                      {featuredBlogPost.title}
                     </h2>
                   </div>
-                  <div className="surface-glass-dark rounded-2xl px-4 py-3 text-right">
-                    <p className="surface-dark-heading text-2xl font-bold">{t('home.hero.workflowBadgeTitle')}</p>
-                    <p className="surface-dark-text text-xs">{t('home.hero.workflowBadgeSubtitle')}</p>
-                  </div>
-                </div>
+                </Link>
+              ) : (
+                <div className="bg-(--color-bg-muted)" />
+              )}
 
-                <div className="mt-6 space-y-3">
-                  <div className="surface-glass-dark rounded-2xl px-4 py-4">
-                    <p className="surface-dark-heading text-sm font-semibold">{heroSteps.oneTitle}</p>
-                    <p className="surface-dark-text mt-1 text-sm">
-                      {heroSteps.oneDesc}
-                    </p>
-                  </div>
-                  <div className="surface-glass-dark rounded-2xl px-4 py-4">
-                    <p className="surface-dark-heading text-sm font-semibold">{heroSteps.twoTitle}</p>
-                    <p className="surface-dark-text mt-1 text-sm">
-                      {heroSteps.twoDesc}
-                    </p>
-                  </div>
-                  <div className="surface-glass-dark rounded-2xl px-4 py-4">
-                    <p className="surface-dark-heading text-sm font-semibold">{heroSteps.threeTitle}</p>
-                    <p className="surface-dark-text mt-1 text-sm">
-                      {heroSteps.threeDesc}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="mt-6 grid grid-cols-2 gap-3">
-                  <div className="surface-glass-dark rounded-2xl px-4 py-4">
-                    <p className="surface-dark-heading text-3xl font-bold">{heroStats.stepsValue}</p>
-                    <p className="surface-dark-text mt-1 text-sm">{heroStats.stepsLabel}</p>
-                  </div>
-                  <div className="surface-glass-dark rounded-2xl px-4 py-4">
-                    <p className="surface-dark-heading text-3xl font-bold">{heroStats.b2bValue}</p>
-                    <p className="surface-dark-text mt-1 text-sm">{heroStats.b2bLabel}</p>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Why Us */}
-      <section className="section-py">
-        <div className="mx-auto max-w-7xl px-4 lg:px-8">
-          <div className="motion-fade-up">
-            <SectionHeader
-            title={t('home.whyUs.title')}
-            description={t('home.whyUs.subtitle')}
-            align="center"
-            />
-          </div>
-          <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {whyUsItems.map(({ icon: Icon, key }, index) => (
-              <div key={key} className={`motion-fade-up motion-delay-${Math.min(index + 1, 4)}`}>
-                <FeatureCard
-                  icon={<Icon className="size-7 text-[var(--color-brand)]" />}
-                  title={t(`home.whyUs.${key}`)}
-                  description={t(`home.whyUs.${key}Desc`)}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* Products */}
-      <section className="section-py bg-[var(--color-bg-muted)]">
-          <div className="mx-auto max-w-7xl px-4 lg:px-8">
-            <div className="motion-fade-up">
-              <SectionHeader
+      {/* Featured Projects — ArchDaily expanded cards */}
+      <section className="section-py">
+        <div className="mx-auto max-w-7xl px-4 lg:px-6">
+          <div className="motion-fade-up mb-8">
+            <SectionHeader
               title={t('home.projects.title')}
               description={t('home.projects.subtitle')}
-              action={(
-                <Link
-                  href={localizedPath(locale, '/projeler')}
-                  className="hidden items-center gap-1 text-sm font-medium text-[var(--color-brand)] hover:underline sm:flex"
-                >
-                  {t('common.viewAll')} <ArrowRight className="size-3.5" />
-                </Link>
-              )}
-              />
-            </div>
-            <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {visibleProducts.map((p: any, index: number) => (
-                <div key={p.id ?? p.title} className={`motion-fade-up motion-delay-${(index % 4) + 1}`}>
-                  <ListingCard
-                    href={p.slug ? localizedPath(locale, `/projeler/${p.slug}`) : `${localizedPath(locale, '/teklif')}?product=${encodeURIComponent(p.title)}`}
-                    title={p.title}
-                    description={p.description}
-                    imageSrc={p.image_url}
-                    imageAlt={buildMediaAlt({
-                      locale,
-                      kind: 'product',
-                      title: p.title,
-                      alt: p.alt,
-                      caption: p.caption,
-                      description: p.description,
-                    })}
-                    imageSizes="(max-width: 768px) 50vw, 25vw"
-                    imageAspectClassName="aspect-[4/3]"
-                  />
-                </div>
-              ))}
-            </div>
+            />
           </div>
-        </section>
+          <div className="lg:grid lg:grid-cols-[1fr_320px] lg:gap-10">
+            {/* Main feed */}
+            <div className="space-y-10">
+              {visibleProducts.slice(0, 4).map((project: any) => {
+                const mainImage = absoluteAssetUrl(project.image_url);
+                const thumbs = (project.images || []).slice(0, 5).map((img: string) => absoluteAssetUrl(img)).filter(Boolean) as string[];
+                const extraCount = (project.images?.length || 0) - 5;
+                const specs = project.specifications || {};
+                const categoryName = project.category?.name || specs.tip || '';
+                const location = specs.lokasyon || specs.location || '';
+                const architects = specs.mimarlar || specs.architects || '';
+                const area = specs.alan || specs.area || '';
+                const year = specs.yıl || specs.year || '';
+                const manufacturers = specs.üreticiler || specs.manufacturers || '';
+                const projectHref = project.slug ? localizedPath(locale, `/projeler/${project.slug}`) : localizedPath(locale, '/projeler');
+
+                return (
+                  <article key={project.id ?? project.title} className="border-b border-(--color-border) pb-10">
+                    <Link href={projectHref}>
+                      <h2
+                        className="text-xl font-bold text-(--color-text-primary) hover:text-(--color-brand) lg:text-2xl"
+                        style={{ fontFamily: 'var(--font-heading)' }}
+                      >
+                        {project.title}
+                        {architects ? ` / ${architects}` : ''}
+                      </h2>
+                    </Link>
+
+                    {mainImage && (
+                      <Link href={projectHref} className="group relative mt-4 block aspect-16/10 overflow-hidden bg-(--color-bg-muted)">
+                        <OptimizedImage
+                          src={mainImage}
+                          alt={project.title}
+                          fill
+                          sizes="(max-width: 1024px) 100vw, 660px"
+                          className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                        />
+                      </Link>
+                    )}
+
+                    {thumbs.length > 1 && (
+                      <div className="mt-2 flex gap-1.5">
+                        {thumbs.map((src: string, i: number) => (
+                          <Link
+                            key={i}
+                            href={projectHref}
+                            className="relative aspect-3/2 w-[calc(20%-3px)] overflow-hidden bg-(--color-bg-muted)"
+                          >
+                            <OptimizedImage
+                              src={src}
+                              alt={`${project.title} — ${i + 1}`}
+                              fill
+                              sizes="120px"
+                              className="object-cover"
+                            />
+                            {i === thumbs.length - 1 && extraCount > 0 && (
+                              <span className="absolute inset-0 flex items-center justify-center bg-black/50 text-lg font-semibold text-white">
+                                + {extraCount}
+                              </span>
+                            )}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+
+                    <div className="mt-3 flex flex-wrap items-center gap-x-1.5 text-xs font-semibold uppercase tracking-wide">
+                      {categoryName && (
+                        <span className="text-(--color-brand)">{categoryName}</span>
+                      )}
+                      {categoryName && location && (
+                        <span className="text-(--color-text-muted)">·</span>
+                      )}
+                      {location && (
+                        <span className="text-(--color-text-secondary)">{location}</span>
+                      )}
+                    </div>
+
+                    <div className="mt-2 flex flex-wrap gap-x-6 gap-y-1 text-sm text-(--color-text-secondary)">
+                      {architects && (
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-xs text-(--color-text-muted)">{locale === 'tr' ? 'Mimarlar:' : 'Architects:'}</span>
+                          <span className="font-medium text-(--color-brand)">{architects}</span>
+                        </div>
+                      )}
+                      {area && (
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-xs text-(--color-text-muted)">{locale === 'tr' ? 'Alan:' : 'Area:'}</span>
+                          <span className="font-medium">{area}</span>
+                        </div>
+                      )}
+                      {year && (
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-xs text-(--color-text-muted)">{locale === 'tr' ? 'Yıl:' : 'Year:'}</span>
+                          <span className="font-medium text-(--color-brand)">{year}</span>
+                        </div>
+                      )}
+                      {manufacturers && (
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-xs text-(--color-text-muted)">{locale === 'tr' ? 'Üreticiler:' : 'Manufacturers:'}</span>
+                          <span className="font-medium">{manufacturers}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="mt-3 flex items-center justify-between">
+                      <span className="inline-flex items-center gap-1.5 bg-(--color-brand) px-3 py-1.5 text-xs font-semibold text-white">
+                        <Bookmark className="size-3.5" />
+                        {locale === 'tr' ? 'Bu Projeyi Kaydet' : 'Save this project'}
+                      </span>
+                      <Link
+                        href={projectHref}
+                        className="text-xs font-medium text-(--color-brand) hover:underline"
+                      >
+                        {t('common.readMore')} »
+                      </Link>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+
+            {/* Sidebar — desktop only */}
+            <aside className="hidden lg:block">
+              <div className="sticky top-24 space-y-8">
+                <div className="border-b border-(--color-border) pb-6">
+                  <h3
+                    className="mb-4 text-lg font-bold text-(--color-text-primary)"
+                    style={{ fontFamily: 'var(--font-heading)' }}
+                  >
+                    {locale === 'tr' ? 'Beğeneceğiniz Projeler' : "Projects You'll Love"}
+                  </h3>
+                  <div className="space-y-5">
+                    {visibleProducts.slice(0, 4).map((p: any) => {
+                      const img = absoluteAssetUrl(p.image_url);
+                      return (
+                        <Link
+                          key={p.id}
+                          href={p.slug ? localizedPath(locale, `/projeler/${p.slug}`) : localizedPath(locale, '/projeler')}
+                          className="group flex gap-3"
+                        >
+                          {img && (
+                            <div className="relative aspect-4/3 w-24 shrink-0 overflow-hidden bg-(--color-bg-muted)">
+                              <OptimizedImage
+                                src={img}
+                                alt={p.title}
+                                fill
+                                sizes="96px"
+                                className="object-cover transition-transform duration-300 group-hover:scale-105"
+                              />
+                            </div>
+                          )}
+                          <h4 className="text-sm font-semibold leading-snug text-(--color-text-primary) group-hover:text-(--color-brand)">
+                            {p.title}
+                            {p.specifications?.mimarlar ? ` / ${p.specifications.mimarlar}` : ''}
+                          </h4>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="bg-(--color-bg-muted) p-5">
+                  <p
+                    className="text-sm font-bold text-(--color-text-primary)"
+                    style={{ fontFamily: 'var(--font-heading)' }}
+                  >
+                    {locale === 'tr' ? 'Projeniz İçin Teklif Alın' : 'Get a Quote for Your Project'}
+                  </p>
+                  <p className="mt-1 text-xs text-(--color-text-secondary)">
+                    {locale === 'tr'
+                      ? 'Ücretsiz keşif ve teklif için hemen iletişime geçin.'
+                      : 'Contact us for a free site survey and quote.'}
+                  </p>
+                  <Link
+                    href={localizedPath(locale, '/teklif')}
+                    className="mt-3 inline-block bg-(--color-brand) px-4 py-2 text-xs font-semibold text-white transition-opacity hover:opacity-90"
+                  >
+                    {locale === 'tr' ? 'Teklif Al' : 'Get Quote'}
+                  </Link>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
 
       {/* Brands / References */}
       <section className="section-py">
@@ -331,181 +460,52 @@ export default async function HomePage({
         </div>
       </section>
 
-      {/* Gallery preview */}
-      <section className="section-py">
-        <div className="mx-auto max-w-7xl px-4 lg:px-8">
-          <div className="motion-fade-up">
-            <SectionHeader
-            title={t('home.gallery.title')}
-            description={t('home.gallery.subtitle')}
-            action={(
-              <Link
-                href={localizedPath(locale, '/galeri')}
-                className="hidden items-center gap-1 text-sm font-medium text-[var(--color-brand)] hover:underline sm:flex"
-              >
-                {t('common.viewAll')} <ArrowRight className="size-3.5" />
-              </Link>
-            )}
-            />
-          </div>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {visibleGalleries.map((g: any, index: number) => (
-              <Reveal key={g.id ?? g.title} delay={120 * (index + 1)}>
-                <MediaOverlayCard
-                  href={g.slug ? localizedPath(locale, `/galeri/${g.slug}`) : localizedPath(locale, '/galeri')}
-                  src={absoluteAssetUrl(g.cover_image_url_resolved || g.cover_image || g.imageSrc) || GALLERY_PLACEHOLDER_SRC}
-                  alt={buildMediaAlt({
-                    locale,
-                    kind: 'gallery-cover',
-                    title: g.title,
-                    alt: g.cover_image_alt,
-                    description: g.description,
-                  })}
-                  title={g.title}
-                  meta={g.image_count != null ? `${g.image_count} ${t('gallery.viewAll').toLowerCase()}` : undefined}
-                  description={g.description}
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                />
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="section-py bg-[var(--color-bg-muted)]">
-        <div className="mx-auto max-w-7xl px-4 lg:px-8">
-          <Reveal>
-            <SectionHeader
-            title={t('home.blog.title')}
-            description={t('home.blog.subtitle')}
-            />
-          </Reveal>
-          <Reveal className="mt-8" delay={120}>
-            {featuredBlogPost ? (
-              <article className="surface-card rounded-[2rem] p-6 lg:p-8">
-                <div className="grid gap-6 lg:grid-cols-[minmax(0,1.7fr)_14rem] lg:items-start">
-                  <div>
-                    <h3 className="text-balance text-2xl font-semibold text-[var(--color-text-primary)] lg:text-3xl">
-                      {t('home.blog.spotlightTitle')}
-                    </h3>
-                    <p className="mt-4 text-base leading-8 text-[var(--color-text-secondary)]">
-                      {t('home.blog.spotlightBodyPrimary')}
-                    </p>
-                    <p className="mt-4 text-base leading-8 text-[var(--color-text-secondary)]">
-                      {t('home.blog.spotlightBodySecondary')}
-                    </p>
-                    <div className="surface-card-muted mt-6 rounded-[1.5rem] p-5">
-                      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--color-brand)]">
-                        {t('home.blog.insightLabel')}
-                      </p>
-                      <p className="mt-2 text-sm leading-7 text-[var(--color-text-secondary)]">
-                        {t('home.blog.insightText')}
-                      </p>
-                    </div>
-                    <Link
-                      href={featuredBlogPost?.slug ? localizedPath(locale, `/haberler/${featuredBlogPost.slug}`) : localizedPath(locale, '/haberler')}
-                      className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-[var(--color-brand)] transition-opacity hover:opacity-80"
-                    >
-                      {t('blog.readMore')}
-                      <ArrowRight className="size-4" />
-                    </Link>
-                  </div>
-
-                  <div className="surface-card-muted rounded-[1.5rem] p-3">
-                      <div className="relative aspect-[5/4] overflow-hidden rounded-[1.1rem] bg-[var(--color-border)]">
-                        <OptimizedImage
-                          src={featuredBlogImageSrc}
-                          alt={buildMediaAlt({
-                            locale,
-                            kind: 'blog',
-                            title: featuredBlogPost.title,
-                            alt: featuredBlogPost.alt,
-                            caption: featuredBlogPost.description,
-                            description: featuredBlogPost.description,
-                          })}
-                          fill
-                          sizes="(max-width: 1024px) 100vw, 14rem"
-                          className="object-cover"
-                        />
-                      </div>
-                    </div>
-                </div>
-              </article>
-            ) : null}
-          </Reveal>
-        </div>
-      </section>
-
-      <section className="section-py bg-[var(--color-bg-muted)] pt-0">
-        <div className="mx-auto max-w-7xl px-4 lg:px-8">
-          <Reveal>
-            <SectionHeader
-            title={t('home.blog.archiveLabel')}
-            description={t('home.blog.archiveSubtitle')}
-            action={(
-              <Link
-                href={localizedPath(locale, '/haberler')}
-                className="hidden items-center gap-1 text-sm font-medium text-[var(--color-brand)] hover:underline sm:flex"
-              >
-                {t('common.viewAll')} <ArrowRight className="size-3.5" />
-              </Link>
-            )}
-            />
-          </Reveal>
-          <div className="mt-8 grid gap-4 lg:grid-cols-3">
-            {secondaryBlogPosts.map((post: any, index: number) => (
-              <Reveal key={post.id ?? post.title} delay={120 * (index + 1)}>
-                <article
-                  className="surface-card rounded-[2rem] p-5 lg:p-6"
-                >
-                  <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">
-                    {post.title}
-                  </h3>
-                  <p className="mt-3 text-sm leading-7 text-[var(--color-text-secondary)]">
-                    {post.description}
-                  </p>
-                  <Link
-                    href={post.slug ? localizedPath(locale, `/haberler/${post.slug}`) : localizedPath(locale, '/haberler')}
-                    className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-[var(--color-brand)] transition-opacity hover:opacity-80"
-                  >
-                    {t('blog.readMore')}
-                    <ArrowRight className="size-4" />
-                  </Link>
-                </article>
-              </Reveal>
-            ))}
-          </div>
-        </div>
+      {/* All Projects — ArchDaily-style infinite feed */}
+      <section className="section-py border-t border-(--color-border)">
+        <ProjectFeed
+          initialProjects={allProjects}
+          locale={locale}
+          apiUrl={API_BASE_URL}
+          backendUrl={API_BASE_URL.replace(/\/api\/?$/, '')}
+          title={t('home.latestProjects.title')}
+          subtitle={t('home.latestProjects.subtitle')}
+          sidebarProjects={visibleProducts.slice(0, 4)}
+          sidebarTitle={locale === 'tr' ? 'Beğeneceğiniz Projeler' : "Projects You'll Love"}
+          readMoreLabel={t('common.readMore')}
+        />
       </section>
 
       {/* CTA */}
-      <section className="surface-dark-shell">
-        <div className="surface-hero-glow-brand motion-float-soft absolute right-0 top-0 h-40 w-40 rounded-full blur-3xl" />
-        <div className="relative mx-auto max-w-7xl px-4 py-16 lg:px-8 lg:py-24">
-          <div className="motion-fade-up">
-            <DarkCtaPanel
-            title={t('common.offerCtaTitle')}
-            description={t('common.offerCtaDescription')}
-            action={(
-              <Link
-                href={localizedPath(locale, '/teklif')}
-                className="btn-primary mt-8 inline-flex items-center gap-2 rounded-lg px-8 py-3 font-medium transition-colors"
-              >
-                {t('common.requestOffer')}
-                <ArrowRight className="size-4" />
-              </Link>
-            )}
-            />
+      <section className="bg-(--color-bg-dark)">
+        <div className="mx-auto max-w-7xl px-4 py-20 lg:px-8 lg:py-28">
+          <div className="mx-auto max-w-2xl text-center">
+            <h2
+              className="text-3xl font-bold text-(--color-text-on-dark) lg:text-4xl"
+              style={{ fontFamily: 'var(--font-heading)' }}
+            >
+              {t('common.offerCtaTitle')}
+            </h2>
+            <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-(--color-text-on-dark)/70">
+              {t('common.offerCtaDescription')}
+            </p>
+            <Link
+              href={localizedPath(locale, '/teklif')}
+              className="mt-8 inline-flex items-center gap-2 bg-(--color-brand) px-8 py-3.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+              style={{ fontFamily: 'var(--font-heading)' }}
+            >
+              {t('common.requestOffer')}
+              <ArrowRight className="size-4" />
+            </Link>
           </div>
         </div>
       </section>
 
       {/* Newsletter */}
-      <section className="section-py bg-[var(--color-bg-muted)]">
+      <section className="section-py bg-(--color-bg-muted)">
         <div className="mx-auto max-w-xl px-4 text-center">
           <div className="motion-fade-up">
             <h2 className="text-2xl font-bold">{t('home.newsletter.title')}</h2>
-            <p className="mt-2 text-[var(--color-text-secondary)]">
+            <p className="mt-2 text-(--color-text-secondary)">
               {t('home.newsletter.subtitle')}
             </p>
           </div>

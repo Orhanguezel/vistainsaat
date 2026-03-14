@@ -51,7 +51,7 @@ function parseSettingValue(value: unknown): unknown {
 export async function fetchBrandingConfig(): Promise<AdminBrandingConfig> {
   try {
     const base = getServerApiUrl();
-    for (const key of ['kompozit__ui_admin_config', 'ui_admin_config']) {
+    for (const key of ['vistainsaat__ui_admin_config', 'ui_admin_config']) {
       const res = await fetch(`${base}/site_settings/${key}`, {
         next: { revalidate: 300 },
       });

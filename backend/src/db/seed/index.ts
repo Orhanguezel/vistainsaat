@@ -42,7 +42,7 @@ const PROFILE_PREFIXES: Record<NonNullable<Flags['profile']>, string[]> = {
     '040',  // site_settings şema + 040.1 (301 override eder)
     '050', '060', '070', '080', '095',
     '100', '110', '120', '130', '140', '150', '160', '170', '180', '190',
-    '200', '201', '220', '230',
+    '200', '201', '220', '230', '240',
     // ── Vista İnşaat'a özgü veri dosyaları ───────────────────────────────
     '299', '300', '301', '302', '303', '304', '305', '306', '307', '308', '310',
     // 309 (auth_role_patch) atlandı: role kolonu artık 001_auth_schema.sql'de mevcut

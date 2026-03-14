@@ -115,8 +115,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   for (const locale of locales) {
-    const [products, galleries, blogPosts, legalPages] = await Promise.all([
+    const [products, services, galleries, blogPosts, legalPages] = await Promise.all([
       fetchItems(`/projects?module_key=vistainsaat&locale=${encodeURIComponent(locale)}`),
+      fetchItems(`/services?module_key=vistainsaat&locale=${encodeURIComponent(locale)}`),
       fetchItems(`/galleries?module_key=vistainsaat&locale=${encodeURIComponent(locale)}`),
       fetchItems(`/custom_pages?module_key=vistainsaat_blog&locale=${encodeURIComponent(locale)}`),
       fetchLegalItemsForLocale(locale),
@@ -135,6 +136,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         url: localizedUrl(locale, `/projeler/${item.slug}`),
         lastModified: resolveLastModified(item),
         changeFrequency: 'weekly',
+        priority: 0.8,
+        images: resolveSitemapImages(item),
+      });
+    }
+
+    for (const item of services) {
+      entries.push({
+        url: localizedUrl(locale, `/hizmetler/${item.slug}`),
+        lastModified: resolveLastModified(item),
+        changeFrequency: 'monthly',
         priority: 0.8,
         images: resolveSitemapImages(item),
       });

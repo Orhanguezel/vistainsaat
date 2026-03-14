@@ -1,8 +1,7 @@
 -- =============================================================
 -- 231_projects_seed.sql
--- Ensotek referans proje kayıtları (parent tablo)
--- Kaynak: LinkedIn paylaşımları + ensotek.com ana sayfa galerileri
---         + referans müşteri listesi
+-- Vista İnşaat referans proje kayıtları (parent tablo)
+-- Konut, ticari, karma kullanım, restorasyon, altyapı, kamu projeleri
 -- =============================================================
 
 SET NAMES utf8mb4;
@@ -28,257 +27,242 @@ INSERT INTO `projects`
 VALUES
 
 -- ============================================================
--- 1. İstanbul Plaza — 2 adet, 2 fanlı, CTP Kaportalı Açık Tip, 130m çatı
---    (LinkedIn paylaşımı — İstanbul Fab yapımı)
+-- 1. Boğaz Manzaralı Rezidans — İstanbul, Beşiktaş
 -- ============================================================
 (
   '33333001-0001-4333-8333-333300000001',
   1, 1, 10,
-  'https://www.ensotek.com/upload/17/water-cooling-towers-su-sogutma-kuleleri.jpg', NULL,
-  'Su Soğutma Kulesi', 'CTP Kaportalı Açık Tip', 'İstanbul', NULL,
-  2, 2,
-  NULL, '2024-01-01', 'Plaza çatısı · 130 m yükseklik',
-  '["Açık devre soğutma","FRP kapor","Çatı montajı","Yükseklik projelendirme"]',
+  '/uploads/projects/vista-insaat-proje-01.jpeg', NULL,
+  'Konut', 'Lüks Rezidans', 'İstanbul, Beşiktaş', NULL,
+  18, NULL,
+  '2022-06-01', '2024-03-01', '18 bağımsız bölüm · 6 kat',
+  '["Konut inşaatı","İç mimari tasarım","Peyzaj düzenleme","Akıllı ev sistemleri"]',
   NULL, NULL,
-  '["CTP","FRP","GRP","HVAC","Açık Tip","Su Soğutma"]',
+  '["Betonarme","Konut","Rezidans","Lüks","Boğaz Manzara"]',
   NOW(3), NOW(3)
 ),
 
 -- ============================================================
--- 2. Kahramanmaraş Sanayi Tesisi — CTP Kaportalı Açık Tip
---    (LinkedIn paylaşımı — Ankara Fab yapımı)
+-- 2. Levent Ofis Kulesi — İstanbul, Levent
 -- ============================================================
 (
   '33333001-0002-4333-8333-333300000002',
-  1, 0, 20,
-  'https://www.ensotek.com/upload/17/ensotek-su-sogutma-kulesi-ensotek-water-cooling-towers.jpg', NULL,
-  'Su Soğutma Kulesi', 'CTP Kaportalı Açık Tip', 'Kahramanmaraş', NULL,
+  1, 1, 20,
+  '/uploads/projects/vista-insaat-proje-05.jpeg', NULL,
+  'Ticari', 'A Sınıfı Ofis', 'İstanbul, Levent', NULL,
   NULL, NULL,
-  NULL, '2024-01-01', 'Ankara Fabrika üretimi',
-  '["Açık devre soğutma","FRP kapor","Endüstriyel soğutma"]',
+  '2021-09-01', '2023-12-01', '12 katlı yeşil sertifikalı ofis',
+  '["Ticari inşaat","Çelik konstrüksiyon","Cam cephe sistemleri","LEED sertifikasyonu"]',
   NULL, NULL,
-  '["CTP","FRP","GRP","HVAC","Açık Tip","Su Soğutma"]',
+  '["Çelik","Cam Cephe","Ticari","Ofis","LEED","Yeşil Bina"]',
   NOW(3), NOW(3)
 ),
 
 -- ============================================================
--- 3. Arçelik — 2× CTP 6C
---    (ensotek.com ana sayfa galeri)
+-- 3. Kadıköy Karma Yapı Kompleksi — İstanbul, Kadıköy
 -- ============================================================
 (
   '33333001-0003-4333-8333-333300000003',
   1, 1, 30,
-  'https://www.ensotek.com/upload/17/water-cooling-towers-su-sogutma-kuleleri.jpg', NULL,
-  'Su Soğutma Kulesi', 'CTP 6C — Açık Tip', 'Gebze, Kocaeli', 'Arçelik A.Ş.',
-  2, 2,
-  NULL, NULL, '2× CTP 6C ünite',
-  '["Açık devre soğutma","Endüstriyel soğutma","Montaj ve devreye alma"]',
-  'https://www.arcelik.com.tr', NULL,
-  '["CTP","FRP","GRP","HVAC","Açık Tip","Endüstriyel"]',
+  '/uploads/projects/vista-insaat-proje-10.jpeg', NULL,
+  'Karma Kullanım', 'Konut + Ticari', 'İstanbul, Kadıköy', NULL,
+  64, NULL,
+  '2024-01-01', NULL, '64 konut + 3 kat ticari alan',
+  '["Karma kullanım inşaat","Konut inşaatı","Ticari alan yapımı","Otopark inşaatı"]',
+  NULL, NULL,
+  '["Betonarme","Karma Kullanım","Konut","Ticari"]',
   NOW(3), NOW(3)
 ),
 
 -- ============================================================
--- 4. Eczacıbaşı — 3× DCTP 5C (Kapalı Tip)
---    (ensotek.com ana sayfa galeri)
+-- 4. Tarihi Han Restorasyon — İstanbul, Eminönü
 -- ============================================================
 (
   '33333001-0004-4333-8333-333300000004',
   1, 1, 40,
-  'https://www.ensotek.com/upload/17/ensotek-su-sogutma-kulesi-ensotek-water-cooling-towers.jpg', NULL,
-  'Su Soğutma Kulesi', 'DCTP 5C — Kapalı Devre', 'İstanbul', 'Eczacıbaşı',
-  3, 3,
-  NULL, NULL, '3× DCTP 5C ünite',
-  '["Kapalı devre soğutma","İlaç & kimya soğutma","Serpantinli ısı değiştirici"]',
-  'https://www.eczacibasi.com.tr', NULL,
-  '["DCTP","FRP","Kapalı Devre","Serpantin","HVAC"]',
+  '/uploads/projects/vista-insaat-proje-15.jpeg', NULL,
+  'Restorasyon', 'Tarihi Yapı Restorasyonu', 'İstanbul, Eminönü', NULL,
+  NULL, NULL,
+  '2020-03-01', '2022-08-01', '19. yüzyıl han · özgün doku korunumu',
+  '["Restorasyon","Tarihi yapı güçlendirme","Ahşap onarım","Taş restorasyon"]',
+  NULL, NULL,
+  '["Yığma Taş","Ahşap","Restorasyon","Tarihi Yapı","Koruma"]',
   NOW(3), NOW(3)
 ),
 
 -- ============================================================
--- 5. Linde Gaz — TCTP 26B (3 ünite) + DCTP 12C — Gebze
---    (ensotek.com ana sayfa galeri)
+-- 5. Gebze Lojistik Merkezi — Kocaeli, Gebze
 -- ============================================================
 (
   '33333001-0005-4333-8333-333300000005',
-  1, 1, 50,
-  'https://www.ensotek.com/upload/9/tctp-26.jpg', NULL,
-  'Proses Soğutma', 'TCTP 26B + DCTP 12C — Kapalı Devre', 'Gebze, Kocaeli', 'Linde Gaz Türkiye',
-  4, 4,
-  NULL, NULL, '3× TCTP 26B + 1× DCTP 12C',
-  '["Kapalı devre soğutma","Proses gazı soğutma","Endüstriyel servis soğutma","Yüksek kapasite proje"]',
-  'https://www.linde.com.tr', NULL,
-  '["TCTP","DCTP","FRP","Kapalı Devre","Proses Soğutma","Gaz Endüstrisi"]',
+  1, 0, 50,
+  '/uploads/projects/vista-insaat-proje-20.jpeg', NULL,
+  'Endüstriyel', 'Lojistik Depo', 'Kocaeli, Gebze', NULL,
+  NULL, NULL,
+  '2023-02-01', '2024-06-01', '8.000 m² prefabrik çelik yapı',
+  '["Endüstriyel inşaat","Prefabrik çelik yapı","Depo inşaatı","Zemin güçlendirme"]',
+  NULL, NULL,
+  '["Prefabrik Çelik","Endüstriyel","Lojistik","Depo"]',
   NOW(3), NOW(3)
 ),
 
 -- ============================================================
--- 6. HES Kablo — DCTP 12 + DCTP 12C (Kapalı Tip + merdiven aksesuarlı)
---    (ensotek.com ana sayfa galeri)
+-- 6. Beşiktaş Sahil Rezidans — İstanbul, Beşiktaş
 -- ============================================================
 (
   '33333001-0006-4333-8333-333300000006',
   1, 0, 60,
-  'https://www.ensotek.com/upload/17/water-cooling-towers-su-sogutma-kuleleri.jpg', NULL,
-  'Su Soğutma Kulesi', 'DCTP 12 + DCTP 12C — Kapalı Devre', NULL, 'HES Kablo',
-  2, 2,
-  NULL, NULL, 'DCTP 12 (merdiven aksesuarlı) + DCTP 12C',
-  '["Kapalı devre soğutma","Kablo üretim soğutma","Özel aksesuar montajı"]',
+  '/uploads/projects/vista-insaat-proje-25.jpeg', NULL,
+  'Konut', 'Modern Rezidans', 'İstanbul, Beşiktaş', NULL,
+  24, NULL,
+  '2024-03-01', NULL, '24 daireli sahil rezidans',
+  '["Konut inşaatı","Cephe kaplama","Peyzaj","Havuz inşaatı"]',
   NULL, NULL,
-  '["DCTP","FRP","Kapalı Devre","Özel Aksesuar"]',
+  '["Betonarme","Konut","Rezidans","Sahil","Modern"]',
   NOW(3), NOW(3)
 ),
 
 -- ============================================================
--- 7. Green Park Otel — 2× CTP 3C (Açık Tip)
---    (ensotek.com ana sayfa galeri)
+-- 7. Ankara Kamu Hizmet Binası — Ankara, Çankaya
 -- ============================================================
 (
   '33333001-0007-4333-8333-333300000007',
-  1, 0, 70,
-  'https://www.ensotek.com/upload/17/ensotek-su-sogutma-kulesi-ensotek-water-cooling-towers.jpg', NULL,
-  'HVAC & Konaklama', 'CTP 3C — Açık Tip', NULL, 'Green Park Hotels',
-  2, 2,
-  NULL, NULL, '2× CTP 3C ünite',
-  '["Otel soğutma","HVAC soğutma","Sessiz çalışma","Estetik tasarım"]',
+  1, 1, 70,
+  '/uploads/projects/vista-insaat-proje-30.jpeg', NULL,
+  'Kamu', 'Hizmet Binası', 'Ankara, Çankaya', NULL,
   NULL, NULL,
-  '["CTP","FRP","HVAC","Açık Tip","Otel","Konaklama"]',
+  '2021-05-01', '2023-10-01', 'Bakanlık hizmet binası · 7 kat',
+  '["Kamu binası inşaat","Cam cephe","Deprem güçlendirme","Mekanik tesisat"]',
+  NULL, NULL,
+  '["Betonarme","Cam Cephe","Kamu","Hizmet Binası"]',
   NOW(3), NOW(3)
 ),
 
 -- ============================================================
--- 8. Orion AVM — TCTP 9C (Kapalı Tip)
---    (ensotek.com ana sayfa galeri)
+-- 8. Bursa Altyapı ve Çevre Düzenlemesi — Bursa, Nilüfer
 -- ============================================================
 (
   '33333001-0008-4333-8333-333300000008',
   1, 0, 80,
-  'https://www.ensotek.com/upload/17/water-cooling-towers-su-sogutma-kuleleri.jpg', NULL,
-  'HVAC & Ticari', 'TCTP 9C — Kapalı Devre', NULL, 'Orion AVM',
-  1, 1,
-  NULL, NULL, '1× TCTP 9C',
-  '["AVM soğutma","Kapalı devre HVAC","Yıl boyu soğutma hizmeti"]',
+  '/uploads/projects/vista-insaat-proje-35.jpeg', NULL,
+  'Altyapı', 'Altyapı Yenileme', 'Bursa, Nilüfer', NULL,
   NULL, NULL,
-  '["TCTP","FRP","Kapalı Devre","HVAC","AVM"]',
+  '2023-04-01', '2024-09-01', 'OSB altyapı yenileme · 45.000 m²',
+  '["Altyapı yenileme","Çevre düzenleme","Yol yapımı","Kanalizasyon"]',
+  NULL, NULL,
+  '["Beton","Asfalt","Altyapı","Çevre Düzenleme"]',
   NOW(3), NOW(3)
 ),
 
 -- ============================================================
--- 9. Plastifay — CTP 9 (Açık Tip)
---    (ensotek.com ana sayfa galeri)
+-- 9. Antalya Boutique Otel — Antalya, Kaleiçi
 -- ============================================================
 (
   '33333001-0009-4333-8333-333300000009',
   1, 0, 90,
-  'https://www.ensotek.com/upload/17/ensotek-su-sogutma-kulesi-ensotek-water-cooling-towers.jpg', NULL,
-  'Su Soğutma Kulesi', 'CTP 9 — Açık Tip', NULL, 'Plastifay',
-  1, 1,
-  NULL, NULL, '1× CTP 9',
-  '["Açık devre soğutma","Plastik sektörü soğutma","Proses soğutma"]',
+  '/uploads/projects/vista-insaat-proje-40.jpeg', NULL,
+  'Turizm', 'Boutique Otel', 'Antalya, Kaleiçi', NULL,
+  32, NULL,
+  '2024-06-01', NULL, '32 odalı butik otel · tarihi doku',
+  '["Otel inşaatı","Restorasyon","Ahşap işçiliği","Taş duvar"]',
   NULL, NULL,
-  '["CTP","FRP","Açık Tip","Proses Soğutma"]',
+  '["Yığma Taş","Ahşap","Turizm","Otel","Tarihi Doku"]',
   NOW(3), NOW(3)
 ),
 
 -- ============================================================
--- 10. Aves Yağ — TCTP 9B + DCTP 9B — Mersin
---     (ensotek.com ana sayfa galeri)
+-- 10. İzmir Teknoloji Kampüsü — İzmir, Bayraklı
 -- ============================================================
 (
   '33333001-0010-4333-8333-333300000010',
-  1, 0, 100,
-  'https://www.ensotek.com/upload/17/water-cooling-towers-su-sogutma-kuleleri.jpg', NULL,
-  'Gıda & Proses Soğutma', 'TCTP 9B + DCTP 9B — Kapalı Devre', 'Mersin', 'Aves Yağ',
-  2, 2,
-  NULL, NULL, 'TCTP 9B + DCTP 9B kombine sistem',
-  '["Gıda üretimi soğutma","Yağ proses soğutma","Kombine soğutma sistemi","Kapalı devre"]',
+  1, 1, 100,
+  '/uploads/projects/vista-insaat-proje-45.jpeg', NULL,
+  'Ticari', 'Teknoloji Kampüsü', 'İzmir, Bayraklı', NULL,
   NULL, NULL,
-  '["TCTP","DCTP","FRP","Kapalı Devre","Gıda Sektörü","Proses Soğutma"]',
+  '2022-10-01', '2024-11-01', 'Sürdürülebilir ofis kampüsü · 32.000 m²',
+  '["Ticari inşaat","Çelik konstrüksiyon","Cam cephe","Peyzaj"]',
+  NULL, NULL,
+  '["Çelik","Cam Cephe","Ticari","Teknoloji","Sürdürülebilir"]',
   NOW(3), NOW(3)
 ),
 
 -- ============================================================
--- 11. TAT Tekstil — Gaziantep
---     (ensotek.com galeri: TAT Tekstil Gaziantep fotoğrafları)
+-- 11. Ümraniye Konut Projesi — İstanbul, Ümraniye
 -- ============================================================
 (
   '33333001-0011-4333-8333-333300000011',
   1, 0, 110,
-  'https://www.ensotek.com/upload/17/ensotek-su-sogutma-kulesi-ensotek-water-cooling-towers.jpg', NULL,
-  'Su Soğutma Kulesi', 'CTP Kaportalı Açık Tip', 'Gaziantep', 'TAT Tekstil',
+  '/uploads/projects/vista-insaat-proje-03.jpeg', NULL,
+  'Konut', 'Toplu Konut', 'İstanbul, Ümraniye', NULL,
+  120, NULL,
+  '2021-01-01', '2023-06-01', '120 daireli toplu konut',
+  '["Toplu konut inşaat","Çevre düzenleme","Otopark","Sosyal tesis"]',
   NULL, NULL,
-  NULL, NULL, 'Tekstil fabrikası soğutma sistemi',
-  '["Tekstil endüstrisi soğutma","Proses soğutma","Süreç sıcaklık kontrolü"]',
-  NULL, NULL,
-  '["CTP","FRP","GRP","Açık Tip","Tekstil Sektörü"]',
+  '["Betonarme","Konut","Toplu Konut","Sosyal Tesis"]',
   NOW(3), NOW(3)
 ),
 
 -- ============================================================
--- 12. Suudi Arabistan — Uluslararası Endüstriyel Proje
---     (ensotek.com galeri: Saudi Arabia fotoğrafları)
+-- 12. Taksim Otel Renovasyon — İstanbul, Beyoğlu
 -- ============================================================
 (
   '33333001-0012-4333-8333-333300000012',
-  1, 1, 120,
-  'https://www.ensotek.com/upload/17/water-cooling-towers-su-sogutma-kuleleri.jpg', NULL,
-  'Su Soğutma Kulesi', 'FRP / GRP Açık Tip', 'Suudi Arabistan', NULL,
+  1, 0, 120,
+  '/uploads/projects/vista-insaat-proje-08.jpeg', NULL,
+  'Turizm', 'Otel Renovasyon', 'İstanbul, Beyoğlu', NULL,
+  85, NULL,
+  '2022-11-01', '2024-02-01', '85 odalı otel renovasyonu',
+  '["Otel renovasyon","İç mekan yenileme","Tesisat yenileme","Cephe yenileme"]',
   NULL, NULL,
-  NULL, NULL, 'Uluslararası ihracat projesi',
-  '["İhracat projesi","Endüstriyel soğutma","Çöl iklimi","Yüksek kapasite"]',
-  NULL, NULL,
-  '["FRP","GRP","CTP","Uluslararası","İhracat","Açık Tip"]',
+  '["Betonarme","Turizm","Otel","Renovasyon"]',
   NOW(3), NOW(3)
 ),
 
 -- ============================================================
--- 13. İran — Uluslararası Endüstriyel Proje
---     (ensotek.com galeri: Iran fotoğrafları)
+-- 13. Eskişehir Üniversite Kampüsü — Eskişehir
 -- ============================================================
 (
   '33333001-0013-4333-8333-333300000013',
-  1, 0, 130,
-  'https://www.ensotek.com/upload/17/ensotek-su-sogutma-kulesi-ensotek-water-cooling-towers.jpg', NULL,
-  'Su Soğutma Kulesi', 'FRP / GRP Açık Tip', 'İran', NULL,
+  1, 1, 130,
+  '/uploads/projects/vista-insaat-proje-12.jpeg', NULL,
+  'Kamu', 'Eğitim Yapısı', 'Eskişehir', NULL,
   NULL, NULL,
-  NULL, NULL, 'Uluslararası ihracat projesi',
-  '["İhracat projesi","Endüstriyel soğutma","Proses soğutma"]',
+  '2020-08-01', '2023-01-01', 'Kampüs ek bina · 15.000 m²',
+  '["Eğitim yapısı inşaat","Laboratuvar","Amfi","Kütüphane"]',
   NULL, NULL,
-  '["FRP","GRP","CTP","Uluslararası","İhracat"]',
+  '["Betonarme","Kamu","Eğitim","Kampüs","Üniversite"]',
   NOW(3), NOW(3)
 ),
 
 -- ============================================================
--- 14. Tüpraş — İzmit Rafinerisi
---     (Ensotek referans müşteri: Tüpraş)
+-- 14. Mersin Serbest Bölge Depo — Mersin
 -- ============================================================
 (
   '33333001-0014-4333-8333-333300000014',
-  1, 1, 140,
-  'https://www.ensotek.com/upload/17/water-cooling-towers-su-sogutma-kuleleri.jpg', NULL,
-  'Proses Soğutma', 'FRP / GRP Açık & Kapalı Tip', 'İzmit, Kocaeli', 'Tüpraş',
+  1, 0, 140,
+  '/uploads/projects/vista-insaat-proje-18.jpeg', NULL,
+  'Endüstriyel', 'Serbest Bölge Depo', 'Mersin', NULL,
   NULL, NULL,
-  NULL, NULL, 'Rafineri proses soğutma sistemi',
-  '["Rafineri soğutma","Proses soğutma","Yüksek sıcaklık toleransı","Petrokimya soğutma"]',
-  'https://www.tupras.com.tr', NULL,
-  '["FRP","GRP","CTP","Proses Soğutma","Rafineri","Petrokimya"]',
+  '2023-07-01', '2024-12-01', 'Soğuk hava deposu · 12.000 m²',
+  '["Depo inşaatı","Soğuk hava deposu","Çelik yapı","İzolasyon"]',
+  NULL, NULL,
+  '["Prefabrik Çelik","Endüstriyel","Depo","Soğuk Hava","Serbest Bölge"]',
   NOW(3), NOW(3)
 ),
 
 -- ============================================================
--- 15. TOFAS — Bursa Otomotiv Tesisi
---     (Ensotek referans müşteri: TOFAS)
+-- 15. Bodrum Villa Projesi — Muğla, Bodrum
 -- ============================================================
 (
   '33333001-0015-4333-8333-333300000015',
-  1, 1, 150,
-  'https://www.ensotek.com/upload/17/ensotek-su-sogutma-kulesi-ensotek-water-cooling-towers.jpg', NULL,
-  'Su Soğutma Kulesi', 'CTP Kaportalı Açık Tip', 'Bursa', 'TOFAS',
+  1, 0, 150,
+  '/uploads/projects/vista-insaat-proje-22.jpeg', NULL,
+  'Konut', 'Villa', 'Muğla, Bodrum', NULL,
+  8, NULL,
+  '2023-03-01', '2024-10-01', '8 villa · deniz manzaralı',
+  '["Villa inşaatı","Havuz","Peyzaj","Taş duvar"]',
   NULL, NULL,
-  NULL, NULL, 'Otomotiv fabrikası soğutma sistemi',
-  '["Otomotiv endüstrisi soğutma","Boya & kalıp soğutma","Yüksek debili soğutma sistemi"]',
-  'https://www.tofas.com.tr', NULL,
-  '["CTP","FRP","GRP","HVAC","Açık Tip","Otomotiv"]',
+  '["Betonarme","Konut","Villa","Deniz Manzara","Bodrum"]',
   NOW(3), NOW(3)
 );
 

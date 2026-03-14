@@ -13,7 +13,7 @@ export interface Category {
 export const categoriesService = {
   getAll: async (params?: Record<string, unknown>): Promise<Category[]> => {
     const res = await api.get('/categories', {
-      params: { module_key: 'kompozit', is_active: 1, ...params },
+      params: { module_key: 'vistainsaat', is_active: 1, ...params },
     });
     return Array.isArray(res.data) ? res.data : (res.data as any)?.items ?? [];
   },

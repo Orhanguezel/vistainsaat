@@ -46,7 +46,7 @@ export function KompozitAdminRouteGate({ children }: { children: React.ReactNode
         <CardHeader>
           <CardTitle>Bu ekran Vista İnşaat panelinde aktif değil</CardTitle>
           <CardDescription>
-            Bu admin panel kompozit operasyonlari icin sadeleştirildi. Su anki route shared Ensotek panelinden kalan bir ekrana ait.
+            Bu admin panel Vista İnşaat operasyonları için özelleştirildi. Bu route mevcut panelde aktif değil.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-wrap gap-3">

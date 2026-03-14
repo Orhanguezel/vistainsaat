@@ -119,7 +119,7 @@ export function AppSidebar({
             <LayoutDashboard className="size-5" />
           </div>
           <div className="flex flex-col gap-0.5 leading-none">
-            <span className="font-bold text-lg tracking-tight">{label || 'MOE KOMPOZIT'}</span>
+            <span className="font-bold text-lg tracking-tight">{label || 'VISTA İNŞAAT'}</span>
             <span className="text-[10px] font-medium tracking-widest text-muted-foreground uppercase">Admin Panel</span>
           </div>
         </Link>

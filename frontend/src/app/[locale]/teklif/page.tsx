@@ -5,7 +5,8 @@ import type { Metadata } from 'next';
 import { ContentPageHeader } from '@/components/patterns/ContentPageHeader';
 import { InfoListPanel } from '@/components/patterns/InfoListPanel';
 import { OfferFormClient } from '@/components/sections/OfferForm';
-import { buildPageMetadata } from '@/seo';
+import { buildPageMetadata, localizedPath } from '@/seo';
+import { Breadcrumbs } from '@/components/seo/Breadcrumbs';
 
 export async function generateMetadata({
   params,
@@ -21,7 +22,7 @@ export async function generateMetadata({
     locale,
     pathname: '/teklif',
     title: locale.startsWith('en')
-      ? `${t('title')} - Composite Quote, Feasibility and Lead Time`
+      ? `${t('title')} - Vista Construction Quote & Project Evaluation`
       : `${t('title')} - Teklif ve Proje Değerlendirme`,
     description: t('description'),
     noIndex: Boolean(product),
@@ -41,8 +42,12 @@ export default async function OfferPage({
   const benefitItems = Object.values(t.raw('offer.benefits.items') as Record<string, string>);
 
   return (
-    <div className="section-py">
-      <div className="mx-auto max-w-5xl px-4 lg:px-8">
+    <div style={{ maxWidth: 1280, margin: '0 auto', padding: '16px 16px 60px' }}>
+      <div>
+        <Breadcrumbs items={[
+          { label: 'Vista İnşaat', href: localizedPath(locale, '/') },
+          { label: locale.startsWith('en') ? 'Request a Quote' : 'Teklif Al' },
+        ]} />
         <ContentPageHeader
           title={t('offer.title')}
           description={t('offer.description')}

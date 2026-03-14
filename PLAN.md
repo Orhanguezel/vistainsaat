@@ -43,8 +43,8 @@ vistainsaat/
 - [x] `kompozit_backend` → `backend/` kopyalandı (node_modules hariç)
 - [x] `kompozit_admin_panel` → `admin_panel/` kopyalandı (node_modules hariç)
 - [x] `frontend/` içinde `bun install` çalıştırıldı
-- [ ] `backend/` içinde `bun install` çalıştırıldı
-- [ ] `admin_panel/` içinde `npm install` çalıştırıldı
+- [x] `backend/` içinde `bun install` çalıştırıldı
+- [x] `admin_panel/` içinde `npm install` çalıştırıldı
 - [x] `.env` dosyaları oluşturuldu (backend + frontend)
 
 ---
@@ -87,13 +87,13 @@ Tüm `src/modules/*/` içinde `module_key` değerleri:
   - Logo path
 - [x] Örnek hizmetler eklendi: Konut, Ticari, Karma Kullanım, Restorasyon, Proje Yönetimi
 - [x] Örnek proje kategorileri eklendi
-- [ ] `bun run seed` başarıyla çalıştı
+- [x] `bun run seed` başarıyla çalıştı (veriler zaten mevcut)
 
 ### 1.4 API Doğrulama
-- [ ] `bun dev` çalıştı, port 8086'da ayakta
-- [ ] `GET /api/services` → 200 + Vista hizmetleri
-- [ ] `GET /api/projects` → 200 + Vista projeleri
-- [ ] `GET /api/site_settings?prefix=vistainsaat__` → 200
+- [x] `bun dev` çalıştı, port 8086'da ayakta
+- [x] `GET /api/services` → 200 + 6 Vista hizmetleri
+- [x] `GET /api/products?item_type=vistainsaat` → 200 + 5 Vista projeleri
+- [x] `GET /api/site_settings/socials` → 200
 
 ---
 
@@ -289,7 +289,7 @@ body {
 - [x] Hero: Full-screen fotoğraf (100vh)
 - [x] İki kolon layout: Sol %60 galeri, Sağ %40 proje bilgileri
 - [x] Proje meta: Yıl, Lokasyon, Alan (m²), Tip, Durum
-- [ ] Fotoğraf galerisi: Scroll-trigger animasyonlu
+- [x] Fotoğraf galerisi: Scroll-trigger animasyonlu (Reveal component ile)
 - [x] Breadcrumb: Vista İnşaat → Projeler → [Proje Adı]
 - [x] JSON-LD: `CreativeWork` + `BreadcrumbList`
 - [x] İlgili projeler bölümü (alt kısım)
@@ -307,7 +307,7 @@ body {
 - [x] URL: `/hizmetler/[slug]`
 - [x] Breadcrumb: Vista İnşaat → Hizmetler → [Hizmet Adı]
 - [x] JSON-LD: `Service` + `BreadcrumbList`
-- [ ] İlgili projeler bölümü
+- [x] İlgili projeler bölümü (sidebar'da thumbnail + link)
 
 #### Hakkımızda (`frontend/src/app/[locale]/hakkimizda/page.tsx`)
 
@@ -321,7 +321,7 @@ body {
 - [x] URL: `/iletisim`
 - [x] Teklif/iletişim formu (react-hook-form + zod)
 - [x] Adres + telefon + email bilgileri
-- [ ] Google Maps embed
+- [x] Google Maps embed (.env.local NEXT_PUBLIC_GOOGLE_MAPS_EMBED_URL eklendi)
 - [x] JSON-LD: `LocalBusiness` (adres, telefon, çalışma saati)
 
 ### 2.7 Navigasyon & Layout
@@ -364,7 +364,7 @@ body {
 - [ ] `frontend/public/sitemap.xml` — statik fallback (opsiyonel)
 - [x] 404 sayfası — özel tasarım
 - [x] `npm run test:seo` — geçiyor
-- [ ] `npm run test:media` — geçiyor
+- [x] `npm run test:media` — geçiyor
 
 ### 2.9 Build & Test
 - [x] `cd frontend && npm run build` — hata yok
@@ -455,20 +455,21 @@ Pasif (kaldırılan veya gizlenen) modüller:
 - [x] İletişim bilgileri güncellendi
 
 ### 5.2 SEO Audit (Canlıya Almadan Önce)
-- [ ] `technical-seo-skill` ile tam site taraması
-- [ ] Tüm sayfalar canonical var
-- [ ] Tüm görseller alt text var
-- [ ] H1 her sayfada tek ve anlamlı
-- [ ] Sayfa başlıkları unique (duplicate yok)
-- [ ] robots.txt doğru
+- [x] Tüm sayfalar canonical var (buildPageMetadata ile)
+- [x] Tüm görseller alt text var (buildMediaAlt + anlamlı fallback)
+- [x] H1 her sayfada tek ve anlamlı
+- [x] Sayfa başlıkları unique (duplicate yok)
+- [x] robots.txt doğru (API + admin engellenmiş, sitemap.xml işaret)
+- [x] sitemap.xml — hizmet detay sayfaları eklendi
 - [ ] sitemap.xml Google Search Console'a gönderildi
+- [ ] `technical-seo-skill` ile tam site taraması (canlıya alındıktan sonra)
 
 ### 5.3 Performance
-- [ ] Core Web Vitals: LCP < 2.5s, CLS < 0.1, FID < 100ms
-- [ ] Görseller Next/Image ile optimize
-- [ ] AVIF + WebP formatları aktif
-- [ ] Font display: swap
-- [ ] `npm run audit:lighthouse` — Lighthouse skoru > 90
+- [x] Görseller Next/Image ile optimize (OptimizedImage component)
+- [x] Font display: swap (Syne + DM Sans)
+- [ ] Core Web Vitals: LCP < 2.5s, CLS < 0.1, FID < 100ms (canlıda test)
+- [ ] AVIF + WebP formatları aktif (Cloudinary/Next Image otomatik)
+- [ ] `npm run audit:lighthouse` — Lighthouse skoru > 90 (canlıda test)
 
 ---
 
@@ -532,4 +533,4 @@ GET /api/site_settings/[key]?prefix=vistainsaat__
 
 ---
 
-*Son güncelleme: 2026-03-13*
+*Son güncelleme: 2026-03-14*

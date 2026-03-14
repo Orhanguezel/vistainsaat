@@ -13,7 +13,7 @@ export interface OfferPayload {
 
 export const offerService = {
   create: async (payload: OfferPayload) => {
-    const res = await api.post('/offers', { ...payload, source: 'kompozit' });
+    const res = await api.post('/offers', { ...payload, source: 'vistainsaat' });
     return res.data;
   },
 };

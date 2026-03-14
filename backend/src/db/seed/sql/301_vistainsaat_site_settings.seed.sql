@@ -1,6 +1,6 @@
 -- =============================================================
--- FILE: 301_kompozit_site_settings.seed.sql
--- Vista İnşaat — site_settings (kompozit__ prefix)
+-- FILE: 301_vistainsaat_site_settings.seed.sql
+-- Vista İnşaat — site_settings (vistainsaat__ prefix)
 -- Keys: app_locales, seo, logo, site_logo, site_favicon, site_apple_touch_icon, site_og_default_image, contact_info, branding
 -- =============================================================
 
@@ -85,7 +85,7 @@ ON DUPLICATE KEY UPDATE `value` = VALUES(`value`), `updated_at` = VALUES(`update
 
 -- =============================================================
 -- SITE LOGO — global (locale='*')
--- Standard site_settings media keys under kompozit__ prefix
+-- Standard site_settings media keys under vistainsaat__ prefix
 -- =============================================================
 INSERT INTO `site_settings` (`id`, `key`, `locale`, `value`, `created_at`, `updated_at`)
 VALUES (

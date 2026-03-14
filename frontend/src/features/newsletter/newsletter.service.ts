@@ -2,7 +2,7 @@ import api from '@/lib/axios';
 
 export const newsletterService = {
   subscribe: async (email: string) => {
-    const res = await api.post('/newsletter/subscribe', { email, source: 'kompozit' });
+    const res = await api.post('/newsletter/subscribe', { email, source: 'vistainsaat' });
     return res.data;
   },
 };

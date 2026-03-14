@@ -3,7 +3,7 @@
 // =============================================================
 import type { RouteHandler } from 'fastify';
 import type { FastifyRequest, FastifyReply } from 'fastify';
-import { and, asc, desc, eq, like, sql } from 'drizzle-orm';
+import { and, asc, desc, eq, like, ne, sql } from 'drizzle-orm';
 
 import { db } from '@/db/client';
 import { products, productFaqs, productSpecs, product_reviews, productI18n } from './schema';
@@ -15,18 +15,23 @@ import { normalizeProduct, normalizeItemType, type ItemType } from './helpers.sh
 /* ----------------- types ----------------- */
 type ListProductsQuery = {
   category_id?: string;
+  category_slug?: string;
   sub_category_id?: string;
   is_active?: string;
+  is_featured?: string;
+  exclude_id?: string;
   q?: string;
   limit?: string;
   offset?: string;
-  sort?: 'price' | 'rating' | 'created_at';
+  sort?: 'price' | 'rating' | 'created_at' | 'order_num';
   order?: 'asc' | 'desc' | string;
   slug?: string;
   min_price?: string;
   max_price?: string;
   locale?: string;
   item_type?: ItemType;
+  module_key?: string;
+  tags?: string;
 };
 
 type DetailQuery = {
@@ -144,6 +149,36 @@ export const listProducts: RouteHandler = async (req, reply) => {
   if (q.category_id) conds.push(eq(products.category_id, q.category_id));
   if (q.sub_category_id) conds.push(eq(products.sub_category_id, q.sub_category_id));
 
+  // Filter by category slug (resolve via categoryI18n join)
+  if (q.category_slug) {
+    conds.push(eq(categoryI18n.slug, q.category_slug));
+  }
+
+  // Filter by is_featured
+  if (q.is_featured !== undefined) {
+    const fv = q.is_featured === '1' || q.is_featured === 'true' ? 1 : 0;
+    conds.push(eq(products.is_featured, fv as any));
+  }
+
+  // Exclude a specific product (useful for sidebar "related" queries)
+  if (q.exclude_id) conds.push(ne(products.id, q.exclude_id));
+
+  // Filter by module_key on category
+  if (q.module_key) {
+    conds.push(eq(categories.module_key, q.module_key));
+  }
+
+  // Filter by tags — match products that share any of the given tags
+  // Usage: ?tags=konut,rezidans (comma-separated)
+  if (q.tags) {
+    const tagList = q.tags.split(',').map((t) => t.trim()).filter(Boolean);
+    if (tagList.length > 0) {
+      // JSON_OVERLAPS checks if the two JSON arrays share at least one element
+      const tagJson = JSON.stringify(tagList);
+      conds.push(sql`JSON_OVERLAPS(${productI18n.tags}, ${tagJson})`);
+    }
+  }
+
   if (q.is_active !== undefined) {
     const v = q.is_active === '1' || q.is_active === 'true' ? 1 : 0;
     conds.push(eq(products.is_active, v as any));
@@ -165,6 +200,7 @@ export const listProducts: RouteHandler = async (req, reply) => {
     price: products.price,
     rating: products.rating,
     created_at: products.created_at,
+    order_num: products.order_num,
   } as const;
 
   let sortKey: keyof typeof colMap = 'created_at';
@@ -175,7 +211,7 @@ export const listProducts: RouteHandler = async (req, reply) => {
     dir = q.order === 'asc' ? 'asc' : 'desc';
   } else if (q.order && q.order.includes('.')) {
     const [col, d] = String(q.order).split('.');
-    sortKey = (['price', 'rating', 'created_at'] as const).includes(col as any)
+    sortKey = (['price', 'rating', 'created_at', 'order_num'] as const).includes(col as any)
       ? (col as keyof typeof colMap)
       : 'created_at';
     dir = d?.toLowerCase() === 'asc' ? 'asc' : 'desc';

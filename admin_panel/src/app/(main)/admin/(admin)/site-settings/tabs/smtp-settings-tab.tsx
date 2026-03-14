@@ -278,7 +278,7 @@ export const SmtpSettingsTab: React.FC<SmtpSettingsTabProps> = ({ locale }) => {
         <Separator />
 
         <div className="rounded-lg border border-dashed border-border/70 bg-muted/20 p-4 text-sm text-muted-foreground">
-          SMTP test aksiyonu kompozit panelden kaldirildi. Bu panelde yalnizca SMTP ayarlarini yonetiyoruz.
+          SMTP test aksiyonu bu panelde devre dışıdır. Yalnızca SMTP ayarlarını yönetiyoruz.
         </div>
 
         <div className="mt-3 flex justify-end gap-2 md:justify-end">

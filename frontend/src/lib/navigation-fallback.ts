@@ -15,9 +15,9 @@ export interface FooterSectionLike {
 
 export function buildDefaultMenu(locale: string, t: TranslateFn): MenuItemLike[] {
   return [
-    { title: t('home'), url: localizedPath(locale, '/') },
     { title: t('projects'), url: localizedPath(locale, '/projeler') },
     { title: t('services'), url: localizedPath(locale, '/hizmetler') },
+    { title: t('blog'), url: localizedPath(locale, '/haberler') },
     { title: t('gallery'), url: localizedPath(locale, '/galeri') },
     { title: t('about'), url: localizedPath(locale, '/hakkimizda') },
     { title: t('contact'), url: localizedPath(locale, '/iletisim') },

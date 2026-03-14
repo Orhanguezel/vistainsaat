@@ -23,15 +23,15 @@ export interface Product {
 
 export const productsService = {
   getAll: async (params?: Record<string, unknown>): Promise<Product[]> => {
-    const res = await api.get('/projeler', {
-      params: { item_type: 'kompozit', is_active: 1, ...params },
+    const res = await api.get('/products', {
+      params: { item_type: 'vistainsaat', is_active: 1, ...params },
     });
     return Array.isArray(res.data) ? res.data : (res.data as any)?.items ?? [];
   },
 
   getBySlug: async (slug: string, locale?: string): Promise<Product> => {
-    const res = await api.get(`/projects/by-slug/${encodeURIComponent(slug)}`, {
-      params: { item_type: 'kompozit', ...(locale ? { locale } : {}) },
+    const res = await api.get(`/products/by-slug/${encodeURIComponent(slug)}`, {
+      params: { item_type: 'vistainsaat', ...(locale ? { locale } : {}) },
     });
     return res.data;
   },

@@ -28,6 +28,7 @@ import { registerMenuItems } from '@/modules/menuItems/router';
 import { registerCategories } from '@/modules/categories/router';
 import { registerSubCategories } from '@/modules/subcategories/router';
 import { registerContacts } from '@/modules/contact/router';
+import { registerComments } from '@/modules/comments/router';
 import { registerLibrary } from '@/modules/library/router';
 import { registerNotifications } from '@/modules/notifications/router';
 import { registerProducts } from '@/modules/products/router';
@@ -35,6 +36,7 @@ import { registerReviews } from '@/modules/review/router';
 import { registerContentReactions } from '@/modules/contentReactions/router';
 import { registerOffer } from '@/modules/offer/router';
 import { registerGallery } from '@/modules/gallery/router';
+import { registerServices } from '@/modules/services/router';
 
 // ✅ Audit single entry
 import { registerAudit } from '@/modules/audit/router';
@@ -50,6 +52,7 @@ import { registerMenuItemsAdmin } from '@/modules/menuItems/admin.routes';
 import { registerCategoriesAdmin } from '@/modules/categories/admin.routes';
 import { registerSubCategoriesAdmin } from '@/modules/subcategories/admin.routes';
 import { registerContactsAdmin } from '@/modules/contact/admin.routes';
+import { registerCommentsAdmin } from '@/modules/comments/admin.routes';
 import { registerLibraryAdmin } from '@/modules/library/admin.routes';
 import { registerProductsAdmin } from '@/modules/products/admin.routes';
 import { registerReviewsAdmin } from '@/modules/review/admin.routes';
@@ -206,6 +209,7 @@ export async function createApp() {
       await api.register(async (i) => registerCategoriesAdmin(i), { prefix: '/admin' });
       await api.register(async (i) => registerSubCategoriesAdmin(i), { prefix: '/admin' });
       await api.register(async (i) => registerContactsAdmin(i), { prefix: '/admin' });
+      await api.register(async (i) => registerCommentsAdmin(i), { prefix: '/admin' });
       await api.register(async (i) => registerLibraryAdmin(i), { prefix: '/admin' });
       await api.register(async (i) => registerProductsAdmin(i), { prefix: '/admin' });
       await api.register(async (i) => registerReviewsAdmin(i), { prefix: '/admin' });
@@ -223,6 +227,7 @@ export async function createApp() {
       await registerCategories(api);
       await registerSubCategories(api);
       await registerContacts(api);
+      await registerComments(api);
       await registerLibrary(api);
       await registerNotifications(api);
       await registerProducts(api);
@@ -230,6 +235,7 @@ export async function createApp() {
       await registerContentReactions(api);
       await registerOffer(api);
       await registerGallery(api);
+      await registerServices(api);
     },
     { prefix: '/api' },
   );

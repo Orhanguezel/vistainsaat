@@ -1,19 +1,12 @@
-# MOE Kompozit Admin Panel
+# Vista İnşaat Admin Panel
 
-Bu klasor, `admin_panel` uygulamasinin kompozit odakli ayrilmis kopyasidir.
+Next.js 16 tabanlı içerik yönetim paneli.
 
-Amac:
-- shared admin panelden tenant bazli karisimi kaldirmak
-- kompozit icerik, galeri, urun, teklif ve site ayarlarini ayri panelde yonetmek
-- shared paneli bozmadan bagimsiz rollout yapmak
+Port: `3004`
+API hedefi: Vista İnşaat Backend (`8086`)
 
-Gecici durum:
-- iskelet `admin_panel` reposundan klonlandi
-- port `3004` olarak ayrildi
-- API hedefi `kompozit_backend` (`8186`) olacak sekilde ayarlandi
-- sidebar kompozit odakli sadeleştirildi
+## Çalıştırma
 
-Calistirma:
 ```bash
 bun install
 bun run dev

@@ -128,17 +128,19 @@ export default async function LocaleLayout({
   const navT = await getTranslations({ locale, namespace: 'nav' });
   const footerT = await getTranslations({ locale, namespace: 'footer' });
 
-  const [menuItems, footerSections, siteLogoSetting, legacyLogoSetting] = await Promise.all([
+  const [menuItems, footerSections, siteLogoSetting, legacyLogoSetting, socialsSetting] = await Promise.all([
     fetchMenuItems(locale),
     fetchFooterSections(locale),
     fetchSetting('site_logo', locale),
     fetchSetting('logo', locale),
+    fetchSetting('socials', locale),
   ]);
 
   const logoValue = { ...readSettingValue(legacyLogoSetting), ...readSettingValue(siteLogoSetting) };
   const logoUrl = pickFirstString(logoValue.logo_url, logoValue.url, logoValue.logo_dark_url);
   const stableMenuItems = ensureMenuItems(menuItems, locale, navT);
   const stableFooterSections = ensureFooterSections(footerSections, locale, navT, footerT);
+  const socials = readSettingValue(socialsSetting) as Record<string, string>;
 
   return (
     <html
@@ -161,7 +163,7 @@ export default async function LocaleLayout({
         <NextIntlClientProvider locale={locale} messages={messages}>
           <Header menuItems={stableMenuItems} logoUrl={logoUrl} locale={locale} />
           <main className="flex-1">{children}</main>
-          <Footer sections={stableFooterSections} locale={locale} />
+          <Footer sections={stableFooterSections} locale={locale} socials={socials} />
           <ClientShell />
           <Toaster position="bottom-right" richColors />
         </NextIntlClientProvider>

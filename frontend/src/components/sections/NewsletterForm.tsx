@@ -16,7 +16,7 @@ export function NewsletterForm({ locale }: { locale: string }) {
     try {
       await api.post('/newsletter/subscribe', {
         email: fd.get('email'),
-        source: 'kompozit',
+        source: 'vistainsaat',
         locale,
       });
       toast.success(t('success'));

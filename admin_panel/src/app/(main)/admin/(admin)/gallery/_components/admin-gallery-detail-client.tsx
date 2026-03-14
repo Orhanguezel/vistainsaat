@@ -601,7 +601,7 @@ export default function AdminGalleryDetailClient({ id }: { id: string }) {
                             setValues((prev) => ({ ...prev, module_key: e.target.value }))
                           }
                           disabled={disabled}
-                          placeholder="kompozit"
+                          placeholder="vistainsaat"
                         />
                       </div>
 

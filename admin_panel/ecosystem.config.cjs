@@ -1,13 +1,13 @@
 // =============================================================
 // FILE: ecosystem.config.cjs
-// MOE Kompozit - admin panel PM2 config
+// Vista İnşaat - admin panel PM2 config
 // =============================================================
 
 module.exports = {
   apps: [
     {
-      name: 'kompozit-admin-panel',
-      cwd: '/var/www/Ensotek/kompozit_admin_panel',
+      name: 'vistainsaat-admin-panel',
+      cwd: '/var/www/vistainsaat/admin_panel',
       script: '/home/orhan/.bun/bin/bun',
       args: 'run start -- -p 3004 -H 127.0.0.1',
       exec_mode: 'fork',
@@ -26,8 +26,8 @@ module.exports = {
         HOSTNAME: '127.0.0.1',
         NEXT_TELEMETRY_DISABLED: '1',
       },
-      out_file: '/home/orhan/.pm2/logs/kompozit-admin-panel.out.log',
-      error_file: '/home/orhan/.pm2/logs/kompozit-admin-panel.err.log',
+      out_file: '/home/orhan/.pm2/logs/vistainsaat-admin-panel.out.log',
+      error_file: '/home/orhan/.pm2/logs/vistainsaat-admin-panel.err.log',
       combine_logs: true,
       time: true,
     },

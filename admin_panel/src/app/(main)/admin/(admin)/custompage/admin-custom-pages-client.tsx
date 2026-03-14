@@ -39,9 +39,9 @@ type Filters = {
 function labelOfModuleKey(k: string, t: any) {
   const map: Record<string, string> = {
     blog: t('admin.customPage.moduleLabels.blog'),
-    kompozit_blog: t('admin.customPage.moduleLabels.kompozit_blog'),
-    kompozit_about: t('admin.customPage.moduleLabels.kompozit_about'),
-    kompozit_legal: t('admin.customPage.moduleLabels.kompozit_legal'),
+    vistainsaat_blog: t('admin.customPage.moduleLabels.vistainsaat_blog'),
+    vistainsaat_about: t('admin.customPage.moduleLabels.vistainsaat_about'),
+    vistainsaat_legal: t('admin.customPage.moduleLabels.vistainsaat_legal'),
     news: t('admin.customPage.moduleLabels.news'),
     about: t('admin.customPage.moduleLabels.about'),
     services: t('admin.customPage.moduleLabels.services'),

@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { useGetSiteSettingByKeyQuery } from '@/integrations/hooks';
 
-const LOGO_FALLBACK = '/logo/png/ensotek_logo_512.png';
+const LOGO_FALLBACK = '/logo/png/vista_logo_512.png';
 
 type Props = {
   heading: string;

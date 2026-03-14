@@ -7,7 +7,8 @@ import { InfoListPanel } from '@/components/patterns/InfoListPanel';
 import { ContactFormClient } from '@/components/sections/ContactForm';
 import { GoogleMap } from '@/components/widgets/GoogleMap';
 import { fetchSetting } from '@/i18n/server';
-import { JsonLd, buildPageMetadata, jsonld, localizedUrl, organizationJsonLd } from '@/seo';
+import { JsonLd, buildPageMetadata, jsonld, localizedPath, localizedUrl, organizationJsonLd } from '@/seo';
+import { Breadcrumbs } from '@/components/seo/Breadcrumbs';
 
 async function fetchContactInfo(locale: string) {
   try {
@@ -28,8 +29,8 @@ export async function generateMetadata({
     locale,
     pathname: '/iletisim',
     title: locale.startsWith('en')
-      ? `${t('title')} - Technical Contact for Sampling and Quotes`
-      : `${t('title')} - Numune ve Teklif Icin Teknik Iletisim`,
+      ? `${t('title')} — Vista Construction`
+      : `${t('title')} — Vista İnşaat`,
     description: t('description'),
   });
 }
@@ -57,8 +58,12 @@ export default async function ContactPage({
   const responseItems = Object.values(t.raw('contact.response.items') as Record<string, string>);
 
   return (
-    <div className="section-py">
-      <div className="mx-auto max-w-7xl px-4 lg:px-8">
+    <div style={{ maxWidth: 1280, margin: '0 auto', padding: '16px 16px 60px' }}>
+      <div>
+        <Breadcrumbs items={[
+          { label: 'Vista İnşaat', href: localizedPath(locale, '/') },
+          { label: locale.startsWith('en') ? 'Contact' : 'İletişim' },
+        ]} />
         <JsonLd
           data={jsonld.graph([
             jsonld.org(
@@ -91,9 +96,9 @@ export default async function ContactPage({
           <div className="space-y-6">
             <section className="surface-card rounded-2xl p-6">
               <h2 className="text-xl font-semibold">{t('contact.info.title')}</h2>
-              <div className="mt-5 space-y-4 text-sm text-[var(--color-text-secondary)]">
+              <div className="mt-5 space-y-4 text-sm text-(--color-text-secondary)">
                 <div>
-                  <p className="font-medium text-[var(--color-text-primary)]">
+                  <p className="font-medium text-(--color-text-primary)">
                     {t('contact.info.address')}
                   </p>
                   <p>{companyName}</p>
@@ -101,30 +106,30 @@ export default async function ContactPage({
                 </div>
                 {phone && (
                   <div>
-                    <p className="font-medium text-[var(--color-text-primary)]">
+                    <p className="font-medium text-(--color-text-primary)">
                       {t('contact.info.phone')}
                     </p>
                     <a
                       href={`tel:${phone.replace(/\s/g, '')}`}
-                      className="hover:text-[var(--color-brand)]"
+                      className="hover:text-(--color-brand)"
                     >
                       {phone}
                     </a>
                   </div>
                 )}
                 <div>
-                  <p className="font-medium text-[var(--color-text-primary)]">
+                  <p className="font-medium text-(--color-text-primary)">
                     {t('contact.info.email')}
                   </p>
                   <a
                     href={`mailto:${email}`}
-                    className="hover:text-[var(--color-brand)]"
+                    className="hover:text-(--color-brand)"
                   >
                     {email}
                   </a>
                 </div>
                 <div>
-                  <p className="font-medium text-[var(--color-text-primary)]">
+                  <p className="font-medium text-(--color-text-primary)">
                     {t('contact.info.hours')}
                   </p>
                   <p>{hours}</p>

@@ -49,7 +49,7 @@ function getFileBase(): string {
     return String(window.location.origin || '').trim().replace(/\/+$/, '');
   }
 
-  return 'https://www.ensotek.de';
+  return 'https://www.vistainsaat.com';
 }
 
 function normalizePdfPath(pdfUrl: string): string {

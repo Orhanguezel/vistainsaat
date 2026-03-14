@@ -1,6 +1,6 @@
 -- =============================================================
 -- 232_projects_i18n_en.sql
--- Ensotek proje i18n kayıtları — ENGLISH (en)
+-- Vista İnşaat proje i18n kayıtları — ENGLISH (en)
 -- =============================================================
 
 SET NAMES utf8mb4;
@@ -16,228 +16,228 @@ INSERT INTO `projects_i18n`
 )
 VALUES
 
--- 1. İstanbul Plaza
+-- 1. Bosphorus View Residence — Istanbul, Beşiktaş
 (
   '55555001-0001-4555-8555-555500000001',
   '33333001-0001-4333-8333-333300000001',
   'en',
-  'Istanbul High-Rise Plaza — 2× FRP-Canopy Open-Type Cooling Tower (130 m Rooftop)',
-  'istanbul-plaza-rooftop-frp-canopy-open-type-cooling-tower-130m',
-  'Two 2-fan FRP-canopy open-type cooling towers manufactured at ENSOTEK Istanbul Factory were successfully installed on the rooftop of a high-rise plaza building at 130 m elevation in Istanbul.',
-  '{"html":"<p>Two <strong>FRP-canopy (CTP Kaportali) open-type cooling towers</strong>, each with 2 fans, manufactured at ENSOTEK\'s Istanbul Factory, were successfully installed on the rooftop of a high-rise commercial tower at <strong>130 m elevation</strong> in Istanbul.</p><h3>Project Specifications</h3><ul><li>Type: FRP-Canopy Open-Type Cooling Tower</li><li>Units: 2</li><li>Fans per unit: 2</li><li>Installation height: 130 m (rooftop)</li><li>Production plant: ENSOTEK Istanbul Factory</li></ul><p>The fiberglass-reinforced polyester (FRP) structure provides exceptional resistance to environmental conditions, ensuring reliable long-term performance even at extreme rooftop heights.</p>","description":"Two 2-fan FRP-canopy open-type cooling towers installed on a 130m rooftop plaza in Istanbul."}',
-  'Istanbul Plaza Rooftop — FRP Canopy Open-Type Cooling Tower Installation',
-  'Istanbul Plaza Rooftop FRP Cooling Tower — ENSOTEK',
-  'Two 2-fan FRP-canopy open-type cooling towers installed at 130 m rooftop height in Istanbul. ENSOTEK Turkey cooling tower project.',
+  'Bosphorus View Residence — 18 Units, 6 Floors',
+  'bosphorus-view-residence-besiktas',
+  'A luxury 18-unit, 6-storey residence with Bosphorus views was successfully completed in Beşiktaş, Istanbul.',
+  '{"html":"<p>In Beşiktaş, one of Istanbul''s most prestigious districts, an <strong>18-unit, 6-storey luxury residence</strong> with stunning Bosphorus views was delivered by Vista İnşaat.</p><h3>Project Specifications</h3><ul><li>Location: Istanbul, Beşiktaş — Bosphorus waterfront</li><li>Type: Luxury Residence</li><li>Units: 18</li><li>Floors: 6</li><li>Completed: March 2024</li></ul><h3>Design & Construction</h3><p>The project features a reinforced concrete structural system, energy-efficient curtain wall glazing, smart home systems, and bespoke landscaping. Every apartment offers spacious balconies and terraces maximising the Bosphorus panorama.</p>","description":"18-unit, 6-storey luxury residence with Bosphorus views in Beşiktaş — Vista İnşaat residential project."}',
+  'Bosphorus View Residence — Vista İnşaat Beşiktaş Luxury Residential',
+  'Bosphorus View Residence Beşiktaş — Vista İnşaat',
+  'Luxury 18-unit, 6-storey residence with Bosphorus views in Beşiktaş, Istanbul. Vista İnşaat residential reference.',
   NOW(3), NOW(3)
 ),
 
--- 2. Kahramanmaraş
+-- 2. Levent Office Tower — Istanbul, Levent
 (
   '55555001-0002-4555-8555-555500000002',
   '33333001-0002-4333-8333-333300000002',
   'en',
-  'Kahramanmaraş Industrial Facility — FRP-Canopy Open-Type Cooling Tower',
-  'kahramanmaras-industrial-frp-canopy-open-type-cooling-tower',
-  'FRP-canopy open-type cooling towers manufactured at ENSOTEK Ankara Factory were successfully delivered and commissioned at an industrial facility in Kahramanmaraş.',
-  '{"html":"<p><strong>FRP-canopy open-type cooling towers</strong> produced at ENSOTEK\'s Ankara Factory have been successfully manufactured and commissioned at an industrial facility in <strong>Kahramanmaraş</strong>, Turkey.</p><h3>Project Details</h3><ul><li>Type: FRP-Canopy Open-Type Cooling Tower</li><li>Production plant: ENSOTEK Ankara Factory</li><li>Location: Kahramanmaraş, Turkey</li><li>Application: Industrial process cooling</li></ul><p>ENSOTEK\'s Ankara facility—Turkey\'s largest cooling tower production plant—handles FRP manufacturing, serpentine coil production, and full tower assembly in-house, ensuring the highest quality standards.</p>","description":"FRP-canopy open-type cooling towers from Ankara Factory installed at Kahramanmaraş industrial facility."}',
-  'Kahramanmaraş — FRP Canopy Open-Type Cooling Tower',
-  'Kahramanmaraş Industrial Cooling Tower — ENSOTEK Ankara Factory',
-  'ENSOTEK Ankara Factory FRP-canopy open-type cooling towers delivered and commissioned at Kahramanmaraş industrial facility.',
+  'Levent Office Tower — 12-Storey LEED-Certified Class A Office',
+  'levent-office-tower-leed-certified',
+  'A 12-storey LEED-certified Class A office tower with steel structure and curtain wall was completed in Levent, Istanbul.',
+  '{"html":"<p>In Levent, Istanbul''s financial hub, a <strong>12-storey LEED-certified Class A office tower</strong> was constructed by Vista İnşaat.</p><h3>Project Specifications</h3><ul><li>Location: Istanbul, Levent</li><li>Type: Class A Office Tower</li><li>Floors: 12</li><li>Structure: Steel frame + curtain wall</li><li>Certification: LEED Green Building</li></ul><h3>Sustainable Design</h3><p>The building was designed with an energy-efficiency focus, featuring high-performance curtain wall glazing, rainwater harvesting, and an intelligent building management system, earning LEED green building certification.</p>","description":"12-storey LEED-certified steel-frame Class A office tower in Levent — Vista İnşaat commercial project."}',
+  'Levent Office Tower — Vista İnşaat LEED-Certified Commercial Project',
+  'Levent Office Tower LEED Certified — Vista İnşaat',
+  '12-storey LEED-certified Class A office tower with steel structure and curtain wall in Levent, Istanbul. Vista İnşaat commercial reference.',
   NOW(3), NOW(3)
 ),
 
--- 3. Arçelik
+-- 3. Kadıköy Mixed-Use Complex — Istanbul, Kadıköy
 (
   '55555001-0003-4555-8555-555500000003',
   '33333001-0003-4333-8333-333300000003',
   'en',
-  'Arçelik — 2× CTP 6C Open-Type Cooling Towers',
-  'arcelik-ctp-6c-open-type-cooling-towers',
-  'Two CTP 6C open-type FRP cooling towers were supplied and commissioned for Arçelik\'s production facility in Gebze, Kocaeli.',
-  '{"html":"<p>Two <strong>CTP 6C open-type FRP cooling towers</strong> were designed, manufactured, and commissioned for the production facility of <strong>Arçelik A.Ş.</strong>, one of Turkey\'s largest consumer electronics manufacturers.</p><h3>Project Details</h3><ul><li>Model: CTP 6C (Open Circuit)</li><li>Units: 2</li><li>Location: Gebze, Kocaeli</li><li>Sector: Consumer Electronics / Industrial Manufacturing</li></ul><h3>CTP 6C Specification</h3><p>The CTP 6C is a mid-to-large-capacity open-circuit cooling tower. Its FRP body provides superior resistance to corrosion, UV radiation, and chemical exposure, making it ideal for long-term industrial use.</p>","description":"2× CTP 6C open-type FRP cooling towers for Arçelik production facility in Gebze, Kocaeli."}',
-  'Arçelik Facility — 2× CTP 6C Open-Type Cooling Towers',
-  'Arçelik CTP 6C Cooling Tower Project — ENSOTEK',
-  'Two CTP 6C open-type FRP cooling towers supplied by ENSOTEK for Arçelik production facility in Gebze, Kocaeli, Turkey.',
+  'Kadıköy Mixed-Use Complex — 64 Residences + 3 Commercial Floors',
+  'kadikoy-mixed-use-complex',
+  'A mixed-use complex comprising 64 residential units and 3 floors of commercial space is under construction in Kadıköy, Istanbul.',
+  '{"html":"<p>In central Kadıköy, Istanbul, a <strong>mixed-use complex with 64 residential units and 3 commercial floors</strong> is being constructed by Vista İnşaat.</p><h3>Project Specifications</h3><ul><li>Location: Istanbul, Kadıköy</li><li>Type: Mixed-Use (Residential + Commercial)</li><li>Residential: 64 units</li><li>Commercial: 3 floors of retail and office space</li><li>Parking: 2-level underground car park</li></ul><h3>Urban Living</h3><p>The project is designed with modern architectural lines that complement Kadıköy''s vibrant urban fabric. Ground and upper levels feature commercial spaces, while the upper floors house a variety of residential unit types.</p>","description":"64-unit residential + 3-floor commercial mixed-use complex in Kadıköy — Vista İnşaat ongoing project."}',
+  'Kadıköy Mixed-Use Complex — Vista İnşaat Residential & Commercial',
+  'Kadıköy Mixed-Use Complex — Vista İnşaat',
+  'Mixed-use complex with 64 residences and 3 commercial floors in Kadıköy, Istanbul. Vista İnşaat reference.',
   NOW(3), NOW(3)
 ),
 
--- 4. Eczacıbaşı
+-- 4. Historic Han Restoration — Istanbul, Eminönü
 (
   '55555001-0004-4555-8555-555500000004',
   '33333001-0004-4333-8333-333300000004',
   'en',
-  'Eczacıbaşı — 3× DCTP 5C Closed-Circuit Cooling Towers',
-  'eczacibasi-dctp-5c-closed-circuit-cooling-towers',
-  'Three DCTP 5C closed-circuit FRP cooling towers were installed for Eczacıbaşı\'s pharmaceutical and chemical manufacturing facility in Istanbul.',
-  '{"html":"<p>Three <strong>DCTP 5C closed-circuit FRP cooling towers</strong> have been installed at a production facility belonging to <strong>Eczacıbaşı</strong>, one of Turkey\'s most established pharmaceutical and chemical groups.</p><h3>Project Details</h3><ul><li>Model: DCTP 5C (Closed Circuit)</li><li>Units: 3</li><li>Location: Istanbul</li><li>Sector: Pharmaceutical / Chemical</li></ul><h3>Why Closed Circuit for Pharma?</h3><p>In pharmaceutical and chemical manufacturing, isolating the process fluid from the external environment is critical. The DCTP 5C\'s coil-type heat exchanger ensures the process fluid never comes into contact with cooling water, maintaining product quality and hygiene standards.</p>","description":"3× DCTP 5C closed-circuit FRP cooling towers for Eczacıbaşı pharmaceutical facility in Istanbul."}',
-  'Eczacıbaşı — 3× DCTP 5C Closed-Circuit Cooling Towers',
-  'Eczacıbaşı DCTP 5C Closed-Circuit Cooling Tower — ENSOTEK',
-  'Three DCTP 5C closed-circuit FRP cooling towers installed by ENSOTEK for Eczacıbaşı pharmaceutical facility in Istanbul.',
+  'Historic Han Restoration — 19th-Century Ottoman Caravanserai',
+  'historic-han-restoration-eminonu',
+  'A comprehensive restoration of a 19th-century Ottoman caravanserai (han) was completed in Eminönü, Istanbul.',
+  '{"html":"<p>In Istanbul''s historic peninsula at Eminönü, a <strong>19th-century Ottoman caravanserai</strong> underwent comprehensive restoration by Vista İnşaat.</p><h3>Project Specifications</h3><ul><li>Location: Istanbul, Eminönü</li><li>Type: Historic Building Restoration</li><li>Period: 19th-century Ottoman</li><li>Duration: March 2020 – August 2022</li></ul><h3>Restoration Scope</h3><p>The original stone masonry was preserved and structurally reinforced. Timber roof and floor elements were restored, and historic window and door joinery was repaired. All works were carried out under Conservation Board supervision using authentic materials and traditional techniques.</p>","description":"19th-century Ottoman caravanserai restoration in Eminönü — stonework, timber repair and reinforcement. Vista İnşaat."}',
+  'Historic Han Restoration Eminönü — Vista İnşaat Heritage Project',
+  'Historic Han Restoration Eminönü — Vista İnşaat',
+  'Comprehensive restoration of a 19th-century Ottoman caravanserai in Eminönü, Istanbul. Stone and timber restoration. Vista İnşaat heritage reference.',
   NOW(3), NOW(3)
 ),
 
--- 5. Linde Gaz
+-- 5. Gebze Logistics Centre — Kocaeli, Gebze
 (
   '55555001-0005-4555-8555-555500000005',
   '33333001-0005-4333-8333-333300000005',
   'en',
-  'Linde Gas — 3× TCTP 26B + 1× DCTP 12C High-Capacity Closed-Circuit Cooling System — Gebze',
-  'linde-gas-tctp-26b-dctp-12c-closed-circuit-cooling-system-gebze',
-  'A high-capacity closed-circuit cooling system comprising 3× TCTP 26B and 1× DCTP 12C cooling towers was installed for Linde Gas Turkey\'s process plant in Gebze, Kocaeli.',
-  '{"html":"<p>A large-scale closed-circuit cooling system was installed for the process plant of <strong>Linde Gas Turkey</strong> in Gebze, Kocaeli. The system combines ENSOTEK\'s highest-capacity tower models to meet the facility\'s demanding cooling requirements.</p><h3>System Components</h3><ul><li>3× TCTP 26B — High-capacity counter-flow closed-circuit cooling tower</li><li>1× DCTP 12C — Double-cell closed-circuit cooling tower</li><li>Total units: 4</li><li>Location: Gebze, Kocaeli</li><li>Sector: Industrial Gases / Chemistry</li></ul><h3>TCTP 26B Overview</h3><p>The TCTP series is designed for high-heat-rejection process applications using a counter-flow design. The FRP enclosure and high-efficiency coil heat exchanger system deliver long service life with minimal maintenance requirements.</p>","description":"3× TCTP 26B + 1× DCTP 12C high-capacity closed-circuit cooling system for Linde Gas Turkey in Gebze."}',
-  'Linde Gas Gebze — TCTP 26B + DCTP 12C Cooling System',
-  'Linde Gas TCTP 26B DCTP 12C Closed-Circuit Cooling Tower — ENSOTEK Gebze',
-  'High-capacity 3× TCTP 26B and 1× DCTP 12C closed-circuit cooling system installed by ENSOTEK for Linde Gas Turkey in Gebze, Kocaeli.',
+  'Gebze Logistics Centre — 8,000 m² Prefabricated Steel Warehouse',
+  'gebze-logistics-centre-prefabricated-steel',
+  'An 8,000 m² prefabricated steel logistics warehouse was completed in Gebze, Kocaeli.',
+  '{"html":"<p>In Gebze, Kocaeli, an <strong>8,000 m² prefabricated steel logistics warehouse</strong> was constructed by Vista İnşaat.</p><h3>Project Specifications</h3><ul><li>Location: Kocaeli, Gebze</li><li>Type: Logistics Warehouse</li><li>Covered area: 8,000 m²</li><li>Structure: Prefabricated steel</li><li>Completed: June 2024</li></ul><h3>Industrial Construction</h3><p>The facility features a steel structure designed for heavy-duty crane loads, ground improvement works, and modern loading docks. A wide-span, column-free layout was implemented to optimise logistics operations.</p>","description":"8,000 m² prefabricated steel logistics warehouse in Gebze — Vista İnşaat industrial project."}',
+  'Gebze Logistics Centre — Vista İnşaat Industrial Project',
+  'Gebze Logistics Centre Prefabricated Steel — Vista İnşaat',
+  '8,000 m² prefabricated steel logistics warehouse in Gebze, Kocaeli. Vista İnşaat industrial construction reference.',
   NOW(3), NOW(3)
 ),
 
--- 6. HES Kablo
+-- 6. Beşiktaş Waterfront Residence — Istanbul, Beşiktaş
 (
   '55555001-0006-4555-8555-555500000006',
   '33333001-0006-4333-8333-333300000006',
   'en',
-  'HES Kablo — DCTP 12 + DCTP 12C Closed-Circuit Cooling Towers',
-  'hes-kablo-dctp-12-dctp-12c-closed-circuit-cooling-towers',
-  'A DCTP 12 (with service ladder accessory) and DCTP 12C closed-circuit cooling tower system was commissioned for HES Kablo\'s cable manufacturing facility.',
-  '{"html":"<p>Two <strong>DCTP series closed-circuit cooling towers</strong> were supplied for the cable manufacturing facility of <strong>HES Kablo</strong>.</p><h3>System Details</h3><ul><li>DCTP 12 — Single-cell closed-circuit cooling tower (with service ladder accessory)</li><li>DCTP 12C — Double-cell closed-circuit cooling tower</li><li>Sector: Cable Manufacturing / Electrical</li><li>Special feature: Custom service ladder accessory for maintenance access</li></ul><p>In cable manufacturing, cooling of drawing and extrusion equipment is critical for product quality. The closed-circuit system prevents cooling water contamination, ensuring a clean and controlled production environment.</p>","description":"DCTP 12 (with service ladder) + DCTP 12C closed-circuit cooling towers for HES Kablo cable facility."}',
-  'HES Kablo — DCTP 12 + DCTP 12C Closed-Circuit Cooling Tower',
-  'HES Kablo DCTP Closed-Circuit Cooling Tower — ENSOTEK',
-  'DCTP 12 and DCTP 12C closed-circuit cooling towers commissioned by ENSOTEK for HES Kablo cable manufacturing facility.',
+  'Beşiktaş Waterfront Residence — 24-Unit Modern Residential',
+  'besiktas-waterfront-residence-modern',
+  'A 24-unit modern waterfront residence is under construction along the Beşiktaş shoreline in Istanbul.',
+  '{"html":"<p>Along the Beşiktaş waterfront in Istanbul, a <strong>24-unit modern residence</strong> is being constructed by Vista İnşaat.</p><h3>Project Specifications</h3><ul><li>Location: Istanbul, Beşiktaş — waterfront</li><li>Type: Modern Residence</li><li>Units: 24</li><li>Started: March 2024</li></ul><h3>Modern Living</h3><p>The project combines waterfront views with city access, featuring façade cladding, landscape design, and swimming pool construction as part of the comprehensive building programme.</p>","description":"24-unit modern waterfront residence in Beşiktaş — Vista İnşaat ongoing residential project."}',
+  'Beşiktaş Waterfront Residence — Vista İnşaat Modern Residential',
+  'Beşiktaş Waterfront Residence 24 Units — Vista İnşaat',
+  '24-unit modern waterfront residence in Beşiktaş, Istanbul. Vista İnşaat residential reference.',
   NOW(3), NOW(3)
 ),
 
--- 7. Green Park Otel
+-- 7. Ankara Government Services Building — Ankara, Çankaya
 (
   '55555001-0007-4555-8555-555500000007',
   '33333001-0007-4333-8333-333300000007',
   'en',
-  'Green Park Hotel — 2× CTP 3C Open-Type Cooling Towers',
-  'green-park-hotel-ctp-3c-open-type-cooling-towers',
-  'Two CTP 3C open-type FRP cooling towers were integrated into the central HVAC cooling system at a Green Park Hotels property.',
-  '{"html":"<p>Two <strong>CTP 3C open-type FRP cooling towers</strong> have been integrated into the central air-conditioning system of a <strong>Green Park Hotels</strong> property.</p><h3>Project Details</h3><ul><li>Model: CTP 3C (Open Circuit)</li><li>Units: 2</li><li>Sector: Hotel / Hospitality / HVAC</li><li>Application: Central chiller cooling water system</li></ul><h3>CTP Series for Hospitality</h3><p>ENSOTEK\'s CTP series cooling towers offer low noise levels, compact dimensions, and an aesthetic appearance—ideal for hotel and hospitality applications. The FRP body minimizes maintenance requirements, reducing operating costs over the tower\'s lifetime.</p>","description":"2× CTP 3C open-type cooling towers integrated into the HVAC system at a Green Park Hotels property."}',
-  'Green Park Hotel — 2× CTP 3C Open-Type Cooling Towers',
-  'Green Park Hotel CTP 3C Cooling Tower — ENSOTEK HVAC',
-  'Two CTP 3C open-type FRP cooling towers installed by ENSOTEK for Green Park Hotels HVAC cooling system.',
+  'Ankara Government Services Building — 7-Storey Ministry Building',
+  'ankara-government-services-building',
+  'A 7-storey government ministry building including seismic reinforcement was completed in Çankaya, Ankara.',
+  '{"html":"<p>In Çankaya, Ankara''s administrative centre, a <strong>7-storey ministry services building</strong> was constructed by Vista İnşaat.</p><h3>Project Specifications</h3><ul><li>Location: Ankara, Çankaya</li><li>Type: Government Services Building</li><li>Floors: 7</li><li>Duration: May 2021 – October 2023</li></ul><h3>Public Sector Expertise</h3><p>The project encompassed reinforced concrete structural works, curtain wall glazing, seismic reinforcement, and full mechanical services installation. The building was designed and built in compliance with current seismic regulations.</p>","description":"7-storey government ministry building with seismic reinforcement in Çankaya, Ankara — Vista İnşaat public sector project."}',
+  'Ankara Government Services Building — Vista İnşaat Public Sector',
+  'Ankara Government Services Building — Vista İnşaat',
+  '7-storey government ministry building with seismic reinforcement in Çankaya, Ankara. Vista İnşaat public sector reference.',
   NOW(3), NOW(3)
 ),
 
--- 8. Orion AVM
+-- 8. Bursa Industrial Zone Infrastructure — Bursa, Nilüfer
 (
   '55555001-0008-4555-8555-555500000008',
   '33333001-0008-4333-8333-333300000008',
   'en',
-  'Orion Shopping Mall — TCTP 9C Closed-Circuit Cooling Tower',
-  'orion-shopping-mall-tctp-9c-closed-circuit-cooling-tower',
-  'A TCTP 9C closed-circuit cooling tower was installed for the central HVAC cooling system of Orion Shopping Mall.',
-  '{"html":"<p>A <strong>TCTP 9C closed-circuit cooling tower</strong> was integrated into the central HVAC infrastructure of <strong>Orion Shopping Mall</strong>.</p><h3>Project Details</h3><ul><li>Model: TCTP 9C (Counter-flow — Closed Circuit)</li><li>Units: 1</li><li>Sector: Commercial / Shopping Mall</li><li>Application: Central chiller cooling water (year-round)</li></ul><p>The TCTP 9C\'s compact footprint and reliable performance make it well-suited for commercial buildings requiring year-round cooling capacity. ENSOTEK\'s FRP construction ensures long operational life with minimal maintenance intervention.</p>","description":"TCTP 9C closed-circuit cooling tower for Orion Shopping Mall central HVAC cooling system."}',
-  'Orion Shopping Mall — TCTP 9C Closed-Circuit Cooling Tower',
-  'Orion Shopping Mall TCTP 9C Cooling Tower — ENSOTEK',
-  'TCTP 9C closed-circuit cooling tower installed by ENSOTEK for Orion Shopping Mall HVAC system.',
+  'Bursa OIZ Infrastructure Renewal — 45,000 m² Site Development',
+  'bursa-oiz-infrastructure-renewal',
+  'A 45,000 m² infrastructure renewal and site development project was completed at an organised industrial zone in Nilüfer, Bursa.',
+  '{"html":"<p>At an organised industrial zone (OIZ) in Nilüfer, Bursa, a <strong>45,000 m² infrastructure renewal and site development</strong> project was delivered by Vista İnşaat.</p><h3>Project Specifications</h3><ul><li>Location: Bursa, Nilüfer OIZ</li><li>Type: Infrastructure Renewal</li><li>Area: 45,000 m²</li><li>Duration: April 2023 – September 2024</li></ul><h3>Infrastructure Scope</h3><p>Comprehensive works included road construction, sewerage lines, stormwater drainage systems, and landscape development across the industrial zone.</p>","description":"45,000 m² infrastructure renewal and site development at Bursa Nilüfer OIZ — Vista İnşaat infrastructure project."}',
+  'Bursa OIZ Infrastructure Renewal — Vista İnşaat Infrastructure Project',
+  'Bursa OIZ Infrastructure Renewal 45,000 m² — Vista İnşaat',
+  '45,000 m² infrastructure renewal and site development at Bursa Nilüfer organised industrial zone. Vista İnşaat infrastructure reference.',
   NOW(3), NOW(3)
 ),
 
--- 9. Plastifay
+-- 9. Antalya Boutique Hotel — Antalya, Kaleiçi
 (
   '55555001-0009-4555-8555-555500000009',
   '33333001-0009-4333-8333-333300000009',
   'en',
-  'Plastifay — CTP 9 Open-Type Cooling Tower',
-  'plastifay-ctp-9-open-type-cooling-tower',
-  'A CTP 9 open-type FRP cooling tower was commissioned for Plastifay\'s plastics manufacturing facility.',
-  '{"html":"<p>A <strong>CTP 9 open-type FRP cooling tower</strong> was installed at <strong>Plastifay</strong>\'s production facility to meet its process cooling requirements.</p><h3>Project Details</h3><ul><li>Model: CTP 9 (Open Circuit)</li><li>Sector: Plastics / Chemicals</li><li>Application: Process equipment cooling (injection moulding / extrusion)</li></ul><p>Open-circuit cooling towers are widely used for cooling injection moulding and extrusion machinery in the plastics industry. The CTP 9 model offers optimised capacity and efficiency for these applications.</p>","description":"CTP 9 open-type FRP cooling tower for Plastifay plastics manufacturing facility."}',
-  'Plastifay — CTP 9 Open-Type Cooling Tower',
-  'Plastifay CTP 9 Open-Type Cooling Tower — ENSOTEK',
-  'CTP 9 open-type FRP cooling tower commissioned by ENSOTEK for Plastifay plastics production facility.',
+  'Antalya Kaleiçi Boutique Hotel — 32 Rooms, Historic District',
+  'antalya-kaleici-boutique-hotel-historic',
+  'A 32-room boutique hotel harmonising with the historic fabric is under construction in Kaleiçi, Antalya.',
+  '{"html":"<p>In Kaleiçi, the historic heart of Antalya, a <strong>32-room boutique hotel</strong> is being constructed by Vista İnşaat.</p><h3>Project Specifications</h3><ul><li>Location: Antalya, Kaleiçi</li><li>Type: Boutique Hotel</li><li>Rooms: 32</li><li>Started: June 2024</li></ul><h3>Historic Fabric Harmony</h3><p>In keeping with Kaleiçi''s UNESCO World Heritage–listed historic fabric, stone masonry and timber craftsmanship take centre stage. Traditional Antalya architecture is blended with modern comfort standards.</p>","description":"32-room boutique hotel in historic Kaleiçi, Antalya — stone and timber. Vista İnşaat hospitality project."}',
+  'Antalya Kaleiçi Boutique Hotel — Vista İnşaat Hospitality Project',
+  'Antalya Kaleiçi Boutique Hotel 32 Rooms — Vista İnşaat',
+  '32-room boutique hotel in historic Kaleiçi, Antalya. Stone masonry and timber craftsmanship. Vista İnşaat hospitality reference.',
   NOW(3), NOW(3)
 ),
 
--- 10. Aves Yağ — Mersin
+-- 10. İzmir Technology Campus — İzmir, Bayraklı
 (
   '55555001-0010-4555-8555-555500000010',
   '33333001-0010-4333-8333-333300000010',
   'en',
-  'Aves Yağ — TCTP 9B + DCTP 9B Combined Closed-Circuit Cooling System — Mersin',
-  'aves-yag-tctp-9b-dctp-9b-combined-cooling-system-mersin',
-  'A combined closed-circuit cooling system comprising a TCTP 9B and DCTP 9B was installed for Aves Yağ\'s edible oil production facility in Mersin.',
-  '{"html":"<p>A combined closed-circuit cooling system was commissioned for <strong>Aves Yağ</strong>\'s edible oil production facility in <strong>Mersin</strong>, Turkey.</p><h3>System Components</h3><ul><li>1× TCTP 9B — Counter-flow closed-circuit cooling tower</li><li>1× DCTP 9B — Double-cell closed-circuit cooling tower</li><li>Location: Mersin, Turkey</li><li>Sector: Food & Beverage / Edible Oil Production</li></ul><h3>Closed-Circuit Cooling for Food Industry</h3><p>Hygiene and product safety are the top priorities in food production. A closed-circuit cooling system prevents process fluid from being exposed to external contaminants. The TCTP 9B and DCTP 9B combination provides balanced coverage of varying capacity demands at the facility.</p>","description":"TCTP 9B + DCTP 9B combined closed-circuit cooling system for Aves Yağ edible oil facility in Mersin."}',
-  'Aves Yağ Mersin — TCTP 9B + DCTP 9B Combined Cooling System',
-  'Aves Yağ Mersin TCTP DCTP Closed-Circuit Cooling — ENSOTEK',
-  'TCTP 9B and DCTP 9B combined closed-circuit cooling system installed by ENSOTEK for Aves Yağ edible oil facility in Mersin.',
+  'İzmir Technology Campus — 32,000 m² Sustainable Office Campus',
+  'izmir-technology-campus-sustainable-office',
+  'A 32,000 m² sustainable technology office campus was completed in Bayraklı, İzmir.',
+  '{"html":"<p>In Bayraklı, İzmir''s emerging business district, a <strong>32,000 m² sustainable technology office campus</strong> was constructed by Vista İnşaat.</p><h3>Project Specifications</h3><ul><li>Location: İzmir, Bayraklı</li><li>Type: Technology Office Campus</li><li>Covered area: 32,000 m²</li><li>Duration: October 2022 – November 2024</li></ul><h3>Sustainable Design</h3><p>Built with a steel frame and curtain wall system, the campus features solar panels, green roof applications, and an energy-efficient HVAC system meeting sustainable building standards. Landscape design creates a comfortable working environment for tech professionals.</p>","description":"32,000 m² sustainable technology office campus in Bayraklı, İzmir — Vista İnşaat commercial project."}',
+  'İzmir Technology Campus — Vista İnşaat Sustainable Project',
+  'İzmir Technology Campus Bayraklı — Vista İnşaat',
+  '32,000 m² sustainable technology office campus in Bayraklı, İzmir. Steel frame and curtain wall. Vista İnşaat commercial reference.',
   NOW(3), NOW(3)
 ),
 
--- 11. TAT Tekstil — Gaziantep
+-- 11. Ümraniye Housing Project — Istanbul, Ümraniye
 (
   '55555001-0011-4555-8555-555500000011',
   '33333001-0011-4333-8333-333300000011',
   'en',
-  'TAT Tekstil — FRP-Canopy Open-Type Cooling Tower — Gaziantep',
-  'tat-tekstil-frp-canopy-open-type-cooling-tower-gaziantep',
-  'An FRP-canopy open-type cooling tower system was installed for TAT Tekstil\'s textile manufacturing facility in Gaziantep.',
-  '{"html":"<p>An <strong>FRP-canopy open-type cooling tower</strong> system was supplied for <strong>TAT Tekstil</strong>\'s production facility in <strong>Gaziantep</strong>, Turkey.</p><h3>Project Details</h3><ul><li>Location: Gaziantep, Turkey</li><li>Sector: Textile / Yarn Manufacturing</li><li>Application: Textile machinery process cooling</li></ul><h3>Cooling in Textile Industry</h3><p>Textile production processes—including dyeing, washing, and weaving—generate significant heat loads. ENSOTEK\'s FRP-canopy open-type cooling towers provide a cost-effective and efficient solution for these demanding industrial applications.</p>","description":"FRP-canopy open-type cooling tower for TAT Tekstil textile manufacturing facility in Gaziantep."}',
-  'TAT Tekstil Gaziantep — FRP Canopy Open-Type Cooling Tower',
-  'TAT Tekstil Gaziantep Cooling Tower — ENSOTEK',
-  'FRP-canopy open-type cooling tower installed by ENSOTEK for TAT Tekstil textile facility in Gaziantep, Turkey.',
+  'Ümraniye Mass Housing — 120-Unit Residential with Social Facilities',
+  'umraniye-mass-housing-120-units',
+  'A 120-unit mass housing project with social facilities and parking was completed in Ümraniye, Istanbul.',
+  '{"html":"<p>In Ümraniye, Istanbul, a <strong>120-unit mass housing project</strong> was constructed by Vista İnşaat.</p><h3>Project Specifications</h3><ul><li>Location: Istanbul, Ümraniye</li><li>Type: Mass Housing</li><li>Units: 120</li><li>Duration: January 2021 – June 2023</li></ul><h3>Comprehensive Living</h3><p>In addition to 120 residential units, the project includes landscape development, an underground car park, and social facilities. Various apartment types cater to diverse family needs.</p>","description":"120-unit mass housing with parking and social facilities in Ümraniye — Vista İnşaat residential project."}',
+  'Ümraniye Mass Housing 120 Units — Vista İnşaat Residential',
+  'Ümraniye Mass Housing 120 Units — Vista İnşaat',
+  '120-unit mass housing project with social facilities and parking in Ümraniye, Istanbul. Vista İnşaat residential reference.',
   NOW(3), NOW(3)
 ),
 
--- 12. Saudi Arabia
+-- 12. Taksim Hotel Renovation — Istanbul, Beyoğlu
 (
   '55555001-0012-4555-8555-555500000012',
   '33333001-0012-4333-8333-333300000012',
   'en',
-  'Saudi Arabia — Industrial FRP Cooling Tower Export Project',
-  'saudi-arabia-industrial-frp-cooling-tower-export',
-  'ENSOTEK successfully completed an industrial FRP/GRP cooling tower export project to Saudi Arabia, one of the largest economies in the Middle East.',
-  '{"html":"<p>ENSOTEK, as Turkey\'s largest cooling tower manufacturer, has successfully delivered an <strong>industrial FRP/GRP cooling tower</strong> system to <strong>Saudi Arabia</strong> as part of its international export activities.</p><h3>Export Project Details</h3><ul><li>Country: Saudi Arabia</li><li>Product: FRP / GRP Open-Type Cooling Tower</li><li>Application: Industrial process cooling</li><li>Sector: Petrochemical / Energy / Industrial</li></ul><h3>Performance in Extreme Climates</h3><p>Saudi Arabia\'s high ambient temperatures and harsh climate demand special design considerations for cooling towers. ENSOTEK\'s FRP/GRP body construction offers superior resistance to solar radiation and extreme heat, ensuring reliable performance even in desert conditions.</p>","description":"Industrial FRP/GRP cooling tower export project to Saudi Arabia. ENSOTEK international reference."}',
-  'Saudi Arabia — Industrial FRP GRP Cooling Tower Export',
-  'Saudi Arabia FRP Cooling Tower Export — ENSOTEK International',
-  'ENSOTEK successfully delivered an industrial FRP/GRP cooling tower to Saudi Arabia. International export project.',
+  'Taksim Hotel Renovation — 85-Room Full Refurbishment',
+  'taksim-hotel-renovation-85-rooms',
+  'A comprehensive renovation of an 85-room hotel was completed in Taksim, Beyoğlu, Istanbul.',
+  '{"html":"<p>In Taksim, Istanbul''s tourism hub, a <strong>comprehensive renovation of an 85-room hotel</strong> was carried out by Vista İnşaat.</p><h3>Project Specifications</h3><ul><li>Location: Istanbul, Beyoğlu — Taksim</li><li>Type: Hotel Renovation</li><li>Rooms: 85</li><li>Duration: November 2022 – February 2024</li></ul><h3>Renovation Scope</h3><p>The full refurbishment included interior fitout, mechanical and electrical services replacement, façade renewal, and redesign of the lobby and restaurant areas. The hotel remained partially operational throughout the renovation.</p>","description":"85-room hotel renovation in Taksim — interior, façade and MEP renewal. Vista İnşaat hospitality project."}',
+  'Taksim Hotel Renovation — Vista İnşaat Hospitality Project',
+  'Taksim Hotel Renovation 85 Rooms — Vista İnşaat',
+  'Comprehensive 85-room hotel renovation in Taksim, Istanbul. Interior, façade and services renewal. Vista İnşaat hospitality reference.',
   NOW(3), NOW(3)
 ),
 
--- 13. Iran
+-- 13. Eskişehir University Campus — Eskişehir
 (
   '55555001-0013-4555-8555-555500000013',
   '33333001-0013-4333-8333-333300000013',
   'en',
-  'Iran — Industrial FRP Cooling Tower Export Project',
-  'iran-industrial-frp-cooling-tower-export',
-  'ENSOTEK successfully completed an FRP/GRP open-type cooling tower export project for an industrial facility in Iran.',
-  '{"html":"<p>ENSOTEK has successfully supplied an <strong>FRP/GRP open-type cooling tower</strong> system to an industrial facility in <strong>Iran</strong> as part of its regional export programme.</p><h3>Project Details</h3><ul><li>Country: Iran</li><li>Product: FRP / GRP Open-Type Cooling Tower</li><li>Application: Industrial process cooling</li></ul><p>ENSOTEK leverages its 40+ years of experience in the Turkish market to deliver reliable cooling solutions to international markets across the Middle East and beyond.</p>","description":"FRP/GRP open-type cooling tower export project for industrial facility in Iran. ENSOTEK international reference."}',
-  'Iran — Industrial FRP GRP Cooling Tower Export',
-  'Iran FRP Cooling Tower Export — ENSOTEK International',
-  'ENSOTEK successfully exported FRP/GRP open-type cooling towers to an industrial facility in Iran.',
+  'Eskişehir University Campus Extension — 15,000 m² Education Building',
+  'eskisehir-university-campus-extension',
+  'A 15,000 m² education building extension was completed at a university campus in Eskişehir.',
+  '{"html":"<p>At a university campus in Eskişehir, a <strong>15,000 m² education building extension</strong> was constructed by Vista İnşaat.</p><h3>Project Specifications</h3><ul><li>Location: Eskişehir</li><li>Type: Education Building — Campus Extension</li><li>Covered area: 15,000 m²</li><li>Duration: August 2020 – January 2023</li></ul><h3>Educational Infrastructure</h3><p>The building houses laboratories, lecture halls, a library, and office spaces. A reinforced concrete structural system and modern façade design maintain architectural continuity with the existing campus buildings.</p>","description":"15,000 m² university campus extension in Eskişehir — labs, lecture halls, library. Vista İnşaat public sector project."}',
+  'Eskişehir University Campus Extension — Vista İnşaat Education Project',
+  'Eskişehir University Campus Extension — Vista İnşaat',
+  '15,000 m² university campus education building in Eskişehir. Laboratories, lecture halls, library. Vista İnşaat public sector reference.',
   NOW(3), NOW(3)
 ),
 
--- 14. Tüpraş — İzmit
+-- 14. Mersin Free Zone Cold Storage — Mersin
 (
   '55555001-0014-4555-8555-555500000014',
   '33333001-0014-4333-8333-333300000014',
   'en',
-  'Tüpraş İzmit Refinery — Process Cooling Tower System',
-  'tupras-izmit-refinery-process-cooling-tower',
-  'A high-capacity process cooling tower system was supplied for Tüpraş İzmit Refinery, Turkey\'s largest oil refinery.',
-  '{"html":"<p>A <strong>process cooling tower system</strong> was supplied by ENSOTEK for the <strong>Tüpraş İzmit Refinery</strong>, operated by Türkiye Petrol Rafinerileri A.Ş.—Turkey\'s largest industrial enterprise.</p><h3>Project Details</h3><ul><li>Client: Tüpraş (Türkiye Petrol Rafinerileri A.Ş.)</li><li>Location: İzmit, Kocaeli</li><li>Sector: Petrochemical / Oil Refining</li><li>Application: Refinery process cooling</li></ul><h3>Cooling in Oil Refining</h3><p>Oil refineries—including distillation, cracking, and other process units—generate extreme heat loads that require large-capacity cooling systems. ENSOTEK cooling towers provide reliable, high-capacity heat rejection for these demanding applications. The FRP/GRP material offers outstanding resistance to chemical and corrosive environments typical of refinery operations.</p>","description":"High-capacity process cooling tower system for Tüpraş İzmit Refinery — petrochemical sector reference."}',
-  'Tüpraş İzmit Refinery — Process Cooling Tower System',
-  'Tüpraş İzmit Refinery Cooling Tower — ENSOTEK',
-  'High-capacity process cooling tower system supplied by ENSOTEK for Tüpraş İzmit Refinery, Turkey\'s largest oil refinery.',
+  'Mersin Free Zone Cold Storage — 12,000 m² Steel Structure',
+  'mersin-free-zone-cold-storage-facility',
+  'A 12,000 m² cold storage facility with steel structure was completed in the Mersin Free Zone.',
+  '{"html":"<p>In the Mersin Free Zone, a <strong>12,000 m² cold storage facility</strong> was constructed by Vista İnşaat.</p><h3>Project Specifications</h3><ul><li>Location: Mersin Free Zone</li><li>Type: Cold Storage Facility</li><li>Covered area: 12,000 m²</li><li>Structure: Prefabricated steel</li><li>Duration: July 2023 – December 2024</li></ul><h3>Specialised Insulation</h3><p>The facility features high-performance insulation for cold-chain logistics, prefabricated steel construction, and specialist floor finishes. Multiple temperature zones accommodate diverse storage requirements.</p>","description":"12,000 m² cold storage facility in Mersin Free Zone — prefabricated steel and insulation. Vista İnşaat industrial project."}',
+  'Mersin Free Zone Cold Storage — Vista İnşaat Industrial Project',
+  'Mersin Free Zone Cold Storage Facility — Vista İnşaat',
+  '12,000 m² cold storage facility in Mersin Free Zone. Prefabricated steel and insulation. Vista İnşaat industrial reference.',
   NOW(3), NOW(3)
 ),
 
--- 15. TOFAS — Bursa
+-- 15. Bodrum Villa Project — Muğla, Bodrum
 (
   '55555001-0015-4555-8555-555500000015',
   '33333001-0015-4333-8333-333300000015',
   'en',
-  'TOFAS Bursa Automotive Plant — FRP-Canopy Open-Type Cooling Tower',
-  'tofas-bursa-automotive-plant-frp-canopy-open-type-cooling-tower',
-  'An FRP-canopy open-type cooling tower system was commissioned for TOFAS\'s automotive manufacturing plant in Bursa, one of Turkey\'s major vehicle production hubs.',
-  '{"html":"<p>An <strong>FRP-canopy open-type cooling tower</strong> system was supplied for <strong>TOFAS</strong>\'s (Türk Otomobil Fabrikası A.Ş.) large-scale automotive manufacturing plant in <strong>Bursa</strong>.</p><h3>Project Details</h3><ul><li>Client: TOFAS (Türk Otomobil Fabrikası A.Ş.)</li><li>Location: Bursa, Turkey</li><li>Sector: Automotive / Vehicle Manufacturing</li><li>Application: Paint lines, mould cooling, and process equipment cooling</li></ul><h3>Cooling in Automotive Manufacturing</h3><p>Automotive plants—including paint lines, welding stations, and mould-cooling systems—require high-volume cooling capacity. ENSOTEK\'s FRP-canopy open-type cooling towers provide high flow capacity, long service life, and low maintenance costs to meet these requirements.</p>","description":"FRP-canopy open-type cooling tower for TOFAS Bursa automotive manufacturing plant."}',
-  'TOFAS Bursa Automotive Plant — FRP Canopy Open-Type Cooling Tower',
-  'TOFAS Bursa Automotive Plant Cooling Tower — ENSOTEK',
-  'FRP-canopy open-type cooling tower system supplied by ENSOTEK for TOFAS automotive manufacturing plant in Bursa, Turkey.',
+  'Bodrum Villa Project — 8 Sea-View Villas',
+  'bodrum-villa-project-sea-view',
+  'A project of 8 sea-view villas was completed in Bodrum, Muğla.',
+  '{"html":"<p>Overlooking one of Bodrum''s most beautiful bays in Muğla, <strong>8 sea-view villas</strong> were constructed by Vista İnşaat.</p><h3>Project Specifications</h3><ul><li>Location: Muğla, Bodrum</li><li>Type: Villa</li><li>Villas: 8</li><li>Duration: March 2023 – October 2024</li></ul><h3>Aegean Lifestyle</h3><p>Each villa features a private swimming pool, landscaped garden, and sea-view terrace. Natural stone cladding and a white-and-blue colour palette in keeping with Bodrum''s architectural character define the design.</p>","description":"8 sea-view villas in Bodrum — private pools and landscaping. Vista İnşaat residential project."}',
+  'Bodrum Villa Project Sea View — Vista İnşaat Residential',
+  'Bodrum Villa Project 8 Villas — Vista İnşaat',
+  '8 sea-view villas in Bodrum, Muğla. Private pools, landscaping and stone cladding. Vista İnşaat residential reference.',
   NOW(3), NOW(3)
 );
 

@@ -12,7 +12,7 @@ export interface ContactPayload {
 
 export const contactService = {
   send: async (payload: ContactPayload) => {
-    const res = await api.post('/contacts', { ...payload, source: 'kompozit' });
+    const res = await api.post('/contacts', { ...payload, source: 'vistainsaat' });
     return res.data;
   },
 };

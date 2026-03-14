@@ -2,25 +2,24 @@ import 'server-only';
 
 import { getTranslations } from 'next-intl/server';
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { API_BASE_URL, absoluteAssetUrl } from '@/lib/utils';
 import { JsonLd, buildPageMetadata, jsonld, localizedPath, localizedUrl } from '@/seo';
-import { SectionHeader } from '@/components/patterns/SectionHeader';
 import { getFallbackProjects } from '@/lib/content-fallbacks';
 import { buildMediaAlt } from '@/lib/media-seo';
 import { SeoIssueBeacon } from '@/components/monitoring/SeoIssueBeacon';
-import { OptimizedImage } from '@/components/ui/OptimizedImage';
+import { ProjectsView } from '@/components/projects/ProjectsView';
+import { Breadcrumbs } from '@/components/seo/Breadcrumbs';
+import type { ProjectViewItem } from '@/components/projects/ProjectsView';
 
 const PROJECT_PLACEHOLDER = '/media/gallery-placeholder.svg';
 
-async function fetchProjects(locale: string, categorySlug?: string) {
+async function fetchProjects(locale: string) {
   const params = new URLSearchParams({
     module_key: 'vistainsaat',
     is_active: '1',
     locale,
     limit: '50',
   });
-  if (categorySlug) params.set('category_slug', categorySlug);
   try {
     const res = await fetch(`${API_BASE_URL}/projects?${params}`, {
       next: { revalidate: 300 },
@@ -33,29 +32,12 @@ async function fetchProjects(locale: string, categorySlug?: string) {
   }
 }
 
-async function fetchCategories(locale: string) {
-  try {
-    const res = await fetch(
-      `${API_BASE_URL}/categories?module_key=vistainsaat&is_active=1&locale=${locale}`,
-      { next: { revalidate: 300 } },
-    );
-    if (!res.ok) return [];
-    const data = await res.json();
-    return Array.isArray(data) ? data : (data as any)?.items ?? [];
-  } catch {
-    return [];
-  }
-}
-
 export async function generateMetadata({
   params,
-  searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ category?: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const { category } = await searchParams;
   const t = await getTranslations({ locale, namespace: 'projects' });
   return buildPageMetadata({
     locale,
@@ -64,37 +46,61 @@ export async function generateMetadata({
       ? `${t('title')} - Construction Portfolio`
       : `${t('title')} - İnşaat Portföyü`,
     description: t('description'),
-    noIndex: Boolean(category),
   });
+}
+
+function toViewItem(p: any, locale: string): ProjectViewItem {
+  const specs = p.specifications as Record<string, string> | undefined;
+  const isEn = locale.startsWith('en');
+  return {
+    id: p.id,
+    title: p.title,
+    href: p.slug
+      ? localizedPath(locale, `/projeler/${p.slug}`)
+      : `${localizedPath(locale, '/teklif')}?proje=${encodeURIComponent(p.title)}`,
+    imageSrc: absoluteAssetUrl(p.image_url) || PROJECT_PLACEHOLDER,
+    alt: buildMediaAlt({
+      locale,
+      kind: 'project',
+      title: p.title,
+      alt: p.alt,
+      caption: p.caption,
+      description: p.description,
+    }),
+    category: p.category_name || p.type || (isEn ? specs?.type : specs?.tip) || undefined,
+    location: (isEn ? specs?.location : specs?.lokasyon) || specs?.lokasyon || specs?.location || undefined,
+    architects: (isEn ? specs?.architects : specs?.mimarlar) || specs?.mimarlar || specs?.architects || undefined,
+    year: specs?.yil || specs?.year || undefined,
+    area: specs?.alan || specs?.area || undefined,
+    status: (isEn ? specs?.status : specs?.durum) || specs?.durum || specs?.status || undefined,
+    materials: (isEn ? specs?.materials : specs?.malzeme) || specs?.malzeme || specs?.materials || undefined,
+    floors: (isEn ? specs?.floors : specs?.kat) || specs?.kat || specs?.floors || undefined,
+    client: (isEn ? specs?.client : specs?.isveren) || specs?.isveren || specs?.client || undefined,
+  };
 }
 
 export default async function ProjectsPage({
   params,
-  searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ category?: string }>;
 }) {
   const { locale } = await params;
-  const { category } = await searchParams;
   const t = await getTranslations({ locale });
+  const isEn = locale.startsWith('en');
 
-  const [projects, categories] = await Promise.all([
-    fetchProjects(locale, category),
-    fetchCategories(locale),
-  ]);
+  const projects = await fetchProjects(locale);
   const fallbackProjects = getFallbackProjects(locale);
   const visibleProjects = projects.length > 0 ? projects : fallbackProjects;
   const totalCount = visibleProjects.length;
-
-  // Split: first project = featured (large left), next 2 = right column, rest = 3-col grid
-  const [featured, ...rest] = visibleProjects;
-  const sideProjects = rest.slice(0, 2);
-  const gridProjects = rest.slice(2);
+  const viewItems = visibleProjects.map((p: any) => toViewItem(p, locale));
 
   return (
     <div style={{ background: 'var(--color-bg)' }}>
-      <div className="mx-auto max-w-7xl px-4 py-8 lg:px-8 lg:py-12">
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '24px 16px 48px' }}>
+        <Breadcrumbs items={[
+          { label: 'Vista İnşaat', href: localizedPath(locale, '/') },
+          { label: isEn ? 'Projects' : 'Projeler' },
+        ]} />
         <JsonLd
           data={jsonld.graph([
             jsonld.collectionPage({
@@ -104,43 +110,40 @@ export default async function ProjectsPage({
               mainEntity: jsonld.itemList(
                 visibleProjects.slice(0, 12).map((item: any) => ({
                   name: item.title,
-                  url: item.slug ? localizedUrl(locale, `/projeler/${item.slug}`) : localizedUrl(locale, '/teklif'),
+                  url: item.slug
+                    ? localizedUrl(locale, `/projeler/${item.slug}`)
+                    : localizedUrl(locale, '/teklif'),
                 })),
               ),
             }),
           ])}
         />
 
-        {/* Header: Title | count */}
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, flexWrap: 'wrap' }}>
+        {/* ── Title + count ── */}
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap' }}>
           <h1
             style={{
               fontFamily: 'var(--font-heading)',
               fontSize: 28,
-              fontWeight: 700,
+              fontWeight: 800,
               color: 'var(--color-text-primary)',
               lineHeight: 1.2,
+              margin: 0,
             }}
           >
             {t('projects.title')}
           </h1>
-          <span
-            style={{
-              fontSize: 16,
-              color: 'var(--color-text-muted)',
-              fontWeight: 400,
-            }}
-          >
-            | {totalCount} {locale === 'en' ? 'results' : 'proje'}
+          <span style={{ fontSize: 15, color: 'var(--color-text-muted)', fontWeight: 400 }}>
+            | {totalCount} {isEn ? 'results' : 'sonuç'}
           </span>
         </div>
 
-        {/* Description */}
+        {/* ── Description ── */}
         <p
           style={{
             fontSize: 14,
             color: 'var(--color-text-secondary)',
-            marginTop: 8,
+            marginTop: 6,
             maxWidth: 720,
             lineHeight: 1.6,
           }}
@@ -148,216 +151,53 @@ export default async function ProjectsPage({
           {t('projects.description')}
         </p>
 
-        {/* Filter chips */}
-        <div
-          style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: 8,
-            marginTop: 24,
-            paddingBottom: 24,
-            borderBottom: '1px solid var(--color-border)',
-          }}
-        >
-          <FilterChip
-            href={localizedPath(locale, '/projeler')}
-            active={!category}
-            label={t('projects.allCategories')}
-          />
-          {categories.map((c: any) => (
-            <FilterChip
-              key={c.id}
-              href={`${localizedPath(locale, '/projeler')}?category=${encodeURIComponent(c.slug)}`}
-              active={category === c.slug}
-              label={c.name}
-            />
-          ))}
-          {/* Static filter chips when no API categories */}
-          {categories.length === 0 && (
-            <>
-              <FilterChip href="#" active={false} label={t('projects.filters.type')} />
-              <FilterChip href="#" active={false} label={t('projects.filters.city')} />
-              <FilterChip href="#" active={false} label={t('projects.filters.year')} />
-              <FilterChip href="#" active={false} label={t('projects.detail.area')} />
-              <FilterChip href="#" active={false} label={t('projects.filters.status')} />
-            </>
-          )}
-        </div>
-
-        {/* Empty state */}
+        {/* ── Empty state (fallback notice) ── */}
         {projects.length === 0 && (
           <>
             <SeoIssueBeacon
               type="soft-404"
               pathname={localizedPath(locale, '/projeler')}
-              reason={category ? 'category-filter-empty' : 'projects-list-empty'}
+              reason="projects-list-empty"
             />
-            <p className="mt-6 text-center text-sm text-[var(--color-text-muted)]">
-              {locale === 'en'
+            <p
+              style={{
+                marginTop: 12,
+                fontSize: 13,
+                color: 'var(--color-text-muted)',
+              }}
+            >
+              {isEn
                 ? 'Sample project titles are shown below until the live project feed becomes available.'
                 : 'Canlı proje akışı gelene kadar aşağıda örnek proje başlıkları gösterilmektedir.'}
             </p>
           </>
         )}
 
-        {/* Featured layout: big left + 2 right */}
-        {featured && (
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr',
-              gap: 20,
-              marginTop: 24,
+        {/* ── Tabs + Filters + View toggle + Content ── */}
+        <div style={{ marginTop: 16 }}>
+          <ProjectsView
+            projects={viewItems}
+            locale={locale}
+            labels={{
+              projects: isEn ? 'Projects' : 'Projeler',
+              images: isEn ? 'Images' : 'Görseller',
             }}
-            className="lg:!grid-cols-[1.6fr_1fr]"
-          >
-            <style>{`@media(min-width:1024px){.lg\\!grid-cols-\\[1\\.6fr_1fr\\]{grid-template-columns:1.6fr 1fr !important}}`}</style>
-
-            {/* Featured large card */}
-            <ProjectCard
-              project={featured}
-              locale={locale}
-              aspect="aspect-[4/5]"
-              titleSize={18}
-              sizes="(max-width: 1024px) 100vw, 60vw"
-            />
-
-            {/* Right column: 2 stacked cards */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-              {sideProjects.map((p: any) => (
-                <ProjectCard
-                  key={p.id ?? p.title}
-                  project={p}
-                  locale={locale}
-                  aspect="aspect-[16/10]"
-                  titleSize={16}
-                  sizes="(max-width: 1024px) 100vw, 40vw"
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Rest: 3-column grid */}
-        {gridProjects.length > 0 && (
-          <div
-            style={{
-              display: 'grid',
-              gap: 20,
-              marginTop: 20,
+            filterLabels={{
+              category: t('projects.filters.type'),
+              location: t('projects.filters.location'),
+              architects: t('projects.filters.architects'),
+              year: t('projects.filters.year'),
+              materials: t('projects.filters.materials'),
+              area: t('projects.filters.area'),
+              floors: t('projects.filters.floors'),
+              client: t('projects.filters.client'),
+              status: t('projects.filters.status'),
+              all: t('projects.filters.all'),
+              search: t('projects.filters.search'),
             }}
-            className="sm:grid-cols-2 lg:grid-cols-3"
-          >
-            {gridProjects.map((p: any) => (
-              <ProjectCard
-                key={p.id ?? p.title}
-                project={p}
-                locale={locale}
-                aspect="aspect-[4/3]"
-                titleSize={15}
-                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-              />
-            ))}
-          </div>
-        )}
+          />
+        </div>
       </div>
     </div>
-  );
-}
-
-/* ─── Filter chip ─── */
-function FilterChip({ href, active, label }: { href: string; active: boolean; label: string }) {
-  return (
-    <Link
-      href={href}
-      style={{
-        padding: '6px 16px',
-        borderRadius: 999,
-        border: '1px solid',
-        borderColor: active ? 'var(--color-text-primary)' : 'var(--color-border)',
-        background: active ? 'var(--color-text-primary)' : 'var(--color-bg)',
-        color: active ? 'var(--color-bg)' : 'var(--color-text-primary)',
-        fontSize: 13,
-        fontWeight: 500,
-        whiteSpace: 'nowrap',
-        transition: 'all 0.15s',
-        textDecoration: 'none',
-      }}
-    >
-      {label}
-    </Link>
-  );
-}
-
-/* ─── Project card (ArchDaily style) ─── */
-function ProjectCard({
-  project,
-  locale,
-  aspect,
-  titleSize,
-  sizes,
-}: {
-  project: any;
-  locale: string;
-  aspect: string;
-  titleSize: number;
-  sizes: string;
-}) {
-  const imageSrc = absoluteAssetUrl(project.image_url) || PROJECT_PLACEHOLDER;
-  const href = project.slug
-    ? localizedPath(locale, `/projeler/${project.slug}`)
-    : `${localizedPath(locale, '/teklif')}?proje=${encodeURIComponent(project.title)}`;
-  const categoryLabel = project.category_name || project.type || null;
-
-  return (
-    <Link href={href} style={{ textDecoration: 'none', display: 'block' }}>
-      {/* Image */}
-      <div
-        className={`relative overflow-hidden ${aspect}`}
-        style={{ background: 'var(--color-bg-muted)', borderRadius: 0 }}
-      >
-        <OptimizedImage
-          src={imageSrc}
-          alt={buildMediaAlt({
-            locale,
-            kind: 'project',
-            title: project.title,
-            alt: project.alt,
-            caption: project.caption,
-            description: project.description,
-          })}
-          fill
-          className="object-cover transition-transform duration-300 hover:scale-105"
-          sizes={sizes}
-        />
-      </div>
-      {/* Meta */}
-      <div style={{ paddingTop: 10 }}>
-        {categoryLabel && (
-          <span
-            style={{
-              fontSize: 11,
-              fontWeight: 600,
-              color: 'var(--color-text-muted)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.06em',
-            }}
-          >
-            {categoryLabel}
-          </span>
-        )}
-        <h3
-          style={{
-            fontSize: titleSize,
-            fontWeight: 600,
-            color: 'var(--color-text-primary)',
-            lineHeight: 1.35,
-            marginTop: categoryLabel ? 2 : 0,
-          }}
-        >
-          {project.title}
-        </h3>
-      </div>
-    </Link>
   );
 }

@@ -86,6 +86,10 @@
       "title": "Öne Çıkan Projeler",
       "subtitle": "Konut, ticari ve karma kullanım alanlarında tamamlanan ve devam eden projelerimizden seçkiler"
     },
+    "latestProjects": {
+      "title": "Son Eklenen Projeler",
+      "subtitle": "En güncel projelerimizi keşfedin"
+    },
     "services": {
       "title": "Hizmetlerimiz",
       "subtitle": "Mimari tasarımdan inşaata, proje yönetiminden teslimata kapsamlı çözümler"
@@ -146,10 +150,17 @@
     "requestOffer": "Bu Proje Hakkında Bilgi Alın",
     "filters": {
       "type": "Proje Tipi",
+      "location": "Lokasyon",
+      "architects": "Mimarlar",
       "city": "Şehir",
       "year": "Yıl",
+      "materials": "Malzeme",
+      "area": "Alan",
+      "floors": "Kat Sayısı",
+      "client": "İşveren",
       "status": "Durum",
       "all": "Tümü",
+      "search": "Ara",
       "residential": "Konut",
       "commercial": "Ticari",
       "mixed": "Karma Kullanım",

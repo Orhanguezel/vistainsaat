@@ -380,16 +380,16 @@ const BusinessHoursStructuredRenderer: React.FC<StructuredRenderProps> = ({
 
 /* ----------------------------- component ----------------------------- */
 
-const KOMPOZIT_BRAND = 'vistainsaat';
-const KOMPOZIT_PREFIX = 'vistainsaat__';
+const VISTA_BRAND = 'vistainsaat';
+const VISTA_PREFIX = 'vistainsaat__';
 
 export default function SiteSettingsDetailClient({ id }: { id: string }) {
   const router = useRouter();
   const sp = useSearchParams();
   const adminLocale = usePreferencesStore((s) => s.adminLocale);
   const t = useAdminTranslations(adminLocale || undefined);
-  const brand = KOMPOZIT_BRAND;
-  const settingPrefix = KOMPOZIT_PREFIX;
+  const brand = VISTA_BRAND;
+  const settingPrefix = VISTA_PREFIX;
   const stripPrefix = React.useCallback(
     (key: string) => (settingPrefix && key.startsWith(settingPrefix) ? key.slice(settingPrefix.length) : key),
     [settingPrefix],

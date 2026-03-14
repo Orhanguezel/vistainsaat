@@ -6,7 +6,7 @@ import { spawn } from 'node:child_process';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 const BUILD_ID_FILE = path.join(ROOT, '.next', 'BUILD_ID');
-const STANDALONE_DIR = path.join(ROOT, '.next', 'standalone', 'karbonkompozit');
+const STANDALONE_DIR = path.join(ROOT, '.next', 'standalone', 'vistainsaat');
 const STANDALONE_SERVER = path.join(STANDALONE_DIR, 'server.js');
 const PREPARE_SCRIPT = path.join(ROOT, 'scripts', 'prepare-standalone.mjs');
 const PORT = 3121;
@@ -15,19 +15,19 @@ const BASE_URL = `http://127.0.0.1:${PORT}`;
 const routeChecks = [
   {
     pathname: '/tr',
-    patterns: ['data-theme-template="moe-carbon-industrial"', 'data-theme-mode="light"', '<link rel="canonical"'],
+    patterns: ['data-theme-template="vista-construction"', 'data-theme-mode="light"', '<link rel="canonical"'],
   },
   {
-    pathname: '/tr/products',
-    patterns: ['data-theme-template="moe-carbon-industrial"', 'MOE Kompozit'],
+    pathname: '/tr/projeler',
+    patterns: ['data-theme-template="vista-construction"', 'Vista İnşaat'],
   },
   {
-    pathname: '/tr/blog',
-    patterns: ['data-theme-template="moe-carbon-industrial"', '<html lang="tr"'],
+    pathname: '/tr/haberler',
+    patterns: ['data-theme-template="vista-construction"', '<html lang="tr"'],
   },
   {
-    pathname: '/tr/contact',
-    patterns: ['data-theme-template="moe-carbon-industrial"', '<html lang="tr"'],
+    pathname: '/tr/iletisim',
+    patterns: ['data-theme-template="vista-construction"', '<html lang="tr"'],
   },
   {
     pathname: '/robots.txt',
@@ -35,7 +35,7 @@ const routeChecks = [
   },
   {
     pathname: '/sitemap.xml',
-    patterns: ['<urlset', '/tr/products', '/tr/blog'],
+    patterns: ['<urlset', '/tr/projeler', '/tr/haberler'],
   },
 ];
 

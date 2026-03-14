@@ -22,7 +22,7 @@ export function ContactFormClient({ locale }: { locale: string }) {
         company: fd.get('company'),
         subject: fd.get('subject'),
         message: fd.get('message'),
-        source: 'kompozit',
+        source: 'vistainsaat',
         locale,
       });
       toast.success(t('success'));

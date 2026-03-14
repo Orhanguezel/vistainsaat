@@ -1,6 +1,6 @@
 -- =============================================================
 -- 232_projects_i18n_tr.sql
--- Ensotek proje i18n kayıtları — TÜRKÇE (tr)
+-- Vista İnşaat proje i18n kayıtları — TÜRKÇE (tr)
 -- =============================================================
 
 SET NAMES utf8mb4;
@@ -16,228 +16,228 @@ INSERT INTO `projects_i18n`
 )
 VALUES
 
--- 1. İstanbul Plaza — CTP Kaportalı, 2 adet, 2 fanlı, 130m
+-- 1. Boğaz Manzaralı Rezidans — İstanbul, Beşiktaş
 (
   '44444001-0001-4444-8444-444400000001',
   '33333001-0001-4333-8333-333300000001',
   'tr',
-  'İstanbul Plaza Çatısı — 2 Adet CTP Kaportalı Açık Tip Su Soğutma Kulesi',
-  'istanbul-plaza-catisi-ctp-kapotali-acik-tip-su-sogutma-kulesi',
-  'İstanbul\'da 130 metre yüksekliğindeki bir plaza binasının çatısına 2 adet, 2 fanlı CTP Kaportalı Açık Tip su soğutma kulesi başarıyla monte edildi.',
-  '{"html":"<p>ENSOTEK İstanbul Fabrikasında üretilen <strong>CTP Kaportalı; 2 adet, 2 fanlı Açık Tip Su Soğutma Kuleleri</strong>, İstanbul\'da 130 metre yüksekliğe sahip bir plaza binasının çatısına başarıyla monte edilmiştir.</p><p>Projenin gerçekleştirildiği bina, şehir merkezinde yüksek katlı bir ticari yapıdır. Soğutma kuleleri, binanın iklimlendirme ve proses soğutma ihtiyacını karşılamak üzere özel olarak projelendirilmiş ve imal edilmiştir.</p><h3>Proje Özellikleri</h3><ul><li>Ürün tipi: CTP Kaportalı Açık Tip Su Soğutma Kulesi</li><li>Adet: 2 ünite</li><li>Fan sayısı: Ünite başına 2 fan</li><li>Kurulum yüksekliği: 130 metre (çatı montajı)</li><li>Üretim tesisi: ENSOTEK İstanbul Fabrikası</li></ul><p>FRP (Cam Elyaf Takviyeli Polyester) gövde yapısı sayesinde kuleler, çevre koşullarına karşı üstün dayanıklılık göstermekte ve uzun yıllar sorunsuz hizmet vermektedir.</p>","description":"İstanbul plaça çatısına 2 adet 2 fanlı CTP Kaportalı açık tip su soğutma kulesi montajı."}',
-  'İstanbul Plaza Çatısı — CTP Kaportalı Açık Tip Su Soğutma Kulesi Montajı',
-  'İstanbul Plaza Çatısı CTP Su Soğutma Kulesi — ENSOTEK',
-  'İstanbul\'da 130 metre yüksekliğindeki plaza çatısına 2 adet 2 fanlı CTP Kaportalı Açık Tip su soğutma kulesi montajı. ENSOTEK Türkiye.',
+  'Boğaz Manzaralı Rezidans — 18 Bağımsız Bölüm, 6 Kat',
+  'bogaz-manzarali-rezidans-besiktas',
+  'İstanbul Beşiktaş''ta Boğaz manzarasına hakim, 18 bağımsız bölümlü, 6 katlı lüks rezidans projesi başarıyla tamamlandı.',
+  '{"html":"<p>İstanbul''un en prestijli semtlerinden Beşiktaş''ta, eşsiz Boğaz manzarasına sahip <strong>18 bağımsız bölümlü, 6 katlı lüks rezidans</strong> projesi Vista İnşaat tarafından hayata geçirilmiştir.</p><h3>Proje Özellikleri</h3><ul><li>Konum: İstanbul, Beşiktaş — Boğaz cephesi</li><li>Tip: Lüks Rezidans</li><li>Bağımsız bölüm: 18 adet</li><li>Kat sayısı: 6</li><li>Tamamlanma: Mart 2024</li></ul><h3>Tasarım ve İnşaat</h3><p>Projede betonarme taşıyıcı sistem, enerji verimli cam cephe, akıllı ev sistemleri ve özel peyzaj düzenlemesi uygulanmıştır. Her dairede Boğaz manzarasını en üst düzeyde yaşatan geniş balkon ve teras alanları bulunmaktadır.</p>","description":"Beşiktaş''ta Boğaz manzaralı 18 daireli 6 katlı lüks rezidans — Vista İnşaat konut projesi."}',
+  'Boğaz Manzaralı Rezidans — Vista İnşaat Beşiktaş Lüks Konut Projesi',
+  'Boğaz Manzaralı Rezidans Beşiktaş — Vista İnşaat',
+  'İstanbul Beşiktaş''ta Boğaz manzaralı 18 bağımsız bölümlü 6 katlı lüks rezidans projesi. Vista İnşaat konut referansı.',
   NOW(3), NOW(3)
 ),
 
--- 2. Kahramanmaraş — CTP Kaportalı Açık Tip
+-- 2. Levent Ofis Kulesi — İstanbul, Levent
 (
   '44444001-0002-4444-8444-444400000002',
   '33333001-0002-4333-8333-333300000002',
   'tr',
-  'Kahramanmaraş Sanayi Tesisi — CTP Kaportalı Açık Tip Su Soğutma Kulesi',
-  'kahramanmaras-sanayi-tesisi-ctp-kapotali-acik-tip-su-sogutma-kulesi',
-  'ENSOTEK Ankara Fabrikasında üretilen CTP Kaportalı Açık Tip su soğutma kuleleri Kahramanmaraş\'ta faaliyet gösteren sanayi tesisine başarıyla teslim edildi.',
-  '{"html":"<p>ENSOTEK <strong>Ankara Fabrikasında üretilen CTP Kaportalı Açık Tip Su Soğutma Kuleleri</strong>, Kahramanmaraş\'ta faaliyet gösteren bir sanayi tesisi için başarıyla imal edilmiş ve devreye alınmıştır.</p><p>Ankara\'daki üretim tesisimiz, Türkiye\'nin en büyük su soğutma kulesi üretim kapasitesine sahip olup; CTP imalatı, serpantin üretimi ve montaj süreçlerinin tamamı kendi bünyemizde gerçekleştirilmektedir.</p><h3>Proje Özellikleri</h3><ul><li>Ürün tipi: CTP Kaportalı Açık Tip Su Soğutma Kulesi</li><li>Üretim tesisi: ENSOTEK Ankara Fabrikası</li><li>Lokasyon: Kahramanmaraş</li><li>Uygulama: Endüstriyel proses soğutma</li></ul><p>ENSOTEK olarak her projede, müşterilerimizin ihtiyaçlarına özel çözümler sunmakta; tasarımdan üretime, montajdan işletmeye kadar tüm süreçlerde yanlarında olmaktayız.</p>","description":"Kahramanmaraş sanayi tesisi için Ankara Fabrika yapımı CTP Kaportalı Açık Tip su soğutma kulesi projesi."}',
-  'Kahramanmaraş — CTP Kaportalı Açık Tip Su Soğutma Kulesi',
-  'Kahramanmaraş Sanayi Tesisi Su Soğutma Kulesi — ENSOTEK',
-  'ENSOTEK Ankara Fabrikası yapımı CTP Kaportalı Açık Tip su soğutma kuleleri Kahramanmaraş sanayi tesisine teslim edildi.',
+  'Levent Ofis Kulesi — 12 Katlı Yeşil Sertifikalı A Sınıfı Ofis',
+  'levent-ofis-kulesi-yesil-sertifikali',
+  'İstanbul Levent''te 12 katlı, LEED sertifikalı, çelik konstrüksiyon ve cam cephe sistemli A sınıfı ofis kulesi tamamlandı.',
+  '{"html":"<p>İstanbul''un finans merkezi Levent''te, <strong>12 katlı LEED sertifikalı A sınıfı ofis kulesi</strong> Vista İnşaat tarafından inşa edilmiştir.</p><h3>Proje Özellikleri</h3><ul><li>Konum: İstanbul, Levent</li><li>Tip: A Sınıfı Ofis Kulesi</li><li>Kat sayısı: 12</li><li>Yapı sistemi: Çelik konstrüksiyon + cam cephe</li><li>Sertifika: LEED Yeşil Bina</li></ul><h3>Sürdürülebilir Tasarım</h3><p>Bina, enerji verimliliği odaklı tasarlanmış olup; yüksek performanslı cam cephe sistemi, yağmur suyu geri kazanımı ve akıllı bina yönetim sistemi ile LEED yeşil bina sertifikası almıştır.</p>","description":"Levent''te 12 katlı LEED sertifikalı çelik konstrüksiyon A sınıfı ofis kulesi — Vista İnşaat ticari proje."}',
+  'Levent Ofis Kulesi — Vista İnşaat LEED Sertifikalı Ticari Proje',
+  'Levent Ofis Kulesi Yeşil Sertifikalı — Vista İnşaat',
+  'İstanbul Levent''te 12 katlı LEED sertifikalı A sınıfı ofis kulesi. Çelik konstrüksiyon ve cam cephe. Vista İnşaat ticari referans.',
   NOW(3), NOW(3)
 ),
 
--- 3. Arçelik — 2× CTP 6C
+-- 3. Kadıköy Karma Yapı Kompleksi — İstanbul, Kadıköy
 (
   '44444001-0003-4444-8444-444400000003',
   '33333001-0003-4333-8333-333300000003',
   'tr',
-  'Arçelik — 2 Adet CTP 6C Açık Tip Su Soğutma Kulesi',
-  'arcelik-ctp-6c-acik-tip-su-sogutma-kulesi',
-  'Türkiye\'nin önde gelen elektronik ve dayanıklı tüketim malları üreticisi Arçelik\'in üretim tesisine 2 adet CTP 6C model açık tip su soğutma kulesi temin edildi.',
-  '{"html":"<p>Türkiye\'nin köklü sanayi kuruluşlarından <strong>Arçelik A.Ş.</strong> bünyesindeki üretim tesisi için <strong>2 adet CTP 6C model Açık Tip Su Soğutma Kulesi</strong> tasarlanmış, üretilmiş ve devreye alınmıştır.</p><h3>Uygulama Detayları</h3><ul><li>Model: CTP 6C (Açık Devre)</li><li>Adet: 2 ünite</li><li>Lokasyon: Gebze, Kocaeli</li><li>Sektör: Dayanıklı Tüketim / Elektronik Üretim</li></ul><h3>CTP 6C Özellikleri</h3><p>CTP 6C, orta-büyük kapasiteli açık devre su soğutma kulesidir. FRP gövde yapısı; korozyona, UV radyasyona ve kimyasal etkilere karşı yüksek direnç göstermektedir.</p>","description":"Arçelik üretim tesisi için 2 adet CTP 6C model açık tip su soğutma kulesi projesi — Gebze, Kocaeli."}',
-  'Arçelik Tesisi — 2 Adet CTP 6C Su Soğutma Kulesi',
-  'Arçelik CTP 6C Su Soğutma Kulesi Projesi — ENSOTEK',
-  'Arçelik üretim tesisi için ENSOTEK tarafından 2 adet CTP 6C model açık tip su soğutma kulesi temin edildi. Gebze, Kocaeli.',
+  'Kadıköy Karma Yapı Kompleksi — 64 Konut + 3 Kat Ticari Alan',
+  'kadikoy-karma-yapi-kompleksi',
+  'İstanbul Kadıköy''de 64 konut birimi ve 3 kat ticari alandan oluşan karma kullanımlı yapı kompleksi inşaatı devam etmektedir.',
+  '{"html":"<p>İstanbul Kadıköy''ün merkezinde, <strong>64 konut birimi ve 3 kat ticari alan</strong> içeren karma kullanımlı yapı kompleksi Vista İnşaat tarafından inşa edilmektedir.</p><h3>Proje Özellikleri</h3><ul><li>Konum: İstanbul, Kadıköy</li><li>Tip: Karma Kullanım (Konut + Ticari)</li><li>Konut: 64 bağımsız bölüm</li><li>Ticari: 3 kat mağaza ve ofis alanı</li><li>Otopark: 2 kat yeraltı otoparkı</li></ul><h3>Şehircilik ve Yaşam</h3><p>Proje, Kadıköy''ün canlı şehir dokusuna uyum sağlayan modern mimari çizgileri ile tasarlanmıştır. Zemin ve üst katlarda ticari alanlar, üst katlarda farklı tiplerde konut birimleri yer almaktadır.</p>","description":"Kadıköy''de 64 konut + 3 kat ticari alan karma kullanım yapı kompleksi — Vista İnşaat devam eden proje."}',
+  'Kadıköy Karma Yapı Kompleksi — Vista İnşaat Konut ve Ticari Proje',
+  'Kadıköy Karma Yapı Kompleksi — Vista İnşaat',
+  'İstanbul Kadıköy''de 64 konut ve 3 kat ticari alanlı karma yapı kompleksi. Vista İnşaat karma kullanım referansı.',
   NOW(3), NOW(3)
 ),
 
--- 4. Eczacıbaşı — 3× DCTP 5C
+-- 4. Tarihi Han Restorasyon — İstanbul, Eminönü
 (
   '44444001-0004-4444-8444-444400000004',
   '33333001-0004-4333-8333-333300000004',
   'tr',
-  'Eczacıbaşı — 3 Adet DCTP 5C Kapalı Devre Su Soğutma Kulesi',
-  'eczacibasi-dctp-5c-kapali-devre-su-sogutma-kulesi',
-  'Türkiye\'nin köklü ilaç ve kimya grubu Eczacıbaşı\'nın tesisine 3 adet DCTP 5C model kapalı devre su soğutma kulesi kuruldu.',
-  '{"html":"<p><strong>Eczacıbaşı</strong> bünyesindeki üretim tesisi için <strong>3 adet DCTP 5C model Kapalı Devre Su Soğutma Kulesi</strong> sistemi devreye alınmıştır.</p><h3>Proje Detayları</h3><ul><li>Model: DCTP 5C (Kapalı Devre)</li><li>Adet: 3 ünite</li><li>Lokasyon: İstanbul</li><li>Sektör: İlaç / Kimya</li></ul><h3>Kapalı Devre Soğutmanın Avantajları</h3><p>İlaç ve kimya sektöründe süreç sıvısının dış ortamdan izole edilmesi kritik önem taşır. DCTP 5C modelinde kullanılan serpantinli ısı değiştirici sistemi, proses sıvısının soğutma suyu ile hiçbir zaman temas etmemesini sağlar. Bu sayede ürün kalitesi ve hijyen koşulları korunur.</p>","description":"Eczacıbaşı ilaç tesisi için 3 adet DCTP 5C kapalı devre su soğutma kulesi projesi — İstanbul."}',
-  'Eczacıbaşı — 3 Adet DCTP 5C Kapalı Devre Soğutma Kulesi',
-  'Eczacıbaşı DCTP 5C Kapalı Devre Su Soğutma Kulesi — ENSOTEK',
-  'Eczacıbaşı ilaç tesisi için ENSOTEK tarafından 3 adet DCTP 5C kapalı devre su soğutma kulesi kuruldu. İstanbul.',
+  'Tarihi Han Restorasyonu — 19. Yüzyıl Osmanlı Hanı, Özgün Doku Korunumu',
+  'tarihi-han-restorasyonu-eminonu',
+  'İstanbul Eminönü''nde 19. yüzyıldan kalma tarihi Osmanlı hanının kapsamlı restorasyon çalışması başarıyla tamamlandı.',
+  '{"html":"<p>İstanbul''un tarihi yarımadasında, Eminönü''de bulunan <strong>19. yüzyıl Osmanlı hanı</strong> Vista İnşaat tarafından kapsamlı restorasyon sürecinden geçirilmiştir.</p><h3>Proje Özellikleri</h3><ul><li>Konum: İstanbul, Eminönü</li><li>Tip: Tarihi Yapı Restorasyonu</li><li>Dönem: 19. yüzyıl Osmanlı</li><li>Süre: Mart 2020 – Ağustos 2022</li></ul><h3>Restorasyon Kapsamı</h3><p>Projede özgün taş duvar dokusu korunarak güçlendirme yapılmış, ahşap çatı ve döşeme elemanları restore edilmiş, tarihi pencere ve kapı doğramaları onarılmıştır. Tüm çalışmalar Koruma Kurulu denetiminde, özgün malzeme ve geleneksel tekniklerle gerçekleştirilmiştir.</p>","description":"Eminönü''nde 19. yüzyıl Osmanlı hanı restorasyonu — taş, ahşap onarım ve güçlendirme. Vista İnşaat."}',
+  'Tarihi Han Restorasyonu Eminönü — Vista İnşaat Koruma Projesi',
+  'Tarihi Han Restorasyonu Eminönü — Vista İnşaat',
+  'İstanbul Eminönü''nde 19. yüzyıl Osmanlı hanının kapsamlı restorasyonu. Taş duvar, ahşap onarım, güçlendirme. Vista İnşaat restorasyon referansı.',
   NOW(3), NOW(3)
 ),
 
--- 5. Linde Gaz — TCTP 26B + DCTP 12C — Gebze
+-- 5. Gebze Lojistik Merkezi — Kocaeli, Gebze
 (
   '44444001-0005-4444-8444-444400000005',
   '33333001-0005-4333-8333-333300000005',
   'tr',
-  'Linde Gaz — TCTP 26B ve DCTP 12C Kapalı Devre Su Soğutma Sistemi — Gebze',
-  'linde-gaz-tctp-26b-dctp-12c-kapali-devre-su-sogutma-kulesi-gebze',
-  'Küresel gaz endüstrisi devi Linde Gaz\'ın Gebze tesisi için 3 adet TCTP 26B ve 1 adet DCTP 12C model yüksek kapasiteli kapalı devre su soğutma sistemi kuruldu.',
-  '{"html":"<p>Küresel gaz endüstrisinin önde gelen kuruluşu <strong>Linde Gaz Türkiye</strong>\'nin Gebze\'deki proses tesisi için yüksek kapasiteli bir soğutma sistemi kurulmuştur.</p><h3>Sistem Bileşenleri</h3><ul><li>3 adet TCTP 26B — Yüksek kapasiteli ters akışlı kapalı devre soğutma kulesi</li><li>1 adet DCTP 12C — Çift hücreli kapalı devre soğutma kulesi</li><li>Toplam: 4 ünite</li><li>Lokasyon: Gebze, Kocaeli</li><li>Sektör: Endüstriyel Gaz / Kimya</li></ul><h3>TCTP 26B Modeli</h3><p>TCTP serisi, yüksek ısı atma kapasitesi gerektiren proses uygulamaları için tasarlanmış ters akışlı (counter-flow) kapalı devre soğutma kulesidir. FRP gövde yapısı ve yüksek verimli serpantin sistemi ile uzun ömürlü ve düşük bakım maliyetli çalışma imkânı sunar.</p>","description":"Linde Gaz Gebze tesisi için 3×TCTP 26B + 1×DCTP 12C yüksek kapasiteli kapalı devre soğutma sistemi."}',
-  'Linde Gaz Gebze — TCTP 26B + DCTP 12C Su Soğutma Sistemi',
-  'Linde Gaz TCTP 26B DCTP 12C Kapalı Devre Soğutma — ENSOTEK Gebze',
-  'Linde Gaz Türkiye Gebze tesisi için ENSOTEK tarafından 3 adet TCTP 26B ve 1 adet DCTP 12C kapalı devre su soğutma sistemi kuruldu.',
+  'Gebze Lojistik Merkezi — 8.000 m² Prefabrik Çelik Depo',
+  'gebze-lojistik-merkezi-prefabrik-celik-depo',
+  'Kocaeli Gebze''de 8.000 m² kapalı alana sahip prefabrik çelik yapı lojistik depo projesi tamamlandı.',
+  '{"html":"<p>Kocaeli Gebze''de, <strong>8.000 m² kapalı alana sahip prefabrik çelik yapı</strong> lojistik depo Vista İnşaat tarafından inşa edilmiştir.</p><h3>Proje Özellikleri</h3><ul><li>Konum: Kocaeli, Gebze</li><li>Tip: Lojistik Depo</li><li>Kapalı alan: 8.000 m²</li><li>Yapı sistemi: Prefabrik çelik konstrüksiyon</li><li>Tamamlanma: Haziran 2024</li></ul><h3>Endüstriyel İnşaat</h3><p>Yüksek tonajlı vinç kapasitesine uygun çelik yapı sistemi, zemin güçlendirme çalışmaları ve modern yükleme rampaları ile projelendirilmiştir. Lojistik operasyonlara uygun geniş açıklıklı, sütun-az yapı tasarımı uygulanmıştır.</p>","description":"Gebze''de 8.000 m² prefabrik çelik yapı lojistik depo — Vista İnşaat endüstriyel proje."}',
+  'Gebze Lojistik Merkezi — Vista İnşaat Endüstriyel Proje',
+  'Gebze Lojistik Merkezi Prefabrik Çelik Depo — Vista İnşaat',
+  'Kocaeli Gebze''de 8.000 m² prefabrik çelik yapı lojistik depo projesi. Vista İnşaat endüstriyel inşaat referansı.',
   NOW(3), NOW(3)
 ),
 
--- 6. HES Kablo — DCTP 12 + DCTP 12C
+-- 6. Beşiktaş Sahil Rezidans — İstanbul, Beşiktaş
 (
   '44444001-0006-4444-8444-444400000006',
   '33333001-0006-4333-8333-333300000006',
   'tr',
-  'HES Kablo — DCTP 12 ve DCTP 12C Kapalı Devre Su Soğutma Kulesi',
-  'hes-kablo-dctp-12-dctp-12c-kapali-devre-su-sogutma-kulesi',
-  'Kablo üretim sektörünün önde gelen firmalarından HES Kablo\'nun tesisi için DCTP 12 (merdiven aksesuarlı) ve DCTP 12C model kapalı devre su soğutma kuleleri devreye alındı.',
-  '{"html":"<p><strong>HES Kablo</strong>\'nun üretim tesisine, proses soğutma ihtiyacını karşılamak üzere <strong>2 adet DCTP serisi Kapalı Devre Su Soğutma Kulesi</strong> temin edilmiştir.</p><h3>Sistem Özellikleri</h3><ul><li>DCTP 12 — Tek hücreli kapalı devre soğutma kulesi (servis merdiveni aksesuarlı)</li><li>DCTP 12C — Çift hücreli kapalı devre soğutma kulesi</li><li>Sektör: Kablo Üretimi / Elektrik</li><li>Özel: Bakım ve servis erişimi için özel merdiven aksesuarı</li></ul><p>Kablo üretiminde kullanılan proses ekipmanlarının soğutulması, ürün kalitesi açısından kritik öneme sahiptir. Kapalı devre sistemimiz, soğutma suyunun dış ortamla temasını engelleyerek kirlenme riskini sıfıra indirmektedir.</p>","description":"HES Kablo üretim tesisi için DCTP 12 (merdiven aksesuarlı) ve DCTP 12C kapalı devre soğutma kulesi."}',
-  'HES Kablo — DCTP 12 + DCTP 12C Kapalı Devre Soğutma Kulesi',
-  'HES Kablo DCTP Kapalı Devre Su Soğutma Kulesi — ENSOTEK',
-  'HES Kablo üretim tesisi için ENSOTEK tarafından DCTP 12 ve DCTP 12C kapalı devre su soğutma kuleleri devreye alındı.',
+  'Beşiktaş Sahil Rezidans — 24 Daireli Modern Konut',
+  'besiktas-sahil-rezidans-modern-konut',
+  'İstanbul Beşiktaş''ta sahil şeridinde 24 daireli modern rezidans projesi inşaat aşamasındadır.',
+  '{"html":"<p>İstanbul Beşiktaş''ın sahil şeridinde, <strong>24 daireli modern rezidans</strong> projesi Vista İnşaat tarafından inşa edilmektedir.</p><h3>Proje Özellikleri</h3><ul><li>Konum: İstanbul, Beşiktaş — sahil şeridi</li><li>Tip: Modern Rezidans</li><li>Daire sayısı: 24</li><li>Başlangıç: Mart 2024</li></ul><h3>Modern Yaşam Alanı</h3><p>Sahil manzarası ve şehir erişimini bir arada sunan proje; cephe kaplama, peyzaj düzenleme ve havuz inşaatı dahil tüm yapım süreçleri ile planlanmıştır.</p>","description":"Beşiktaş sahilde 24 daireli modern rezidans — Vista İnşaat devam eden konut projesi."}',
+  'Beşiktaş Sahil Rezidans — Vista İnşaat Modern Konut Projesi',
+  'Beşiktaş Sahil Rezidans 24 Daire — Vista İnşaat',
+  'İstanbul Beşiktaş sahilde 24 daireli modern rezidans projesi. Vista İnşaat konut referansı.',
   NOW(3), NOW(3)
 ),
 
--- 7. Green Park Otel — 2× CTP 3C
+-- 7. Ankara Kamu Hizmet Binası — Ankara, Çankaya
 (
   '44444001-0007-4444-8444-444400000007',
   '33333001-0007-4333-8333-333300000007',
   'tr',
-  'Green Park Oteli — 2 Adet CTP 3C Açık Tip Su Soğutma Kulesi',
-  'green-park-otel-ctp-3c-acik-tip-su-sogutma-kulesi',
-  'Green Park Oteller bünyesindeki otel tesisinin iklimlendirme sistemine 2 adet CTP 3C model açık tip su soğutma kulesi entegre edildi.',
-  '{"html":"<p><strong>Green Park Hotels</strong> zincirindeki otel tesisi için <strong>2 adet CTP 3C model Açık Tip Su Soğutma Kulesi</strong> sistemi kurulmuştur.</p><h3>Proje Özellikleri</h3><ul><li>Model: CTP 3C (Açık Devre)</li><li>Adet: 2 ünite</li><li>Sektör: Otel / Konaklama / HVAC</li><li>Uygulama: Otel merkezi iklimlendirme soğutma sistemi</li></ul><h3>Otel Uygulamalarında CTP Serisi</h3><p>CTP serisi soğutma kuleleri; düşük gürültü seviyesi, kompakt boyutları ve estetik görünümleri ile otel ve konaklama işletmeleri için ideal çözüm sunar. Fiberglas gövde yapısı, bakım gereksinimini minimize ederek işletme maliyetlerini düşürür.</p>","description":"Green Park Oteli iklimlendirme sistemine 2 adet CTP 3C açık tip su soğutma kulesi entegrasyonu."}',
-  'Green Park Otel — 2 Adet CTP 3C Su Soğutma Kulesi',
-  'Green Park Otel CTP 3C Açık Tip Su Soğutma Kulesi — ENSOTEK',
-  'Green Park Oteli için ENSOTEK tarafından 2 adet CTP 3C açık tip su soğutma kulesi kuruldu. HVAC otel soğutma sistemi.',
+  'Ankara Kamu Hizmet Binası — 7 Katlı Bakanlık Binası',
+  'ankara-kamu-hizmet-binasi-bakanlik',
+  'Ankara Çankaya''da 7 katlı bakanlık hizmet binası projesi deprem güçlendirme dahil başarıyla tamamlandı.',
+  '{"html":"<p>Ankara''nın yönetim merkezi Çankaya''da, <strong>7 katlı bakanlık hizmet binası</strong> Vista İnşaat tarafından inşa edilmiştir.</p><h3>Proje Özellikleri</h3><ul><li>Konum: Ankara, Çankaya</li><li>Tip: Kamu Hizmet Binası</li><li>Kat sayısı: 7</li><li>Süre: Mayıs 2021 – Ekim 2023</li></ul><h3>Kamu İnşaat Uzmanlığı</h3><p>Projede betonarme taşıyıcı sistem, cam cephe, deprem güçlendirme ve komple mekanik tesisat uygulamaları gerçekleştirilmiştir. Bina, güncel deprem yönetmeliğine uygun olarak tasarlanmış ve inşa edilmiştir.</p>","description":"Ankara Çankaya''da 7 katlı bakanlık hizmet binası — deprem güçlendirme dahil. Vista İnşaat kamu projesi."}',
+  'Ankara Kamu Hizmet Binası — Vista İnşaat Kamu Projesi',
+  'Ankara Kamu Hizmet Binası Çankaya — Vista İnşaat',
+  'Ankara Çankaya''da 7 katlı bakanlık hizmet binası inşaatı. Deprem güçlendirme ve cam cephe. Vista İnşaat kamu referansı.',
   NOW(3), NOW(3)
 ),
 
--- 8. Orion AVM — TCTP 9C
+-- 8. Bursa Altyapı ve Çevre Düzenlemesi — Bursa, Nilüfer
 (
   '44444001-0008-4444-8444-444400000008',
   '33333001-0008-4333-8333-333300000008',
   'tr',
-  'Orion AVM — TCTP 9C Kapalı Devre Su Soğutma Kulesi',
-  'orion-avm-tctp-9c-kapali-devre-su-sogutma-kulesi',
-  'Alışveriş merkezi uygulaması için TCTP 9C model kapalı devre su soğutma kulesi sistemi kuruldu.',
-  '{"html":"<p><strong>Orion AVM</strong>\'nin merkezi iklimlendirme altyapısına <strong>TCTP 9C model Kapalı Devre Su Soğutma Kulesi</strong> entegre edilmiştir.</p><h3>Proje Özellikleri</h3><ul><li>Model: TCTP 9C (Ters Akışlı — Kapalı Devre)</li><li>Adet: 1 ünite</li><li>Sektör: Ticari / Alışveriş Merkezi</li><li>Uygulama: Merkezi soğutma sistemi (chiller soğutma suyu)</li></ul><p>Alışveriş merkezlerinde yıl boyu sürdürülebilir ve güvenilir soğutma kapasitesi sunmak için tasarlanan TCTP 9C, kompakt boyutları ve yüksek verimliliği ile öne çıkar.</p>","description":"Orion AVM merkezi iklimlendirme sistemi için TCTP 9C kapalı devre su soğutma kulesi."}',
-  'Orion AVM — TCTP 9C Kapalı Devre Soğutma Kulesi',
-  'Orion AVM TCTP 9C Su Soğutma Kulesi — ENSOTEK',
-  'Orion AVM için ENSOTEK tarafından TCTP 9C kapalı devre su soğutma kulesi kuruldu.',
+  'Bursa OSB Altyapı Yenileme — 45.000 m² Çevre Düzenlemesi',
+  'bursa-osb-altyapi-yenileme-cevre-duzenlemesi',
+  'Bursa Nilüfer''de 45.000 m² OSB altyapı yenileme ve çevre düzenleme projesi tamamlandı.',
+  '{"html":"<p>Bursa Nilüfer''deki organize sanayi bölgesinde, <strong>45.000 m² alanda altyapı yenileme ve çevre düzenleme</strong> projesi Vista İnşaat tarafından gerçekleştirilmiştir.</p><h3>Proje Özellikleri</h3><ul><li>Konum: Bursa, Nilüfer OSB</li><li>Tip: Altyapı Yenileme</li><li>Alan: 45.000 m²</li><li>Süre: Nisan 2023 – Eylül 2024</li></ul><h3>Altyapı Kapsamı</h3><p>Yol yapımı, kanalizasyon hatları, yağmur suyu drenaj sistemi ve peyzaj düzenlemesi dahil kapsamlı altyapı yenileme çalışmaları tamamlanmıştır.</p>","description":"Bursa Nilüfer OSB''de 45.000 m² altyapı yenileme ve çevre düzenleme — Vista İnşaat altyapı projesi."}',
+  'Bursa OSB Altyapı Yenileme — Vista İnşaat Altyapı Projesi',
+  'Bursa OSB Altyapı Yenileme 45.000 m² — Vista İnşaat',
+  'Bursa Nilüfer OSB''de 45.000 m² altyapı yenileme ve çevre düzenleme projesi. Vista İnşaat altyapı referansı.',
   NOW(3), NOW(3)
 ),
 
--- 9. Plastifay — CTP 9
+-- 9. Antalya Boutique Otel — Antalya, Kaleiçi
 (
   '44444001-0009-4444-8444-444400000009',
   '33333001-0009-4333-8333-333300000009',
   'tr',
-  'Plastifay — CTP 9 Açık Tip Su Soğutma Kulesi',
-  'plastifay-ctp-9-acik-tip-su-sogutma-kulesi',
-  'Plastik sektöründe faaliyet gösteren Plastifay\'ın üretim tesisi için CTP 9 model açık tip su soğutma kulesi sistemi devreye alındı.',
-  '{"html":"<p><strong>Plastifay</strong>\'ın üretim tesisine proses soğutma ihtiyacı için <strong>CTP 9 model Açık Tip Su Soğutma Kulesi</strong> sistemi kurulmuştur.</p><h3>Proje Özellikleri</h3><ul><li>Model: CTP 9 (Açık Devre)</li><li>Sektör: Plastik / Kimya</li><li>Uygulama: Proses ekipmanı soğutma</li></ul><p>Plastik enjeksiyon ve ekstrüzyon makinelerinin soğutulmasında açık devre soğutma sistemi yaygın olarak tercih edilir. CTP 9 modeli, bu uygulamalar için optimize edilmiş kapasite ve verimlilik sunar.</p>","description":"Plastifay üretim tesisi için CTP 9 açık tip su soğutma kulesi proje çözümü."}',
-  'Plastifay — CTP 9 Açık Tip Su Soğutma Kulesi',
-  'Plastifay CTP 9 Açık Tip Su Soğutma Kulesi — ENSOTEK',
-  'Plastifay plastik üretim tesisi için ENSOTEK CTP 9 açık tip su soğutma kulesi devreye alındı.',
+  'Antalya Kaleiçi Butik Otel — 32 Odalı, Tarihi Doku Uyumlu',
+  'antalya-kaleici-butik-otel-tarihi-doku',
+  'Antalya Kaleiçi bölgesinde tarihi dokuya uyumlu 32 odalı butik otel inşaat projesi devam etmektedir.',
+  '{"html":"<p>Antalya''nın tarihi kalbi Kaleiçi''nde, <strong>32 odalı butik otel</strong> projesi Vista İnşaat tarafından inşa edilmektedir.</p><h3>Proje Özellikleri</h3><ul><li>Konum: Antalya, Kaleiçi</li><li>Tip: Butik Otel</li><li>Oda sayısı: 32</li><li>Başlangıç: Haziran 2024</li></ul><h3>Tarihi Doku Uyumu</h3><p>Kaleiçi''nin UNESCO Dünya Mirası listesindeki tarihi dokusuna uygun olarak yığma taş ve ahşap işçiliği ön planda tutulmuştur. Geleneksel Antalya mimarisi ile modern konfor standartları bir arada sunulmaktadır.</p>","description":"Antalya Kaleiçi''nde tarihi dokuya uyumlu 32 odalı butik otel — Vista İnşaat turizm projesi."}',
+  'Antalya Kaleiçi Butik Otel — Vista İnşaat Turizm Projesi',
+  'Antalya Kaleiçi Butik Otel 32 Oda — Vista İnşaat',
+  'Antalya Kaleiçi''nde tarihi dokuya uyumlu 32 odalı butik otel projesi. Yığma taş ve ahşap. Vista İnşaat turizm referansı.',
   NOW(3), NOW(3)
 ),
 
--- 10. Aves Yağ — TCTP 9B + DCTP 9B — Mersin
+-- 10. İzmir Teknoloji Kampüsü — İzmir, Bayraklı
 (
   '44444001-0010-4444-8444-444400000010',
   '33333001-0010-4333-8333-333300000010',
   'tr',
-  'Aves Yağ — TCTP 9B + DCTP 9B Kombine Soğutma Sistemi — Mersin',
-  'aves-yag-tctp-9b-dctp-9b-kombine-sogutma-sistemi-mersin',
-  'Mersin\'de faaliyet gösteren Aves Yağ\'ın gıda üretim tesisi için TCTP 9B ve DCTP 9B model kapalı devre su soğutma kulesi kombine sistemi kuruldu.',
-  '{"html":"<p><strong>Aves Yağ</strong>\'ın Mersin\'deki gıda üretim tesisi için <strong>TCTP 9B ve DCTP 9B model Kapalı Devre Su Soğutma Kulesi</strong> kombine sistemi devreye alınmıştır.</p><h3>Sistem Bileşenleri</h3><ul><li>1 adet TCTP 9B — Ters akışlı kapalı devre soğutma kulesi</li><li>1 adet DCTP 9B — Çift hücreli kapalı devre soğutma kulesi</li><li>Lokasyon: Mersin</li><li>Sektör: Gıda / Bitkisel Yağ Üretimi</li></ul><h3>Gıda Endüstrisinde Kapalı Devre Soğutma</h3><p>Gıda üretiminde hijyen ve ürün güvenliği en öncelikli unsurdur. Kapalı devre soğutma sistemi, süreç sıvısının dış etkenlerle temasını önleyerek hijyenik bir üretim ortamı sağlar. TCTP 9B ve DCTP 9B\'nin kombinasyonu, farklı kapasite ihtiyaçlarını dengeli şekilde karşılar.</p>","description":"Aves Yağ Mersin gıda tesisi için TCTP 9B ve DCTP 9B kombine kapalı devre soğutma sistemi."}',
-  'Aves Yağ Mersin — TCTP 9B + DCTP 9B Kombine Soğutma Sistemi',
-  'Aves Yağ Mersin TCTP DCTP Kapalı Devre Su Soğutma — ENSOTEK',
-  'Aves Yağ Mersin gıda üretim tesisi için ENSOTEK TCTP 9B ve DCTP 9B kombine kapalı devre su soğutma kulesi sistemi devreye alındı.',
+  'İzmir Teknoloji Kampüsü — 32.000 m² Sürdürülebilir Ofis Kampüsü',
+  'izmir-teknoloji-kampusu-surdurulebilir-ofis',
+  'İzmir Bayraklı''da 32.000 m² kapalı alanlı sürdürülebilir teknoloji ofis kampüsü tamamlandı.',
+  '{"html":"<p>İzmir''in yeni iş merkezi Bayraklı''da, <strong>32.000 m² kapalı alanlı sürdürülebilir teknoloji ofis kampüsü</strong> Vista İnşaat tarafından inşa edilmiştir.</p><h3>Proje Özellikleri</h3><ul><li>Konum: İzmir, Bayraklı</li><li>Tip: Teknoloji Ofis Kampüsü</li><li>Kapalı alan: 32.000 m²</li><li>Süre: Ekim 2022 – Kasım 2024</li></ul><h3>Sürdürülebilir Tasarım</h3><p>Çelik konstrüksiyon ve cam cephe sistemi ile inşa edilen kampüs; güneş panelleri, yeşil çatı uygulaması ve enerji verimli HVAC sistemi ile sürdürülebilir yapı standartlarını karşılamaktadır. Peyzaj düzenlemesi ile teknoloji çalışanları için konforlu bir çalışma ortamı oluşturulmuştur.</p>","description":"İzmir Bayraklı''da 32.000 m² sürdürülebilir teknoloji ofis kampüsü — Vista İnşaat ticari proje."}',
+  'İzmir Teknoloji Kampüsü — Vista İnşaat Sürdürülebilir Proje',
+  'İzmir Teknoloji Kampüsü Bayraklı — Vista İnşaat',
+  'İzmir Bayraklı''da 32.000 m² sürdürülebilir teknoloji ofis kampüsü. Çelik konstrüksiyon ve cam cephe. Vista İnşaat referansı.',
   NOW(3), NOW(3)
 ),
 
--- 11. TAT Tekstil — Gaziantep
+-- 11. Ümraniye Konut Projesi — İstanbul, Ümraniye
 (
   '44444001-0011-4444-8444-444400000011',
   '33333001-0011-4333-8333-333300000011',
   'tr',
-  'TAT Tekstil — CTP Kaportalı Açık Tip Su Soğutma Kulesi — Gaziantep',
-  'tat-tekstil-ctp-kapotali-acik-tip-su-sogutma-kulesi-gaziantep',
-  'Gaziantep\'te faaliyet gösteren TAT Tekstil\'in üretim tesisi için CTP Kaportalı Açık Tip su soğutma kulesi sistemi kuruldu.',
-  '{"html":"<p><strong>TAT Tekstil</strong>\'in Gaziantep\'teki üretim tesisine <strong>CTP Kaportalı Açık Tip Su Soğutma Kulesi</strong> sistemi temin edilmiştir.</p><h3>Proje Özellikleri</h3><ul><li>Lokasyon: Gaziantep</li><li>Sektör: Tekstil / İplik Üretimi</li><li>Uygulama: Tekstil makineleri proses soğutma</li></ul><h3>Tekstil Sektöründe Soğutma</h3><p>Tekstil üretiminde boya, yıkama ve dokuma makineleri yoğun ısı açığa çıkarır. CTP Kaportalı Açık Tip soğutma kulesi, bu uygulamalar için maliyet etkin ve verimli bir çözüm sunmaktadır.</p>","description":"TAT Tekstil Gaziantep üretim tesisi için CTP Kaportalı Açık Tip su soğutma kulesi."}',
-  'TAT Tekstil Gaziantep — CTP Kaportalı Açık Tip Su Soğutma Kulesi',
-  'TAT Tekstil Gaziantep CTP Su Soğutma Kulesi — ENSOTEK',
-  'TAT Tekstil Gaziantep üretim tesisi için ENSOTEK CTP Kaportalı Açık Tip su soğutma kulesi devreye alındı.',
+  'Ümraniye Toplu Konut — 120 Daireli Sosyal Tesisli Konut Projesi',
+  'umraniye-toplu-konut-120-daire',
+  'İstanbul Ümraniye''de 120 daireli, sosyal tesis ve otopark alanlarını içeren toplu konut projesi tamamlandı.',
+  '{"html":"<p>İstanbul Ümraniye''de, <strong>120 daireli toplu konut projesi</strong> Vista İnşaat tarafından inşa edilmiştir.</p><h3>Proje Özellikleri</h3><ul><li>Konum: İstanbul, Ümraniye</li><li>Tip: Toplu Konut</li><li>Daire sayısı: 120</li><li>Süre: Ocak 2021 – Haziran 2023</li></ul><h3>Kapsamlı Yaşam Alanı</h3><p>Proje kapsamında 120 konut biriminin yanı sıra çevre düzenleme, yer altı otoparkı ve sosyal tesis alanları da inşa edilmiştir. Farklı daire tiplerinde ailelerin ihtiyaçlarına yönelik konut çözümleri sunulmaktadır.</p>","description":"Ümraniye''de 120 daireli toplu konut — otopark ve sosyal tesis dahil. Vista İnşaat konut projesi."}',
+  'Ümraniye Toplu Konut 120 Daire — Vista İnşaat Konut Projesi',
+  'Ümraniye Toplu Konut 120 Daire — Vista İnşaat',
+  'İstanbul Ümraniye''de 120 daireli toplu konut projesi. Sosyal tesis ve otopark dahil. Vista İnşaat konut referansı.',
   NOW(3), NOW(3)
 ),
 
--- 12. Suudi Arabistan — Uluslararası Proje
+-- 12. Taksim Otel Renovasyon — İstanbul, Beyoğlu
 (
   '44444001-0012-4444-8444-444400000012',
   '33333001-0012-4333-8333-333300000012',
   'tr',
-  'Suudi Arabistan — Endüstriyel FRP Su Soğutma Kulesi İhracat Projesi',
-  'suudi-arabistan-endustriyel-frp-su-sogutma-kulesi-ihracat',
-  'Orta Doğu\'nun en büyük ekonomileri arasında yer alan Suudi Arabistan\'a endüstriyel FRP/GRP su soğutma kulesi ihracat projesi başarıyla gerçekleştirildi.',
-  '{"html":"<p>ENSOTEK, Türkiye\'nin en büyük su soğutma kulesi üreticisi olarak, <strong>Suudi Arabistan</strong>\'a yönelik uluslararası ihracat projelerini de başarıyla hayata geçirmektedir.</p><h3>İhracat Projesi Detayları</h3><ul><li>Ülke: Suudi Arabistan</li><li>Ürün: FRP / GRP Açık Tip Su Soğutma Kulesi</li><li>Uygulama: Endüstriyel proses soğutma</li><li>Sektör: Petrokimya / Enerji / Sanayi</li></ul><h3>Sert İklim Koşullarına Uygunluk</h3><p>Suudi Arabistan\'ın yüksek çevre sıcaklığı ve zorlu iklim koşulları, soğutma kulesi seçiminde özel tasarım gerektirir. ENSOTEK\'in FRP/GRP gövde yapısı, güneş radyasyonuna ve yüksek ısıya karşı üstün dayanıklılık sunmaktadır.</p>","description":"Suudi Arabistan endüstriyel FRP/GRP su soğutma kulesi ihracat projesi. ENSOTEK uluslararası referans."}',
-  'Suudi Arabistan — FRP GRP Su Soğutma Kulesi İhracat Projesi',
-  'Suudi Arabistan FRP Soğutma Kulesi İhracat — ENSOTEK Uluslararası',
-  'ENSOTEK tarafından Suudi Arabistan\'a endüstriyel FRP/GRP su soğutma kulesi ihracat projesi başarıyla tamamlandı.',
+  'Taksim Otel Renovasyonu — 85 Odalı Otel Yenileme Projesi',
+  'taksim-otel-renovasyonu-85-oda',
+  'İstanbul Beyoğlu Taksim''de 85 odalı otelin kapsamlı renovasyon projesi başarıyla tamamlandı.',
+  '{"html":"<p>İstanbul''un turizm merkezi Taksim''de, <strong>85 odalı otelin kapsamlı renovasyonu</strong> Vista İnşaat tarafından gerçekleştirilmiştir.</p><h3>Proje Özellikleri</h3><ul><li>Konum: İstanbul, Beyoğlu — Taksim</li><li>Tip: Otel Renovasyon</li><li>Oda sayısı: 85</li><li>Süre: Kasım 2022 – Şubat 2024</li></ul><h3>Renovasyon Kapsamı</h3><p>İç mekan yenileme, tesisat altyapısı değişimi, cephe yenileme ve lobi-restoran alanlarının yeniden düzenlenmesi dahil kapsamlı bir renovasyon gerçekleştirilmiştir. Otel, renovasyon sürecinde kısmi olarak hizmet vermeye devam etmiştir.</p>","description":"Taksim''de 85 odalı otel renovasyonu — iç mekan, cephe ve tesisat yenileme. Vista İnşaat turizm projesi."}',
+  'Taksim Otel Renovasyonu — Vista İnşaat Turizm Projesi',
+  'Taksim Otel Renovasyonu 85 Oda — Vista İnşaat',
+  'İstanbul Taksim''de 85 odalı otel renovasyonu. İç mekan, cephe ve tesisat yenileme. Vista İnşaat turizm referansı.',
   NOW(3), NOW(3)
 ),
 
--- 13. İran — Uluslararası Proje
+-- 13. Eskişehir Üniversite Kampüsü — Eskişehir
 (
   '44444001-0013-4444-8444-444400000013',
   '33333001-0013-4333-8333-333300000013',
   'tr',
-  'İran — Endüstriyel FRP Su Soğutma Kulesi İhracat Projesi',
-  'iran-endustriyel-frp-su-sogutma-kulesi-ihracat',
-  'İran\'daki sanayi tesisi için FRP/GRP açık tip su soğutma kulesi ihracat projesi ENSOTEK tarafından başarıyla tamamlandı.',
-  '{"html":"<p>ENSOTEK, Orta Doğu ve çevre bölgelerdeki uluslararası ihracat faaliyetleri kapsamında <strong>İran</strong>\'daki bir sanayi tesisi için su soğutma kulesi sistemi temin etmiştir.</p><h3>Proje Özellikleri</h3><ul><li>Ülke: İran</li><li>Ürün: FRP / GRP Açık Tip Su Soğutma Kulesi</li><li>Uygulama: Endüstriyel proses soğutma</li></ul><p>ENSOTEK, Türkiye pazarındaki 40 yılı aşkın deneyimini uluslararası projelere de taşıyarak, farklı coğrafyalardaki sanayi tesislerine güvenilir soğutma çözümleri sunmaktadır.</p>","description":"İran sanayi tesisi için FRP/GRP açık tip su soğutma kulesi ihracat projesi. ENSOTEK uluslararası referans."}',
-  'İran — FRP GRP Su Soğutma Kulesi İhracat Projesi',
-  'İran FRP Su Soğutma Kulesi İhracat — ENSOTEK Uluslararası',
-  'ENSOTEK tarafından İran sanayi tesisine FRP/GRP açık tip su soğutma kulesi ihracat projesi tamamlandı.',
+  'Eskişehir Üniversite Kampüsü Ek Bina — 15.000 m² Eğitim Yapısı',
+  'eskisehir-universite-kampusu-ek-bina',
+  'Eskişehir''de üniversite kampüsüne 15.000 m² kapalı alanlı eğitim binası ek projesi tamamlandı.',
+  '{"html":"<p>Eskişehir''de bir üniversite kampüsüne, <strong>15.000 m² kapalı alanlı ek eğitim binası</strong> Vista İnşaat tarafından inşa edilmiştir.</p><h3>Proje Özellikleri</h3><ul><li>Konum: Eskişehir</li><li>Tip: Eğitim Yapısı — Kampüs Ek Bina</li><li>Kapalı alan: 15.000 m²</li><li>Süre: Ağustos 2020 – Ocak 2023</li></ul><h3>Eğitim Altyapısı</h3><p>Bina bünyesinde laboratuvar, amfi, kütüphane ve ofis alanları yer almaktadır. Betonarme taşıyıcı sistem ve modern cephe tasarımı ile kampüsün mevcut yapılarına uyumlu bir mimari dil benimsenmiştir.</p>","description":"Eskişehir üniversite kampüsünde 15.000 m² ek eğitim binası — laboratuvar, amfi, kütüphane. Vista İnşaat kamu projesi."}',
+  'Eskişehir Üniversite Kampüsü Ek Bina — Vista İnşaat Eğitim Projesi',
+  'Eskişehir Üniversite Kampüsü Ek Bina — Vista İnşaat',
+  'Eskişehir üniversite kampüsünde 15.000 m² ek eğitim binası. Laboratuvar, amfi, kütüphane. Vista İnşaat kamu referansı.',
   NOW(3), NOW(3)
 ),
 
--- 14. Tüpraş — İzmit Rafinerisi
+-- 14. Mersin Serbest Bölge Depo — Mersin
 (
   '44444001-0014-4444-8444-444400000014',
   '33333001-0014-4333-8333-333300000014',
   'tr',
-  'Tüpraş İzmit Rafinerisi — Proses Soğutma Kulesi Sistemi',
-  'tupras-izmit-rafinerisi-proses-sogutma-kulesi',
-  'Türkiye\'nin en büyük petrol rafinerisi Tüpraş İzmit Rafinerisi\'ne yüksek kapasiteli proses soğutma kulesi sistemi temin edildi.',
-  '{"html":"<p>Türkiye\'nin en büyük sanayi kuruluşlarından <strong>Tüpraş</strong>\'ın İzmit Rafinerisi\'ne yönelik <strong>proses soğutma kulesi sistemi</strong> ENSOTEK tarafından sağlanmıştır.</p><h3>Proje Detayları</h3><ul><li>Müşteri: Tüpraş (Türkiye Petrol Rafinerileri A.Ş.)</li><li>Lokasyon: İzmit, Kocaeli</li><li>Sektör: Petrokimya / Rafineri</li><li>Uygulama: Rafineri proses soğutma</li></ul><h3>Rafineri Uygulamalarında Soğutma</h3><p>Petrol rafinerilerinde distilasyon, kraking ve diğer proses ekipmanları yüksek ısı açığa çıkarır. ENSOTEK soğutma kuleleri, bu yüksek kapasiteli ısı atma uygulamalarında güvenilir ve verimli performans sunar. FRP/GRP malzeme yapısı, kimyasal ve korozif ortamlara karşı üstün dayanıklılık sağlar.</p>","description":"Tüpraş İzmit Rafinerisi için ENSOTEK proses soğutma kulesi sistemi — petrokimya sektörü referans."}',
-  'Tüpraş İzmit Rafinerisi — Proses Soğutma Kulesi',
-  'Tüpraş İzmit Rafineri Proses Soğutma Kulesi — ENSOTEK',
-  'Tüpraş İzmit Rafinerisi için ENSOTEK tarafından yüksek kapasiteli proses soğutma kulesi sistemi temin edildi.',
+  'Mersin Serbest Bölge Soğuk Hava Deposu — 12.000 m² Çelik Yapı',
+  'mersin-serbest-bolge-soguk-hava-deposu',
+  'Mersin Serbest Bölge''de 12.000 m² soğuk hava deposu çelik yapı projesi tamamlandı.',
+  '{"html":"<p>Mersin Serbest Bölge''de, <strong>12.000 m² kapalı alanlı soğuk hava deposu</strong> Vista İnşaat tarafından inşa edilmiştir.</p><h3>Proje Özellikleri</h3><ul><li>Konum: Mersin Serbest Bölge</li><li>Tip: Soğuk Hava Deposu</li><li>Kapalı alan: 12.000 m²</li><li>Yapı sistemi: Prefabrik çelik</li><li>Süre: Temmuz 2023 – Aralık 2024</li></ul><h3>Özel İzolasyon Sistemi</h3><p>Soğuk zincir lojistiğine uygun yüksek performanslı izolasyon sistemi, prefabrik çelik yapı ve özel zemin kaplama ile projelendirilmiştir. Tesis, farklı sıcaklık bölgelerine ayrılmış depolama alanları içermektedir.</p>","description":"Mersin Serbest Bölge''de 12.000 m² soğuk hava deposu — prefabrik çelik ve izolasyon. Vista İnşaat endüstriyel proje."}',
+  'Mersin Serbest Bölge Soğuk Hava Deposu — Vista İnşaat Endüstriyel Proje',
+  'Mersin Serbest Bölge Soğuk Hava Deposu — Vista İnşaat',
+  'Mersin Serbest Bölge''de 12.000 m² soğuk hava deposu projesi. Prefabrik çelik ve izolasyon. Vista İnşaat endüstriyel referans.',
   NOW(3), NOW(3)
 ),
 
--- 15. TOFAS — Bursa Otomotiv Tesisi
+-- 15. Bodrum Villa Projesi — Muğla, Bodrum
 (
   '44444001-0015-4444-8444-444400000015',
   '33333001-0015-4333-8333-333300000015',
   'tr',
-  'TOFAS Bursa Otomotiv Tesisi — CTP Kaportalı Açık Tip Su Soğutma Kulesi',
-  'tofas-bursa-otomotiv-tesisi-ctp-kapotali-acik-tip-su-sogutma-kulesi',
-  'Türkiye\'nin önde gelen otomobil üreticisi TOFAS\'ın Bursa\'daki otomotiv üretim tesisi için CTP Kaportalı Açık Tip su soğutma kulesi sistemi devreye alındı.',
-  '{"html":"<p><strong>TOFAS</strong>\'ın Bursa\'daki geniş kapsamlı otomotiv üretim tesisi için <strong>CTP Kaportalı Açık Tip Su Soğutma Kulesi</strong> sistemi temin edilmiştir.</p><h3>Proje Detayları</h3><ul><li>Müşteri: TOFAS (Türk Otomobil Fabrikası A.Ş.)</li><li>Lokasyon: Bursa</li><li>Sektör: Otomotiv / Araç Üretimi</li><li>Uygulama: Boya hatları, kalıp ve proses ekipmanı soğutma</li></ul><h3>Otomotiv Sektöründe Soğutma</h3><p>Otomotiv fabrikalarında boya hatları, kaynak istasyonları ve kalıp soğutma sistemleri yüksek soğutma kapasitesi gerektirir. ENSOTEK\'in CTP Kaportalı açık tip soğutma kuleleri; yüksek debi kapasitesi, uzun ömür ve düşük bakım maliyeti ile bu talepleri karşılar.</p>","description":"TOFAS Bursa otomotiv üretim tesisi için CTP Kaportalı Açık Tip su soğutma kulesi projesi."}',
-  'TOFAS Bursa — CTP Kaportalı Açık Tip Su Soğutma Kulesi',
-  'TOFAS Bursa Otomotiv Tesisi Su Soğutma Kulesi — ENSOTEK',
-  'TOFAS Bursa otomotiv üretim tesisi için ENSOTEK CTP Kaportalı Açık Tip su soğutma kulesi sistemi devreye alındı.',
+  'Bodrum Villa Projesi — 8 Villa, Deniz Manzaralı',
+  'bodrum-villa-projesi-deniz-manzarali',
+  'Muğla Bodrum''da deniz manzaralı 8 adet villa inşaat projesi tamamlandı.',
+  '{"html":"<p>Muğla Bodrum''un en güzel koylarından birine bakan, <strong>8 adet deniz manzaralı villa</strong> Vista İnşaat tarafından inşa edilmiştir.</p><h3>Proje Özellikleri</h3><ul><li>Konum: Muğla, Bodrum</li><li>Tip: Villa</li><li>Villa sayısı: 8</li><li>Süre: Mart 2023 – Ekim 2024</li></ul><h3>Ege Yaşam Tarzı</h3><p>Her villada özel havuz, peyzaj alanı ve deniz manzaralı teras bulunmaktadır. Doğal taş duvar kaplama ve Bodrum mimarisine uygun beyaz-mavi renk paleti ile tasarlanmıştır.</p>","description":"Bodrum''da deniz manzaralı 8 villa — özel havuz ve peyzaj. Vista İnşaat konut projesi."}',
+  'Bodrum Villa Projesi Deniz Manzaralı — Vista İnşaat Konut',
+  'Bodrum Villa Projesi 8 Villa — Vista İnşaat',
+  'Muğla Bodrum''da deniz manzaralı 8 villa projesi. Özel havuz, peyzaj ve taş duvar. Vista İnşaat konut referansı.',
   NOW(3), NOW(3)
 );
 

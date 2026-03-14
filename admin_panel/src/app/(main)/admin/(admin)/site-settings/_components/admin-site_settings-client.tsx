@@ -175,12 +175,12 @@ function ListPanel({
 
 /* ----------------------------- main component ----------------------------- */
 
-const KOMPOZIT_BRAND = 'vistainsaat';
-const KOMPOZIT_PREFIX = 'vistainsaat__';
+const VISTA_BRAND = 'vistainsaat';
+const VISTA_PREFIX = 'vistainsaat__';
 
 export default function AdminSiteSettingsClient() {
-  const brand = KOMPOZIT_BRAND;
-  const brandPrefix = KOMPOZIT_PREFIX;
+  const brand = VISTA_BRAND;
+  const brandPrefix = VISTA_PREFIX;
   const isScopedBrand = true;
   const appLocalesKey = `${brandPrefix || ''}app_locales`;
   const localeSettingsQ = useListSiteSettingsAdminQuery({
@@ -278,8 +278,8 @@ export default function AdminSiteSettingsClient() {
             </Badge>
           </div>
           <p className="mt-2 text-sm text-orange-900">
-            Bu ekran kompozit projesine ozeldir. Buradaki degisiklikler Ensotek ve diger sitelerin
-            ortak `site_settings` kayitlarini etkilemez.
+            Bu ekran Vista İnşaat projesine özeldir. Buradaki değişiklikler yalnızca vistainsaat__
+            prefix'li site_settings kayıtlarını etkiler.
           </p>
         </div>
       ) : null}

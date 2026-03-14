@@ -7,26 +7,30 @@ type BreadcrumbItem = {
 
 export function Breadcrumbs({ items }: { items: BreadcrumbItem[] }) {
   return (
-    <nav aria-label="Breadcrumb" className="mb-6">
-      <ol className="flex flex-wrap items-center gap-2 text-sm text-[var(--color-text-secondary)]">
-        {items.map((item, index) => {
-          const isLast = index === items.length - 1;
+    <>
+      <style>{`
+        .vi-breadcrumb{display:flex;flex-wrap:wrap;gap:4px;font-size:13px;color:var(--color-text-muted);margin-bottom:8px}
+        .vi-breadcrumb a{color:var(--color-text-muted);text-decoration:none}
+        .vi-breadcrumb a:hover{color:var(--color-brand)}
+        .vi-breadcrumb .sep{margin:0 2px}
+      `}</style>
+      <nav className="vi-breadcrumb" aria-label="Breadcrumb">
+        {items.map((item, i) => {
+          const isLast = i === items.length - 1;
           return (
-            <li key={`${item.label}-${index}`} className="flex items-center gap-2">
+            <span key={`${item.label}-${i}`}>
               {item.href && !isLast ? (
-                <Link href={item.href} className="hover:text-[var(--color-text-primary)] hover:underline">
-                  {item.label}
-                </Link>
+                <Link href={item.href}>{item.label}</Link>
               ) : (
-                <span className={isLast ? 'font-medium text-[var(--color-text-primary)]' : ''}>
+                <span style={isLast ? { color: 'var(--color-text-primary)' } : undefined}>
                   {item.label}
                 </span>
               )}
-              {!isLast && <span aria-hidden="true">/</span>}
-            </li>
+              {!isLast && <span className="sep">&gt;</span>}
+            </span>
           );
         })}
-      </ol>
-    </nav>
+      </nav>
+    </>
   );
 }

@@ -30,7 +30,7 @@ export function OfferFormClient({
         quantity: fd.get('quantity'),
         deadline: fd.get('deadline'),
         message: fd.get('details'),
-        source: 'kompozit',
+        source: 'vistainsaat',
         locale,
       });
       toast.success(t('success'));

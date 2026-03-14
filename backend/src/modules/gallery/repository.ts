@@ -45,6 +45,27 @@ export async function listGalleries(params: GalleryListParams) {
     params.sort === 'created_at' ? galleries.created_at : galleries.display_order;
   const orderFn = params.order === 'desc' ? desc : asc;
 
+  /* Subquery: cover image URL (is_cover=1, fallback to first image) */
+  const coverSub = db
+    .select({
+      gallery_id: galleryImages.gallery_id,
+      url: sql<string>`COALESCE(${storageAssets.url}, ${galleryImages.image_url})`.as('cover_url'),
+    })
+    .from(galleryImages)
+    .leftJoin(storageAssets, eq(galleryImages.storage_asset_id, storageAssets.id))
+    .where(eq(galleryImages.is_cover, true))
+    .as('cover_sub');
+
+  /* Subquery: image count */
+  const countSub = db
+    .select({
+      gallery_id: galleryImages.gallery_id,
+      image_count: sql<number>`COUNT(*)`.as('image_count'),
+    })
+    .from(galleryImages)
+    .groupBy(galleryImages.gallery_id)
+    .as('count_sub');
+
   const rows = await db
     .select({
       id: galleries.id,
@@ -61,9 +82,14 @@ export async function listGalleries(params: GalleryListParams) {
       description: galleryI18n.description,
       meta_title: galleryI18n.meta_title,
       meta_description: galleryI18n.meta_description,
+      // cover + count
+      cover_image_url: coverSub.url,
+      image_count: countSub.image_count,
     })
     .from(galleries)
     .innerJoin(galleryI18n, eq(galleries.id, galleryI18n.gallery_id))
+    .leftJoin(coverSub, eq(galleries.id, coverSub.gallery_id))
+    .leftJoin(countSub, eq(galleries.id, countSub.gallery_id))
     .where(and(...conds))
     .orderBy(orderFn(sortCol))
     .limit(limit)

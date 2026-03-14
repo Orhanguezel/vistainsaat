@@ -308,7 +308,7 @@
         "title": "Anmelden",
         "welcomeBack": "Willkommen zurück",
         "continueLogin": "Anmelden um fortzufahren",
-        "description": "Geben Sie Ihre E-Mail und Ihr Passwort ein, um auf das MOE Kompozit Admin-Panel zuzugreifen.",
+        "description": "Geben Sie Ihre E-Mail und Ihr Passwort ein, um auf das Vista İnşaat Admin-Panel zuzugreifen.",
         "noAccess": "Haben Sie keinen Zugang?",
         "contactAdmin": "Administrator kontaktieren",
         "emailLabel": "E-Mail-Adresse",
@@ -639,9 +639,9 @@
       },
       "moduleLabels": {
         "blog": "Blog",
-        "kompozit_blog": "Komposit-Blog",
-        "kompozit_about": "Komposit-Unternehmensseiten",
-        "kompozit_legal": "Komposit-Rechtliches",
+        "vistainsaat_blog": "Vista Blog",
+        "vistainsaat_about": "Vista Unternehmensseiten",
+        "vistainsaat_legal": "Vista Rechtliches",
         "news": "Nachrichten / Ankündigungen",
         "about": "Über uns / Statisch",
         "services": "Dienstleistungen",
@@ -677,7 +677,7 @@
         "isPublished": "Veröffentlicht",
         "featured": "Auf Startseite anzeigen",
         "moduleKey": "Modulschlüssel",
-        "moduleKeyPlaceholder": "z. B. kompozit_blog",
+        "moduleKeyPlaceholder": "z. B. vistainsaat_blog",
         "moduleKeyRequired": "Modulschlüssel ist erforderlich.",
         "title": "Titel",
         "slug": "Slug",
@@ -814,7 +814,7 @@
         "marketing": "Marketing",
         "communication": "Kommunikation & CRM",
         "system": "System & Einstellungen",
-        "moe_kompozit": "MOE Kompozit"
+        "vista_insaat": "Vista İnşaat"
       }
     },
     "dashboard": {
@@ -852,15 +852,15 @@
         "offers": "Angebote",
         "references": "Referenzen",
         "support": "Support-Tickets",
-        "kompozit_products": "Komposit-Produkte",
-        "kompozit_categories": "Komposit-Kategorien",
-        "kompozit_gallery": "Galerie",
-        "kompozit_offers": "Komposit-Angebote",
-        "kompozit_blog": "Komposit-Blog",
-        "kompozit_blog_comments": "Blog-Kommentare",
-        "kompozit_corporate": "Unternehmensseiten",
-        "kompozit_legal": "Rechtsseiten",
-        "kompozit_settings": "Komposit-Site-Einstellungen"
+        "vista_projects": "Projekte",
+        "vista_categories": "Kategorien",
+        "vista_gallery": "Galerie",
+        "vista_offers": "Angebote",
+        "vista_blog": "Blog",
+        "vista_blog_comments": "Blog-Kommentare",
+        "vista_corporate": "Unternehmensseiten",
+        "vista_legal": "Rechtsseiten",
+        "vista_settings": "Site-Einstellungen"
       },
       "stats": {
         "deliveredOrders": "Gelieferte Bestellungen",
