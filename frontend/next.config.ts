@@ -5,7 +5,6 @@ const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  output: 'standalone',
 
   images: {
     formats: ['image/avif', 'image/webp'],
@@ -16,6 +15,7 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'res.cloudinary.com' },
       { protocol: 'https', hostname: 'vistainsaat.com' },
       { protocol: 'https', hostname: 'www.vistainsaat.com' },
+      { protocol: 'https', hostname: 'example.guezelwebdesign.com' },
       { protocol: 'https', hostname: 'picsum.photos' },
       { protocol: 'https', hostname: 'fastly.picsum.photos' },
       ...(process.env.NODE_ENV === 'development'

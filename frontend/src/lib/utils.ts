@@ -15,5 +15,5 @@ export function absoluteAssetUrl(value?: string | null): string | null {
   if (!value) return null;
   if (/^https?:\/\//i.test(value)) return value;
   const normalized = value.startsWith('/') ? value : `/${value}`;
-  return `${API_BASE_URL.replace(/\/api\/?$/, '')}${normalized}`;
+  return `${SITE_URL}${normalized}`;
 }
