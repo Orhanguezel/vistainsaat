@@ -2,7 +2,7 @@
   "nav": {
     "home": "Ana Sayfa",
     "projects": "Projeler",
-    "services": "Hizmetler",
+    "services": "Faaliyetler",
     "about": "Hakkımızda",
     "gallery": "Galeri",
     "blog": "Haberler",
@@ -91,7 +91,7 @@
       "subtitle": "En güncel projelerimizi keşfedin"
     },
     "services": {
-      "title": "Hizmetlerimiz",
+      "title": "Faaliyet Alanlarımız",
       "subtitle": "Mimari tasarımdan inşaata, proje yönetiminden teslimata kapsamlı çözümler"
     },
     "whyUs": {
@@ -180,11 +180,11 @@
     }
   },
   "services": {
-    "title": "Hizmetlerimiz",
-    "description": "Mimari tasarımdan inşaata, röleve ve restorasyon çalışmalarından proje yönetimine kadar kapsamlı inşaat ve mimarlık hizmetleri.",
-    "viewAll": "Tüm Hizmetler",
-    "noServices": "Henüz hizmet bulunmuyor.",
-    "requestService": "Bu Hizmet İçin Teklif Alın",
+    "title": "Faaliyet Alanlarımız",
+    "description": "Mimari tasarımdan inşaata, röleve ve restorasyon çalışmalarından proje yönetimine kadar kapsamlı inşaat ve mimarlık faaliyetleri.",
+    "viewAll": "Tüm Faaliyetler",
+    "noServices": "Henüz faaliyet bulunmuyor.",
+    "requestService": "Bu Faaliyet İçin Teklif Alın",
     "items": {
       "residential": "Konut Projeleri",
       "commercial": "Ticari Projeler",
@@ -303,7 +303,7 @@
         "two": "Mimari tasarım, mühendislik ve izin süreçlerini yönetme",
         "three": "Kalite kontrolü ile zamanında ve eksiksiz teslim"
       },
-      "sectorsTitle": "Hizmet Verdiğimiz Alanlar",
+      "sectorsTitle": "Faaliyet Gösterdiğimiz Alanlar",
       "sectorsItems": {
         "one": "Bireysel konut yatırımcıları ve aileler",
         "two": "Ticari gayrimenkul geliştiricileri ve kurumlar",

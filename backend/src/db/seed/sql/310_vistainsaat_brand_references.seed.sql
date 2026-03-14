@@ -24,24 +24,25 @@ INSERT INTO `references`
   created_at, updated_at
 )
 VALUES
-  ('vis3101-0001-4310-8310-310000000001', 1, 1, 10,  NULL, NULL, 'https://www.rehau.com/tr-tr',      NULL, NULL, NOW(3), NOW(3)),
-  ('vis3101-0002-4310-8310-310000000002', 1, 1, 20,  NULL, NULL, 'https://www.saint-gobain-weber.com.tr', NULL, NULL, NOW(3), NOW(3)),
-  ('vis3101-0003-4310-8310-310000000003', 1, 1, 30,  NULL, NULL, 'https://www.schueco.com/tr',       NULL, NULL, NOW(3), NOW(3)),
-  ('vis3101-0004-4310-8310-310000000004', 1, 1, 40,  NULL, NULL, 'https://www.villeroy-boch.com/tr', NULL, NULL, NOW(3), NOW(3)),
-  ('vis3101-0005-4310-8310-310000000005', 1, 1, 50,  NULL, NULL, 'https://www.grohe.com/tr',         NULL, NULL, NOW(3), NOW(3)),
-  ('vis3101-0006-4310-8310-310000000006', 1, 1, 60,  NULL, NULL, 'https://www.kone.com/tr-tr',       NULL, NULL, NOW(3), NOW(3)),
-  ('vis3101-0007-4310-8310-310000000007', 1, 0, 70,  NULL, NULL, 'https://www.laufen.com/tr',        NULL, NULL, NOW(3), NOW(3)),
-  ('vis3101-0008-4310-8310-310000000008', 1, 0, 80,  NULL, NULL, 'https://www.blum.com/tr',          NULL, NULL, NOW(3), NOW(3)),
-  ('vis3101-0009-4310-8310-310000000009', 1, 0, 90,  NULL, NULL, 'https://www.dormakaba.com/tr-tr',  NULL, NULL, NOW(3), NOW(3)),
-  ('vis3101-0010-4310-8310-310000000010', 1, 1, 100, NULL, NULL, 'https://www.knauf.com.tr',         NULL, NULL, NOW(3), NOW(3)),
-  ('vis3101-0011-4310-8310-310000000011', 1, 1, 110, NULL, NULL, 'https://www.mapei.com/tr-tr',      NULL, NULL, NOW(3), NOW(3)),
-  ('vis3101-0012-4310-8310-310000000012', 1, 0, 120, NULL, NULL, 'https://www.daikin.com.tr',        NULL, NULL, NOW(3), NOW(3)),
-  ('vis3101-0013-4310-8310-310000000013', 1, 0, 130, NULL, NULL, 'https://www.franke.com/tr-tr',     NULL, NULL, NOW(3), NOW(3)),
-  ('vis3101-0014-4310-8310-310000000014', 1, 0, 140, NULL, NULL, 'https://www.siemens.com/tr/tr',    NULL, NULL, NOW(3), NOW(3))
+  ('vis3101-0001-4310-8310-310000000001', 1, 1, 10,  '/uploads/brands/rehau.jpeg', NULL, 'https://www.rehau.com/tr-tr',      'cccc0008-4008-4008-8008-cccccccc0008', NULL, NOW(3), NOW(3)),
+  ('vis3101-0002-4310-8310-310000000002', 1, 1, 20,  '/uploads/brands/weber.jpeg', NULL, 'https://www.saint-gobain-weber.com.tr', 'cccc0008-4008-4008-8008-cccccccc0008', NULL, NOW(3), NOW(3)),
+  ('vis3101-0003-4310-8310-310000000003', 1, 1, 30,  '/uploads/brands/schuco.jpeg', NULL, 'https://www.schueco.com/tr',       'cccc0008-4008-4008-8008-cccccccc0008', NULL, NOW(3), NOW(3)),
+  ('vis3101-0004-4310-8310-310000000004', 1, 1, 40,  '/uploads/brands/villeroy-boch.jpeg', NULL, 'https://www.villeroy-boch.com/tr', 'cccc0008-4008-4008-8008-cccccccc0008', NULL, NOW(3), NOW(3)),
+  ('vis3101-0005-4310-8310-310000000005', 1, 1, 50,  '/uploads/brands/grohe.jpeg', NULL, 'https://www.grohe.com/tr',         'cccc0008-4008-4008-8008-cccccccc0008', NULL, NOW(3), NOW(3)),
+  ('vis3101-0006-4310-8310-310000000006', 1, 1, 60,  '/uploads/brands/kone.jpeg', NULL, 'https://www.kone.com/tr-tr',       'cccc0008-4008-4008-8008-cccccccc0008', NULL, NOW(3), NOW(3)),
+  ('vis3101-0007-4310-8310-310000000007', 1, 0, 70,  '/uploads/brands/laufen.jpeg', NULL, 'https://www.laufen.com/tr',        'cccc0008-4008-4008-8008-cccccccc0008', NULL, NOW(3), NOW(3)),
+  ('vis3101-0008-4310-8310-310000000008', 1, 0, 80,  '/uploads/brands/blum.jpeg', NULL, 'https://www.blum.com/tr',          'cccc0008-4008-4008-8008-cccccccc0008', NULL, NOW(3), NOW(3)),
+  ('vis3101-0009-4310-8310-310000000009', 1, 0, 90,  '/uploads/brands/dorma-kaba.jpeg', NULL, 'https://www.dormakaba.com/tr-tr',  'cccc0008-4008-4008-8008-cccccccc0008', NULL, NOW(3), NOW(3)),
+  ('vis3101-0010-4310-8310-310000000010', 1, 1, 100, '/uploads/brands/knauf.jpeg', NULL, 'https://www.knauf.com.tr',         'cccc0008-4008-4008-8008-cccccccc0008', NULL, NOW(3), NOW(3)),
+  ('vis3101-0011-4310-8310-310000000011', 1, 1, 110, '/uploads/brands/mapei.jpeg', NULL, 'https://www.mapei.com/tr-tr',      'cccc0008-4008-4008-8008-cccccccc0008', NULL, NOW(3), NOW(3)),
+  ('vis3101-0012-4310-8310-310000000012', 1, 0, 120, '/uploads/brands/daikin.jpeg', NULL, 'https://www.daikin.com.tr',        'cccc0008-4008-4008-8008-cccccccc0008', NULL, NOW(3), NOW(3)),
+  ('vis3101-0013-4310-8310-310000000013', 1, 0, 130, '/uploads/brands/franke.jpeg', NULL, 'https://www.franke.com/tr-tr',     'cccc0008-4008-4008-8008-cccccccc0008', NULL, NOW(3), NOW(3)),
+  ('vis3101-0014-4310-8310-310000000014', 1, 0, 140, '/uploads/brands/siemens.jpeg', NULL, 'https://www.siemens.com/tr/tr',    'cccc0008-4008-4008-8008-cccccccc0008', NULL, NOW(3), NOW(3))
 ON DUPLICATE KEY UPDATE
   `is_published`  = VALUES(`is_published`),
   `is_featured`   = VALUES(`is_featured`),
   `display_order` = VALUES(`display_order`),
+  `featured_image` = VALUES(`featured_image`),
   `website_url`   = VALUES(`website_url`),
   `updated_at`    = CURRENT_TIMESTAMP(3);
 

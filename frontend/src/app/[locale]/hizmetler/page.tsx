@@ -43,7 +43,7 @@ export async function generateMetadata({
   return buildPageMetadata({
     locale,
     pathname: '/hizmetler',
-    title: locale.startsWith('en') ? 'Our Services - Vista Construction' : `${t('title')} — Vista İnşaat`,
+    title: locale.startsWith('en') ? 'Our Activity Areas - Vista Construction' : `${t('title')} — Vista İnşaat`,
     description: t('description'),
   });
 }
@@ -110,7 +110,7 @@ export default async function ServicesPage({
 
         <Breadcrumbs items={[
           { label: 'Vista İnşaat', href: localizedPath(locale, '/') },
-          { label: isEn ? 'Services' : 'Hizmetler' },
+          { label: isEn ? 'Activities' : 'Faaliyetler' },
         ]} />
 
         <h1 className="sv-page-title">{t('services.title')}</h1>
@@ -126,7 +126,7 @@ export default async function ServicesPage({
             <p style={{ fontSize: 13, color: 'var(--color-text-muted)', marginBottom: 16 }}>
               {isEn
                 ? 'Sample service descriptions are shown below until live content becomes available.'
-                : 'Canlı içerik gelene kadar aşağıda örnek hizmet açıklamaları gösterilmektedir.'}
+                : 'Canlı içerik gelene kadar aşağıda örnek faaliyet açıklamaları gösterilmektedir.'}
             </p>
           </>
         )}
@@ -198,7 +198,7 @@ export default async function ServicesPage({
           <aside>
             {/* All services list */}
             <div className="sv-sidebar-card">
-              <h3>{isEn ? 'All Services' : 'Tüm Hizmetler'}</h3>
+              <h3>{isEn ? 'All Activities' : 'Tüm Faaliyetler'}</h3>
               {visibleServices.map((s: any) => (
                 <Link
                   key={s.id ?? s.title}

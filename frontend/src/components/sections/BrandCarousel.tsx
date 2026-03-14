@@ -43,7 +43,7 @@ export function BrandCarousel({ brands }: { brands: BrandItem[] }) {
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: 56,
+            gap: 80,
             width: 'max-content',
           }}
         >
@@ -59,35 +59,26 @@ export function BrandCarousel({ brands }: { brands: BrandItem[] }) {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  height: 48,
-                  opacity: 0.5,
-                  transition: 'opacity 0.2s',
-                  filter: 'grayscale(100%)',
+                  height: 64,
+                  opacity: 0.9,
+                  transition: 'all 0.3s ease',
                 }}
-                className="hover:!opacity-100 hover:!filter-none"
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.opacity = '1';
-                  e.currentTarget.style.filter = 'grayscale(0%)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.opacity = '0.5';
-                  e.currentTarget.style.filter = 'grayscale(100%)';
-                }}
+                className="hover:scale-110 hover:opacity-100"
               >
                 {logoSrc ? (
                   <Image
                     src={logoSrc}
                     alt={brand.title}
-                    width={140}
-                    height={48}
-                    style={{ height: 40, width: 'auto', objectFit: 'contain' }}
+                    width={180}
+                    height={64}
+                    style={{ height: 60, width: 'auto', objectFit: 'contain' }}
                     unoptimized={logoSrc.endsWith('.svg')}
                   />
                 ) : (
                   <span
                     style={{
                       fontFamily: 'var(--font-heading)',
-                      fontSize: 18,
+                      fontSize: 22,
                       fontWeight: 700,
                       color: 'var(--color-text-primary)',
                       whiteSpace: 'nowrap',

@@ -2,7 +2,7 @@
   "nav": {
     "home": "Home",
     "projects": "Projects",
-    "services": "Services",
+    "services": "Activities",
     "about": "About",
     "gallery": "Gallery",
     "blog": "News",
@@ -91,7 +91,7 @@
       "subtitle": "Discover our most recent projects"
     },
     "services": {
-      "title": "Our Services",
+      "title": "Our Activity Areas",
       "subtitle": "Comprehensive solutions from architectural design to construction, project management to handover"
     },
     "whyUs": {
@@ -180,11 +180,11 @@
     }
   },
   "services": {
-    "title": "Our Services",
-    "description": "Comprehensive construction and architecture services from architectural design to construction, from survey and restoration to project management.",
-    "viewAll": "All Services",
-    "noServices": "No services found.",
-    "requestService": "Get a Quote for This Service",
+    "title": "Our Activity Areas",
+    "description": "Comprehensive construction and architecture activities from architectural design to construction, from survey and restoration to project management.",
+    "viewAll": "All Activities",
+    "noServices": "No activities found.",
+    "requestService": "Get a Quote for This Activity",
     "items": {
       "residential": "Residential Projects",
       "commercial": "Commercial Projects",

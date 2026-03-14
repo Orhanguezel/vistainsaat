@@ -72,7 +72,7 @@ async function fetchAllProjects(locale: string) {
 async function fetchFeaturedBlogPosts(locale: string) {
   try {
     const res = await fetch(
-      `${API_BASE_URL}/custom_pages?module_key=vistainsaat_blog&is_active=1&locale=${locale}&limit=3`,
+      `${API_BASE_URL}/custom_pages?module_key=news&is_published=1&featured=1&locale=${locale}&limit=3`,
       { next: { revalidate: 300 } },
     );
     if (!res.ok) return [];
@@ -117,7 +117,10 @@ export default async function HomePage({
   ]);
 
   const siteUrl = siteUrlBase();
-  const visibleBrands = references.length > 0 ? references : getFallbackBrands();
+  const visibleBrands = (references.length > 0 ? references : getFallbackBrands()).map((r: any) => ({
+    ...r,
+    logo_url: resolveImageUrl(r.featured_image || r.logo_url || r.image_url),
+  }));
   const visibleProducts = products.length > 0 ? products.slice(0, 8) : getFallbackProjects(locale);
   const visibleBlogPosts = blogPosts.length > 0 ? blogPosts.slice(0, 3) : getFallbackBlogPosts(locale);
   const [featuredBlogPost] = visibleBlogPosts;
@@ -142,106 +145,108 @@ export default async function HomePage({
       {/* Hero — ArchDaily editorial grid */}
       <section className="bg-(--color-bg)">
         <div className="mx-auto max-w-7xl px-4 pt-4 pb-6 lg:px-6">
-          <div className="grid gap-2.5 lg:grid-cols-[1.15fr_1fr]" style={{ minHeight: '560px' }}>
+          <div className="flex flex-col gap-2.5 lg:grid lg:grid-cols-[1.15fr_1fr]" style={{ minHeight: '560px' }}>
 
             {/* Left — Main video panel */}
             <HeroVideoPlayer
-              src="/media/hero-video.mp4"
+              src={absoluteAssetUrl('/uploads/video/hero-desktop.mp4') || ''}
+              mobileSrc={absoluteAssetUrl('/uploads/video/hero-mobile.mp4') || ''}
               poster={absoluteAssetUrl(visibleProducts[0]?.image_url) || undefined}
-              badge={t('home.hero.badge')}
-              title={t('home.hero.title')}
+              badge={locale === 'tr' ? 'Yeni Proje' : 'New Project'}
+              title={visibleProducts[0]?.title || 'Vista Sunset'}
+              subtitle={visibleProducts[0]?.summary || ''}
             />
 
             {/* Right — left stack + full-height news */}
-            <div className="grid grid-cols-2 gap-2.5">
+            <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
 
-              {/* Left column — stacked cards */}
-              <div className="flex flex-col gap-2.5">
-                {/* Project with play icon */}
-                {visibleProducts[0] && (
-                  <Link
-                    href={visibleProducts[0].slug ? localizedPath(locale, `/projeler/${visibleProducts[0].slug}`) : localizedPath(locale, '/projeler')}
-                    className="group relative flex-1 overflow-hidden"
-                  >
-                    <div className="absolute inset-0 bg-(--color-bg-muted)">
-                      {absoluteAssetUrl(visibleProducts[0].image_url) && (
-                        <OptimizedImage
-                          src={absoluteAssetUrl(visibleProducts[0].image_url)!}
-                          alt={buildMediaAlt({ locale, kind: 'project', title: visibleProducts[0].title })}
-                          fill
-                          sizes="(max-width: 1024px) 50vw, 18vw"
-                          className="object-cover transition-transform duration-500 group-hover:scale-105"
-                        />
-                      )}
-                    </div>
-                    <div className="absolute left-3 top-3 z-10 flex size-8 items-center justify-center rounded-full bg-white/90">
-                      <Play className="size-3.5 fill-(--color-text-primary) text-(--color-text-primary)" />
-                    </div>
-                  </Link>
-                )}
-
-                {/* Project image */}
-                {visibleProducts[1] && (
-                  <Link
-                    href={visibleProducts[1].slug ? localizedPath(locale, `/projeler/${visibleProducts[1].slug}`) : localizedPath(locale, '/projeler')}
-                    className="group relative flex-1 overflow-hidden"
-                  >
-                    <div className="absolute inset-0 bg-(--color-bg-muted)">
-                      {absoluteAssetUrl(visibleProducts[1].image_url) && (
-                        <OptimizedImage
-                          src={absoluteAssetUrl(visibleProducts[1].image_url)!}
-                          alt={buildMediaAlt({ locale, kind: 'project', title: visibleProducts[1].title })}
-                          fill
-                          sizes="(max-width: 1024px) 50vw, 18vw"
-                          className="object-cover transition-transform duration-500 group-hover:scale-105"
-                        />
-                      )}
-                    </div>
-                  </Link>
-                )}
-
-                {/* CTA button */}
-                <Link
-                  href={localizedPath(locale, '/teklif')}
-                  className="flex items-center justify-center gap-3 bg-(--color-brand) px-6 py-4 text-center transition-opacity hover:opacity-90"
-                >
-                  <p className="text-sm font-bold text-white lg:text-base" style={{ fontFamily: 'var(--font-heading)' }}>
-                    {t('home.hero.ctaSecondary')}
-                  </p>
-                  <ArrowRight className="size-4 text-white" />
-                </Link>
-              </div>
-
-              {/* Right column — full-height news card */}
-              {featuredBlogPost ? (
-                <Link
-                  href={featuredBlogPost.slug ? localizedPath(locale, `/haberler/${featuredBlogPost.slug}`) : localizedPath(locale, '/haberler')}
-                  className="group flex flex-col overflow-hidden"
-                >
-                  <div className="relative flex-1 overflow-hidden bg-(--color-bg-muted)">
-                    <OptimizedImage
-                      src={resolveImageUrl(featuredBlogPost.image_url || featuredBlogPost.featured_image) || BLOG_PLACEHOLDER_SRC}
-                      alt={featuredBlogPost.title}
-                      fill
-                      sizes="(max-width: 1024px) 50vw, 25vw"
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                  </div>
-                  <div className="bg-(--color-bg) pt-3 pb-1">
-                    <p className="text-xs font-medium uppercase tracking-wider text-(--color-brand)">
-                      {locale === 'tr' ? 'Haberler' : 'News'}
-                    </p>
-                    <h2
-                      className="mt-1 text-sm font-semibold leading-snug text-(--color-brand) lg:text-base"
-                      style={{ fontFamily: 'var(--font-heading)' }}
+                {/* Left column — stacked cards */}
+                <div className="flex flex-col gap-2.5 min-h-[400px] lg:min-h-0">
+                  {/* Project with play icon */}
+                  {visibleProducts[0] && (
+                    <Link
+                      href={visibleProducts[0].slug ? localizedPath(locale, `/projeler/${visibleProducts[0].slug}`) : localizedPath(locale, '/projeler')}
+                      className="group relative flex-1 overflow-hidden"
                     >
-                      {featuredBlogPost.title}
-                    </h2>
-                  </div>
-                </Link>
-              ) : (
-                <div className="bg-(--color-bg-muted)" />
-              )}
+                      <div className="absolute inset-0 bg-(--color-bg-muted)">
+                        {absoluteAssetUrl(visibleProducts[0].image_url) && (
+                          <OptimizedImage
+                            src={absoluteAssetUrl(visibleProducts[0].image_url)!}
+                            alt={buildMediaAlt({ locale, kind: 'project', title: visibleProducts[0].title })}
+                            fill
+                            sizes="(max-width: 1024px) 50vw, 18vw"
+                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                          />
+                        )}
+                      </div>
+                      <div className="absolute left-3 top-3 z-10 flex size-8 items-center justify-center rounded-full bg-white/90">
+                        <Play className="size-3.5 fill-(--color-text-primary) text-(--color-text-primary)" />
+                      </div>
+                    </Link>
+                  )}
+
+                  {/* Project image */}
+                  {visibleProducts[1] && (
+                    <Link
+                      href={visibleProducts[1].slug ? localizedPath(locale, `/projeler/${visibleProducts[1].slug}`) : localizedPath(locale, '/projeler')}
+                      className="group relative flex-1 overflow-hidden"
+                    >
+                      <div className="absolute inset-0 bg-(--color-bg-muted)">
+                        {absoluteAssetUrl(visibleProducts[1].image_url) && (
+                          <OptimizedImage
+                            src={absoluteAssetUrl(visibleProducts[1].image_url)!}
+                            alt={buildMediaAlt({ locale, kind: 'project', title: visibleProducts[1].title })}
+                            fill
+                            sizes="(max-width: 1024px) 50vw, 18vw"
+                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                          />
+                        )}
+                      </div>
+                    </Link>
+                  )}
+
+                  {/* CTA button */}
+                  <Link
+                    href={localizedPath(locale, '/teklif')}
+                    className="flex items-center justify-center gap-3 bg-(--color-brand) px-6 py-4 text-center transition-opacity hover:opacity-90"
+                  >
+                    <p className="text-sm font-bold text-white lg:text-base" style={{ fontFamily: 'var(--font-heading)' }}>
+                      {t('home.hero.ctaSecondary')}
+                    </p>
+                    <ArrowRight className="size-4 text-white" />
+                  </Link>
+                </div>
+
+                {/* Right column — full-height news card */}
+                {featuredBlogPost ? (
+                  <Link
+                    href={featuredBlogPost.slug ? localizedPath(locale, `/haberler/${featuredBlogPost.slug}`) : localizedPath(locale, '/haberler')}
+                    className="group flex flex-col overflow-hidden min-h-[320px] lg:min-h-0"
+                  >
+                    <div className="relative flex-1 overflow-hidden bg-(--color-bg-muted) aspect-video sm:aspect-auto">
+                      <OptimizedImage
+                        src={resolveImageUrl(featuredBlogPost.image_url || featuredBlogPost.featured_image) || BLOG_PLACEHOLDER_SRC}
+                        alt={featuredBlogPost.title}
+                        fill
+                        sizes="(max-width: 1024px) 100vw, 25vw"
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                    </div>
+                    <div className="bg-(--color-bg) pt-3 pb-1">
+                      <p className="text-xs font-medium uppercase tracking-wider text-(--color-brand)">
+                        {locale === 'tr' ? 'Haberler' : 'News'}
+                      </p>
+                      <h2
+                        className="mt-1 text-sm font-semibold leading-snug text-(--color-brand) lg:text-base"
+                        style={{ fontFamily: 'var(--font-heading)' }}
+                      >
+                        {featuredBlogPost.title}
+                      </h2>
+                    </div>
+                  </Link>
+                ) : (
+                  <div className="bg-(--color-bg-muted)" />
+                )}
 
             </div>
           </div>
@@ -296,31 +301,6 @@ export default async function HomePage({
                           className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
                         />
                       </Link>
-                    )}
-
-                    {thumbs.length > 1 && (
-                      <div className="mt-2 flex gap-1.5">
-                        {thumbs.map((src: string, i: number) => (
-                          <Link
-                            key={i}
-                            href={projectHref}
-                            className="relative aspect-3/2 w-[calc(20%-3px)] overflow-hidden bg-(--color-bg-muted)"
-                          >
-                            <OptimizedImage
-                              src={src}
-                              alt={`${project.title} — ${i + 1}`}
-                              fill
-                              sizes="120px"
-                              className="object-cover"
-                            />
-                            {i === thumbs.length - 1 && extraCount > 0 && (
-                              <span className="absolute inset-0 flex items-center justify-center bg-black/50 text-lg font-semibold text-white">
-                                + {extraCount}
-                              </span>
-                            )}
-                          </Link>
-                        ))}
-                      </div>
                     )}
 
                     <div className="mt-3 flex flex-wrap items-center gap-x-1.5 text-xs font-semibold uppercase tracking-wide">

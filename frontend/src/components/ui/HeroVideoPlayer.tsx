@@ -1,20 +1,32 @@
 'use client';
 
-import { useRef, useState, useCallback } from 'react';
+import { useRef, useState, useCallback, useEffect } from 'react';
 import { Play, X } from 'lucide-react';
 
 interface HeroVideoPlayerProps {
   src: string;
+  mobileSrc?: string;
   poster?: string;
   badge?: string;
   title: string;
   subtitle?: string;
 }
 
-export function HeroVideoPlayer({ src, poster, badge, title, subtitle }: HeroVideoPlayerProps) {
+export function HeroVideoPlayer({ src, mobileSrc, poster, badge, title, subtitle }: HeroVideoPlayerProps) {
   const bgVideoRef = useRef<HTMLVideoElement>(null);
   const fullVideoRef = useRef<HTMLVideoElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile device
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024); // Use 1024 to match LG break
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const openFullscreen = useCallback(() => {
     setIsFullscreen(true);
@@ -29,11 +41,20 @@ export function HeroVideoPlayer({ src, poster, badge, title, subtitle }: HeroVid
     }
   }, []);
 
+  const currentSrc = isMobile && mobileSrc ? mobileSrc : src;
+
+  // Force video reload when src changes
+  useEffect(() => {
+    if (bgVideoRef.current) {
+      bgVideoRef.current.load();
+    }
+  }, [currentSrc]);
+
   return (
     <>
       {/* Background auto-playing video */}
       <div
-        className="group relative flex flex-1 cursor-pointer flex-col overflow-hidden"
+        className="group relative flex cursor-pointer flex-col overflow-hidden aspect-9/16 sm:aspect-4/3 lg:aspect-auto lg:flex-1 min-h-[520px] lg:min-h-0"
         onClick={openFullscreen}
       >
         <div className="relative flex-1 overflow-hidden">
@@ -46,7 +67,7 @@ export function HeroVideoPlayer({ src, poster, badge, title, subtitle }: HeroVid
             className="absolute inset-0 h-full w-full object-cover"
             poster={poster}
           >
-            <source src={src} type="video/mp4" />
+            <source src={currentSrc} type="video/mp4" />
           </video>
           {/* Video badge — top left */}
           <div className="absolute left-4 top-4 z-10 flex items-center gap-1.5 rounded-sm bg-white px-3 py-1.5 text-xs font-semibold text-(--color-text-primary)">
@@ -76,7 +97,7 @@ export function HeroVideoPlayer({ src, poster, badge, title, subtitle }: HeroVid
       {/* Fullscreen overlay */}
       {isFullscreen && (
         <div
-          className="fixed inset-0 z-[200] flex items-center justify-center bg-black/95"
+          className="fixed inset-0 z-200 flex items-center justify-center bg-black/95"
           onClick={closeFullscreen}
         >
           <button
@@ -91,10 +112,10 @@ export function HeroVideoPlayer({ src, poster, badge, title, subtitle }: HeroVid
             autoPlay
             controls
             playsInline
-            className="max-h-[90vh] max-w-[90vw]"
+            className="max-h-[90vh] max-w-full lg:max-w-[90vw]"
             onClick={(e) => e.stopPropagation()}
           >
-            <source src={src} type="video/mp4" />
+            <source src={currentSrc} type="video/mp4" />
           </video>
         </div>
       )}

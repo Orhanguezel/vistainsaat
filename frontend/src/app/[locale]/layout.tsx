@@ -156,10 +156,31 @@ export default async function LocaleLayout({
         <ThemeBootScript />
       </head>
       <body
-        className="min-h-screen bg-[var(--color-bg)] text-[var(--color-text-primary)] antialiased"
+        className="min-h-screen bg-(--color-bg) text-(--color-text-primary) antialiased"
         data-theme-mode="light"
         suppressHydrationWarning
       >
+        {/* SSR Splash Screen: inline overlay that hides content until client takes over */}
+        <div
+          id="vista-splash-ssr"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 99998,
+            background: '#0f0e0d',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'opacity 0.4s ease',
+          }}
+          aria-hidden="true"
+          suppressHydrationWarning
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{if(sessionStorage.getItem('vista_splash_seen')){var el=document.getElementById('vista-splash-ssr');if(el)el.style.display='none'}}catch(e){}})()`
+          }}
+        />
         <NextIntlClientProvider locale={locale} messages={messages}>
           <Header menuItems={stableMenuItems} logoUrl={logoUrl} locale={locale} />
           <main className="flex-1">{children}</main>

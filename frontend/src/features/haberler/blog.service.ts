@@ -17,7 +17,7 @@ export interface BlogPost {
 export const blogService = {
   getAll: async (params?: Record<string, unknown>): Promise<BlogPost[]> => {
     const res = await api.get('/custom_pages', {
-      params: { module_key: 'vistainsaat_blog', is_active: 1, ...params },
+      params: { module_key: 'news', is_published: 1, ...params },
     });
     return Array.isArray(res.data) ? res.data : (res.data as any)?.items ?? [];
   },

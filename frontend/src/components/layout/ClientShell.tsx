@@ -31,10 +31,18 @@ const WhatsAppButton = dynamic(
     ),
   { ssr: false },
 );
+const SplashScreen = dynamic(
+  () =>
+    import('@/components/layout/SplashScreen').then(
+      (m) => m.SplashScreen,
+    ),
+  { ssr: false },
+);
 
 export function ClientShell() {
   return (
     <>
+      <SplashScreen />
       <ScrollToTop />
       <WebVitals />
       <GoogleAnalytics />

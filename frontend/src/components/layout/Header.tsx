@@ -43,7 +43,7 @@ function getMegaColumns(locale: string, isEn: boolean) {
       title: 'Vista İnşaat',
       links: [
         { label: isEn ? 'Projects' : 'Projeler', url: l('/projeler'), bold: true },
-        { label: isEn ? 'Services' : 'Hizmetler', url: l('/hizmetler'), bold: true },
+        { label: isEn ? 'Activities' : 'Faaliyetler', url: l('/hizmetler'), bold: true },
         { label: isEn ? 'News' : 'Haberler', url: l('/haberler'), bold: true },
         { label: isEn ? 'Gallery' : 'Galeri', url: l('/galeri'), bold: true },
         { label: isEn ? 'About Us' : 'Hakkımızda', url: l('/hakkimizda'), bold: true },
@@ -64,7 +64,7 @@ function getMegaColumns(locale: string, isEn: boolean) {
       ],
     },
     {
-      title: isEn ? 'Services' : 'Hizmetler',
+      title: isEn ? 'Activities' : 'Faaliyetler',
       links: [
         { label: isEn ? 'Construction' : 'İnşaat & Taahhüt', url: l('/hizmetler') },
         { label: isEn ? 'Project Management' : 'Proje Yönetimi', url: l('/hizmetler') },
@@ -366,7 +366,7 @@ export function Header({
       </div>
 
       {/* Spacer for fixed compact header on non-home pages */}
-      {compactOnly && <div style={{ height: 48 }} className="lg:!h-[44px]" />}
+      {compactOnly && <div style={{ height: 48 }} className="lg:h-[44px]!" />}
 
       {/* ══════════════════════════════════════════
           FULLSCREEN MEGA MENU OVERLAY

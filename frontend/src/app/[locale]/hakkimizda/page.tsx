@@ -247,7 +247,7 @@ export default async function AboutPage({
             {/* Services list */}
             {services.length > 0 && (
               <div className="ab-sidebar-card">
-                <h3>{isEn ? 'Our Services' : 'Hizmetlerimiz'}</h3>
+                <h3>{isEn ? 'Our Activity Areas' : 'Faaliyet Alanlarımız'}</h3>
                 {services.map((s: any) => (
                   <Link
                     key={s.id ?? s.title}

@@ -66,8 +66,8 @@ export async function generateMetadata({
     locale,
     pathname: `/hizmetler/${slug}`,
     title: service.meta_title || (locale.startsWith('en')
-      ? `${service.title} | Vista Construction Services`
-      : `${service.title} | Vista İnşaat Hizmetleri`),
+      ? `${service.title} | Vista Construction Activities`
+      : `${service.title} | Vista İnşaat Faaliyetleri`),
     description: service.meta_description || service.description,
     ogImage: absoluteAssetUrl(service.image_url) || undefined,
   });
@@ -94,7 +94,7 @@ export default async function ServiceDetailPage({
 
   const breadcrumbs = [
     { label: 'Vista İnşaat', href: localizedPath(locale, '/') },
-    { label: isEn ? 'Services' : 'Hizmetler', href: localizedPath(locale, '/hizmetler') },
+    { label: isEn ? 'Activities' : 'Faaliyetler', href: localizedPath(locale, '/hizmetler') },
     { label: service.title },
   ];
 
@@ -290,7 +290,7 @@ export default async function ServiceDetailPage({
             {/* Other services */}
             {otherServices.length > 0 && (
               <div className="sd-sidebar-card">
-                <h3>{isEn ? 'Other Services' : 'Diğer Hizmetler'}</h3>
+                <h3>{isEn ? 'Other Activities' : 'Diğer Faaliyetler'}</h3>
                 {otherServices.map((s: any) => (
                   <Link
                     key={s.id ?? s.title}
@@ -344,7 +344,7 @@ export default async function ServiceDetailPage({
                 border: '1px solid var(--color-border)',
               }}
             >
-              {isEn ? '← All Services' : '← Tüm Hizmetler'}
+              {isEn ? '← All Activities' : '← Tüm Faaliyetler'}
             </Link>
           </aside>
         </div>

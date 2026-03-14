@@ -35,7 +35,7 @@ async function fetchNewsCategories(locale: string): Promise<NewsCategory[]> {
 
 async function fetchNews(locale: string, categoryId?: string) {
   try {
-    let url = `${API_BASE_URL}/custom_pages?module_key=news&is_active=1&locale=${locale}&limit=50`;
+    let url = `${API_BASE_URL}/custom_pages?module_key=news&is_published=1&locale=${locale}&limit=50`;
     if (categoryId) url += `&category_id=${encodeURIComponent(categoryId)}`;
     const res = await fetch(url, { next: { revalidate: 300 } });
     if (!res.ok) return [];
@@ -49,7 +49,7 @@ async function fetchNews(locale: string, categoryId?: string) {
 async function fetchSidebarNews(locale: string, limit = 4) {
   try {
     const res = await fetch(
-      `${API_BASE_URL}/custom_pages?module_key=news&is_active=1&locale=${locale}&limit=${limit}&sort=created_at&order=desc`,
+      `${API_BASE_URL}/custom_pages?module_key=news&is_published=1&locale=${locale}&limit=${limit}&sort=created_at&order=desc`,
       { next: { revalidate: 300 } },
     );
     if (!res.ok) return [];

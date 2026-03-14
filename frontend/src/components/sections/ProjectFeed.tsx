@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Bookmark } from 'lucide-react';
+import { absoluteAssetUrl } from '@/lib/utils';
 
 interface ProjectItem {
   id: string;
@@ -28,13 +29,6 @@ interface ProjectFeedProps {
   sidebarProjects?: ProjectItem[];
   sidebarTitle?: string;
   readMoreLabel?: string;
-}
-
-function resolveImg(value: string | undefined | null, backendUrl: string): string | null {
-  if (!value) return null;
-  if (/^https?:\/\//i.test(value)) return value;
-  if (value.startsWith('/media/')) return value;
-  return `${backendUrl}${value}`;
 }
 
 function localePath(locale: string, path: string): string {
@@ -132,8 +126,8 @@ export function ProjectFeed({
         {/* Main feed */}
         <div className="space-y-10">
           {projects.map((project) => {
-            const mainImage = resolveImg(project.image_url, backendUrl);
-            const thumbs = (project.images || []).slice(0, 5).map((img) => resolveImg(img, backendUrl)).filter(Boolean) as string[];
+            const mainImage = absoluteAssetUrl(project.image_url);
+            const thumbs = (project.images || []).slice(0, 5).map((img) => absoluteAssetUrl(img)).filter(Boolean) as string[];
             const extraCount = (project.images?.length || 0) - 5;
             const specs = project.specifications || {};
             const categoryName = project.category?.name || specs.tip || '';
@@ -173,32 +167,6 @@ export function ProjectFeed({
                       className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
                     />
                   </Link>
-                )}
-
-                {/* Thumbnail strip */}
-                {thumbs.length > 1 && (
-                  <div className="mt-2 flex gap-1.5">
-                    {thumbs.map((src, i) => (
-                      <Link
-                        key={i}
-                        href={projectHref}
-                        className="relative aspect-3/2 w-[calc(20%-3px)] overflow-hidden bg-(--color-bg-muted)"
-                      >
-                        <Image
-                          src={src}
-                          alt={`${project.title} — ${i + 1}`}
-                          fill
-                          sizes="120px"
-                          className="object-cover"
-                        />
-                        {i === thumbs.length - 1 && extraCount > 0 && (
-                          <span className="absolute inset-0 flex items-center justify-center bg-black/50 text-lg font-semibold text-white">
-                            + {extraCount}
-                          </span>
-                        )}
-                      </Link>
-                    ))}
-                  </div>
                 )}
 
                 {/* Category tags + location */}
@@ -285,7 +253,7 @@ export function ProjectFeed({
                 </h3>
                 <div className="space-y-5">
                   {sidebarProjects.map((p) => {
-                    const img = resolveImg(p.image_url, backendUrl);
+                    const img = absoluteAssetUrl(p.image_url);
                     return (
                       <Link
                         key={p.id}

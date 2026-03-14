@@ -32,7 +32,8 @@ VALUES
   ('cccc0004-4004-4004-8004-cccccccc0004', 'vistainsaat', NULL, NULL, NULL, NULL, 1, 0, 40),
   ('cccc0005-4005-4005-8005-cccccccc0005', 'vistainsaat', NULL, NULL, NULL, NULL, 1, 0, 50),
   ('cccc0006-4006-4006-8006-cccccccc0006', 'vistainsaat', NULL, NULL, NULL, NULL, 1, 0, 60),
-  ('cccc0007-4007-4007-8007-cccccccc0007', 'vistainsaat', NULL, NULL, NULL, NULL, 1, 0, 70)
+  ('cccc0007-4007-4007-8007-cccccccc0007', 'vistainsaat', NULL, NULL, NULL, NULL, 1, 0, 70),
+  ('cccc0008-4008-4008-8008-cccccccc0008', 'vistainsaat', NULL, NULL, NULL, NULL, 1, 0, 80)
 ON DUPLICATE KEY UPDATE
   `module_key` = VALUES(`module_key`),
   `is_active` = VALUES(`is_active`),
@@ -56,7 +57,8 @@ VALUES
   ('cccc0004-4004-4004-8004-cccccccc0004', 'tr', 'Restorasyon', 'restorasyon', 'Tarihi yapılar ve mevcut binaların yenilenmesi'),
   ('cccc0005-4005-4005-8005-cccccccc0005', 'tr', 'Altyapı ve Çevre Düzenlemesi', 'altyapi-cevre-duzenlemesi', 'Yol, park, peyzaj ve altyapı projeleri'),
   ('cccc0006-4006-4006-8006-cccccccc0006', 'tr', 'Endüstriyel Yapılar', 'endustriyel-yapilar', 'Fabrika, depo ve endüstriyel tesis projeleri'),
-  ('cccc0007-4007-4007-8007-cccccccc0007', 'tr', 'Mimari Tasarım', 'mimari-tasarim', 'Özel tasarım ve mimari proje çözümleri')
+  ('cccc0007-4007-4007-8007-cccccccc0007', 'tr', 'Mimari Tasarım', 'mimari-tasarim', 'Özel tasarım ve mimari proje çözümleri'),
+  ('cccc0008-4008-4008-8008-cccccccc0008', 'tr', 'Markalar', 'markalar', 'Proje ve imalat süreçlerimizde kullandığımız dünya devi markalar')
 ON DUPLICATE KEY UPDATE
   `name` = VALUES(`name`),
   `slug` = VALUES(`slug`),
@@ -80,7 +82,8 @@ VALUES
   ('cccc0004-4004-4004-8004-cccccccc0004', 'en', 'Restoration', 'restoration', 'Renovation of historic buildings and existing structures'),
   ('cccc0005-4005-4005-8005-cccccccc0005', 'en', 'Infrastructure & Landscaping', 'infrastructure-landscaping', 'Road, park, landscaping, and infrastructure projects'),
   ('cccc0006-4006-4006-8006-cccccccc0006', 'en', 'Industrial Buildings', 'industrial-buildings', 'Factory, warehouse, and industrial facility projects'),
-  ('cccc0007-4007-4007-8007-cccccccc0007', 'en', 'Architectural Design', 'architectural-design', 'Custom design and architectural project solutions')
+  ('cccc0007-4007-4007-8007-cccccccc0007', 'en', 'Architectural Design', 'architectural-design', 'Custom design and architectural project solutions'),
+  ('cccc0008-4008-4008-8008-cccccccc0008', 'en', 'Brands', 'brands', 'World-leading brands we use in our project and production processes')
 ON DUPLICATE KEY UPDATE
   `name` = VALUES(`name`),
   `slug` = VALUES(`slug`),

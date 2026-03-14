@@ -32,7 +32,7 @@ async function fetchPost(slug: string, locale: string) {
 async function fetchSidebarNews(locale: string, excludeSlug: string, limit = 4) {
   try {
     const res = await fetch(
-      `${API_BASE_URL}/custom_pages?module_key=news&is_active=1&locale=${locale}&limit=${limit + 1}&sort=created_at&order=desc`,
+      `${API_BASE_URL}/custom_pages?module_key=news&is_published=1&locale=${locale}&limit=${limit + 1}&sort=created_at&order=desc`,
       { next: { revalidate: 300 } },
     );
     if (!res.ok) return [];
@@ -47,7 +47,7 @@ async function fetchSidebarNews(locale: string, excludeSlug: string, limit = 4) 
 async function fetchRelatedArticles(locale: string, excludeSlug: string, limit = 3) {
   try {
     const res = await fetch(
-      `${API_BASE_URL}/custom_pages?module_key=news&is_active=1&locale=${locale}&limit=${limit + 1}&sort=created_at&order=desc`,
+      `${API_BASE_URL}/custom_pages?module_key=news&is_published=1&locale=${locale}&limit=${limit + 1}&sort=created_at&order=desc`,
       { next: { revalidate: 300 } },
     );
     if (!res.ok) return [];
