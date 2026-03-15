@@ -193,11 +193,12 @@ export const listProducts: RouteHandler = async (req, reply) => {
   }
   const orderExpr = dir === 'asc' ? asc(colMap[sortKey]) : desc(colMap[sortKey]);
 
-  // ✅ COUNT includes item_type + locale
+  // ✅ COUNT includes item_type + locale + category join for module_key filter
   const countBase = db
     .select({ total: sql<number>`COUNT(*)` })
     .from(products)
     .innerJoin(productI18n, eq(productI18n.product_id, products.id))
+    .leftJoin(categories, eq(products.category_id, categories.id))
     .where(whereExpr as any);
 
   const [{ total }] = await countBase;
