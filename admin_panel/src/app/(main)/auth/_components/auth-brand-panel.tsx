@@ -17,7 +17,10 @@ export function AuthBrandPanel({ heading, subtext }: Props) {
   const logoVal = logoSetting?.value as any;
   const configVal = configSetting?.value as any;
 
-  const logoUrl: string = logoVal?.url || LOGO_FALLBACK;
+  const rawLogoUrl: string = logoVal?.url || LOGO_FALLBACK;
+  // SVG files cannot go through Next.js image optimizer
+  const isSvg = rawLogoUrl.endsWith('.svg');
+  const logoUrl = rawLogoUrl;
   const logoAlt: string = logoVal?.alt || 'Logo';
   const appName: string = configVal?.branding?.app_name || 'Vista İnşaat';
 
@@ -30,6 +33,7 @@ export function AuthBrandPanel({ heading, subtext }: Props) {
             alt={logoAlt}
             fill
             className="object-contain"
+            unoptimized={isSvg}
           />
         </div>
         <div className="space-y-2">

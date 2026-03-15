@@ -160,12 +160,12 @@ const SubCategoryFormPage: React.FC<SubCategoryFormPageProps> = ({
       firstLocaleValue ||
       'de';
 
-    return (base || 'de').toLowerCase();
+    return (base || 'tr').toLowerCase();
   }, [coerceLocale, routerLocale, defaultLocaleFromDb, firstLocaleValue]);
 
   /* -------------------- Categories (locale-dependent) -------------------- */
   // ✅ KRİTİK: locale arg ver -> dil değişince query arg değişsin -> refetch
-  const categoriesLocale = (formState?.locale || effectiveLocale || 'de').toLowerCase();
+  const categoriesLocale = (formState?.locale || effectiveLocale || 'tr').toLowerCase();
 
   const { data: categoryRows, isLoading: isCategoriesLoading } = useListCategoriesAdminQuery(
     {
@@ -381,7 +381,7 @@ const SubCategoryFormPage: React.FC<SubCategoryFormPageProps> = ({
 
     const payloadBase = {
       category_id: formState.category_id,
-      locale: (formState.locale || effectiveLocale || 'de').toLowerCase(),
+      locale: (formState.locale || effectiveLocale || 'tr').toLowerCase(),
       name: formState.name.trim(),
       slug: formState.slug.trim(),
       description: formState.description.trim() || undefined,

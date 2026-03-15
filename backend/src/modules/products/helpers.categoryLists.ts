@@ -9,10 +9,6 @@ import {
   categories,
   categoryI18n,
 } from "@/modules/categories/schema";
-import {
-  subCategories,
-  subCategoryI18n,
-} from "@/modules/subcategories/schema";
 
 // küçük yardımcı – query string bool parse
 const toBool = (v: unknown): boolean | undefined => {
@@ -82,54 +78,3 @@ export const adminListCategories: RouteHandler = async (req, reply) => {
   return reply.send(rows);
 };
 
-/** Admin için alt kategori drop-down (category_id + locale + is_active) */
-export const adminListSubcategories: RouteHandler = async (
-  req,
-  reply,
-) => {
-  const { category_id, locale, is_active } =
-    (req.query as {
-      category_id?: string;
-      locale?: string;
-      is_active?: string;
-    }) ?? {};
-
-  const conds: any[] = [];
-
-  if (category_id) {
-    conds.push(eq(subCategories.category_id, category_id));
-  }
-
-  const normLocale = normalizeLocale(locale);
-  if (normLocale) {
-    conds.push(eq(subCategoryI18n.locale, normLocale));
-  }
-
-  const active = toBool(is_active);
-  if (active !== undefined) {
-    conds.push(eq(subCategories.is_active, active));
-  }
-
-  const base = db
-    .select({
-      id: subCategories.id,
-      name: subCategoryI18n.name,
-      slug: subCategoryI18n.slug,
-      category_id: subCategories.category_id,
-      locale: subCategoryI18n.locale,
-    })
-    .from(subCategories)
-    .innerJoin(
-      subCategoryI18n,
-      eq(subCategoryI18n.sub_category_id, subCategories.id),
-    );
-
-  const qb = conds.length ? base.where(and(...conds)) : base;
-
-  const rows = await qb.orderBy(
-    asc(subCategories.display_order),
-    asc(subCategoryI18n.name),
-  );
-
-  return reply.send(rows);
-};

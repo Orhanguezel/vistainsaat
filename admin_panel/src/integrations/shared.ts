@@ -65,7 +65,7 @@ export * from '@/integrations/shared/product_faqs_admin.types';
 export * from '@/integrations/shared/product_images_admin.types';
 export * from '@/integrations/shared/product_reviews_admin.types';
 export * from '@/integrations/shared/product_specs_admin.types';
-export * from '@/integrations/shared/library.types';
 export * from '@/integrations/shared/references.types';
 export * from '@/integrations/shared/gallery.types';
+export * from '@/integrations/shared/comment_admin.types';
 

@@ -1,6 +1,6 @@
 -- =============================================================
 -- 032_ip_blocklist_schema.sql
--- Ensotek – IP blocklist table
+-- Vista İnşaat – IP blocklist table
 -- =============================================================
 
 SET NAMES utf8mb4;

@@ -53,8 +53,6 @@ export const productCreateSchema = z.object({
   // Base alanlar
   price: z.coerce.number().nonnegative(),
   category_id: z.string().uuid(),
-  sub_category_id: emptyToNull(z.string().uuid().optional().nullable()),
-
   image_url: emptyToNull(z.string().url().optional().nullable()),
   images: z.array(z.string().url()).optional().default([]),
 

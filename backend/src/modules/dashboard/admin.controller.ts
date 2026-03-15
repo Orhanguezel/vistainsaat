@@ -11,12 +11,11 @@ import { sql } from "drizzle-orm";
 // İsimler %99 bunlara çok yakın; farklıysa sadece import satırlarını düzeltmen yeterli.
 import { products } from "@/modules/products/schema";
 import { categories } from "@/modules/categories/schema";
-import { subCategories} from "@/modules/subcategories/schema";
 import { contact_messages } from "@/modules/contact/schema";
 import { siteSettings } from "@/modules/siteSettings/schema";
 import { customPages } from "@/modules/customPages/schema";
 import { menuItems } from "@/modules/menuItems/schema";
-import { library } from "@/modules/library/schema";
+// import { library } from "@/modules/library/schema";
 import { reviews } from "@/modules/review/schema";
 import { users } from "@/modules/auth/schema";
 import { offersTable } from '@/modules/offer/schema';
@@ -49,12 +48,10 @@ export const getDashboardSummaryAdmin: RouteHandler = async (req, reply) => {
     const defs: { key: string; label: string; table: any }[] = [
       { key: "products", label: "Ürünler", table: products },
       { key: "categories", label: "Kategoriler", table: categories },
-      { key: "subcategories", label: "Alt Kategoriler", table: subCategories },
       { key: "contacts", label: "İletişim Mesajları", table: contact_messages },
       { key: "site_settings", label: "Site Ayarları", table: siteSettings },
       { key: "custom_pages", label: "Özel Sayfalar", table: customPages },
       { key: "menu_items", label: "Menü Öğeleri", table: menuItems },
-      { key: "library", label: "Kütüphane / Library", table: library },
       { key: "reviews", label: "Yorumlar", table: reviews },
       { key: "users", label: "Kullanıcılar", table: users },
       { key: "offers", label: "Teklifler", table: offersTable },

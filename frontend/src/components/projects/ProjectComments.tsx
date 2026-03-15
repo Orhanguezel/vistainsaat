@@ -1,6 +1,18 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import Script from 'next/script';
+
+const RECAPTCHA_SITE_KEY =
+  process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI';
+
+const EMOJI_LIST = [
+  '😀','😂','😍','🥰','😎','🤔','😢','😡',
+  '👍','👎','👏','🙏','❤️','🔥','⭐','✨',
+  '🎉','💯','🏗️','🏠','🏢','🏛️','🧱','🪵',
+  '🔨','⚒️','🪜','📐','🏆','💪','👷','🚧',
+  '✅','❌','⚠️','💡','📸','🎨','🌟','👀',
+];
 
 type Comment = {
   id: string;
@@ -10,6 +22,10 @@ type Comment = {
   created_at: string;
   likes_count: number;
 };
+
+function isVideoUrl(url: string): boolean {
+  return /\.(mp4|webm|ogg)(\?|$)/i.test(url);
+}
 
 type Props = {
   targetType: string;
@@ -26,8 +42,55 @@ export function ProjectComments({ targetType, targetId, apiBaseUrl, locale }: Pr
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
+  const [uploadedMediaType, setUploadedMediaType] = useState<'image' | 'video'>('image');
+  const [uploading, setUploading] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const emojiPickerRef = useRef<HTMLDivElement>(null);
+
+  // reCAPTCHA state
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const captchaRef = useRef<HTMLDivElement>(null);
+  const widgetIdRef = useRef<number | null>(null);
+  const [captchaReady, setCaptchaReady] = useState(false);
+  const [isLocalhost, setIsLocalhost] = useState(false);
+
+  useEffect(() => {
+    const host = window.location.hostname;
+    if (host === 'localhost' || host === '127.0.0.1') {
+      setIsLocalhost(true);
+    }
+  }, []);
+
+  // Render reCAPTCHA widget
+  useEffect(() => {
+    if (isLocalhost || !captchaReady) return;
+    const container = captchaRef.current;
+    if (!container || widgetIdRef.current != null) return;
+
+    const theme =
+      document.documentElement.dataset.themeMode === 'dark' ? 'dark' : 'light';
+
+    const renderWidget = () => {
+      if (!window.grecaptcha || typeof window.grecaptcha.render !== 'function') return;
+      const id = window.grecaptcha.render(container, {
+        sitekey: RECAPTCHA_SITE_KEY,
+        theme,
+        callback: (token) => setCaptchaToken(token),
+        'expired-callback': () => setCaptchaToken(null),
+      });
+      widgetIdRef.current = id;
+    };
+
+    if (window.grecaptcha && typeof window.grecaptcha.ready === 'function') {
+      window.grecaptcha.ready(renderWidget);
+    } else {
+      renderWidget();
+    }
+  }, [captchaReady, isLocalhost]);
 
   /* Load comments on first render */
   const loadComments = useCallback(async () => {
@@ -53,6 +116,29 @@ export function ProjectComments({ targetType, targetId, apiBaseUrl, locale }: Pr
     }
   }, [loaded, loading, loadComments]);
 
+  /* Upload media (image or video) to server */
+  const uploadMedia = useCallback(
+    async (file: File): Promise<{ url: string; type: 'image' | 'video' } | null> => {
+      setUploading(true);
+      try {
+        const fd = new FormData();
+        fd.append('file', file);
+        const res = await fetch(`${apiBaseUrl}/comments/upload-image`, {
+          method: 'POST',
+          body: fd,
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.url) return { url: data.url, type: data.type || 'image' };
+        }
+      } catch { /* silent */ } finally {
+        setUploading(false);
+      }
+      return null;
+    },
+    [apiBaseUrl],
+  );
+
   /* Submit comment */
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
@@ -65,6 +151,11 @@ export function ProjectComments({ targetType, targetId, apiBaseUrl, locale }: Pr
       const content = (fd.get('content') as string)?.trim();
       if (!content) return;
 
+      // reCAPTCHA check (skip on localhost)
+      if (!isLocalhost && !captchaToken) {
+        return;
+      }
+
       setSubmitting(true);
       setSuccess(false);
 
@@ -75,7 +166,8 @@ export function ProjectComments({ targetType, targetId, apiBaseUrl, locale }: Pr
           author_name: authorName || (isEn ? 'Guest' : 'Misafir'),
           content,
         };
-        if (imagePreview) body.image_url = imagePreview;
+        if (uploadedImageUrl) body.image_url = uploadedImageUrl;
+        if (captchaToken) body.captcha_token = captchaToken;
 
         const res = await fetch(`${apiBaseUrl}/comments`, {
           method: 'POST',
@@ -87,32 +179,62 @@ export function ProjectComments({ targetType, targetId, apiBaseUrl, locale }: Pr
           setSuccess(true);
           form.reset();
           setImagePreview(null);
-          // Reload comments
+          setUploadedImageUrl(null);
+          setUploadedMediaType('image');
+          setCaptchaToken(null);
+          if (widgetIdRef.current != null && window.grecaptcha) {
+            window.grecaptcha.reset(widgetIdRef.current);
+          }
           setLoaded(false);
         }
       } catch { /* silent */ }
       setSubmitting(false);
     },
-    [apiBaseUrl, targetType, targetId, isEn, submitting, imagePreview],
+    [apiBaseUrl, targetType, targetId, isEn, submitting, uploadedImageUrl, captchaToken, isLocalhost],
   );
 
-  /* Image preview (base64 for display only — real upload would go through storage API) */
+  /* Image select + upload */
   const handleImageSelect = useCallback(() => {
     fileRef.current?.click();
   }, []);
 
-  const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => setImagePreview(reader.result as string);
-    reader.readAsDataURL(file);
-  }, []);
+  const handleFileChange = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+
+      const isVideo = file.type.startsWith('video/');
+
+      // Show preview immediately
+      if (isVideo) {
+        setImagePreview(URL.createObjectURL(file));
+        setUploadedMediaType('video');
+      } else {
+        const reader = new FileReader();
+        reader.onload = () => setImagePreview(reader.result as string);
+        reader.readAsDataURL(file);
+        setUploadedMediaType('image');
+      }
+
+      // Upload to server
+      const result = await uploadMedia(file);
+      if (result) {
+        setUploadedImageUrl(result.url);
+        setUploadedMediaType(result.type);
+      }
+    },
+    [uploadMedia],
+  );
 
   const removeImage = useCallback(() => {
+    if (imagePreview && uploadedMediaType === 'video') {
+      URL.revokeObjectURL(imagePreview);
+    }
     setImagePreview(null);
+    setUploadedImageUrl(null);
+    setUploadedMediaType('image');
     if (fileRef.current) fileRef.current.value = '';
-  }, []);
+  }, [imagePreview, uploadedMediaType]);
 
   const formatDate = (iso: string) => {
     try {
@@ -128,6 +250,38 @@ export function ProjectComments({ targetType, targetId, apiBaseUrl, locale }: Pr
     }
   };
 
+  /* Insert emoji into textarea */
+  const insertEmoji = useCallback((emoji: string) => {
+    const ta = textareaRef.current;
+    if (!ta) return;
+    const start = ta.selectionStart ?? ta.value.length;
+    const end = ta.selectionEnd ?? start;
+    const before = ta.value.slice(0, start);
+    const after = ta.value.slice(end);
+    // Update native input value + trigger React change
+    const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+      window.HTMLTextAreaElement.prototype, 'value',
+    )?.set;
+    nativeInputValueSetter?.call(ta, before + emoji + after);
+    ta.dispatchEvent(new Event('input', { bubbles: true }));
+    ta.focus();
+    const pos = start + emoji.length;
+    ta.setSelectionRange(pos, pos);
+    setShowEmojiPicker(false);
+  }, []);
+
+  /* Close emoji picker on outside click */
+  useEffect(() => {
+    if (!showEmojiPicker) return;
+    const handler = (e: MouseEvent) => {
+      if (emojiPickerRef.current && !emojiPickerRef.current.contains(e.target as Node)) {
+        setShowEmojiPicker(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [showEmojiPicker]);
+
   // Deterministic viewing count based on targetId to avoid hydration mismatch
   const viewingBase = useRef(
     targetId.split('').reduce((sum, ch) => sum + ch.charCodeAt(0), 0) % 13 + 3,
@@ -136,6 +290,15 @@ export function ProjectComments({ targetType, targetId, apiBaseUrl, locale }: Pr
 
   return (
     <div style={{ marginTop: 48 }}>
+      {/* reCAPTCHA script */}
+      {!isLocalhost && (
+        <Script
+          src="https://www.google.com/recaptcha/api.js?render=explicit"
+          strategy="afterInteractive"
+          onReady={() => setCaptchaReady(true)}
+        />
+      )}
+
       <style>{`
         .pc-header{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--color-text-primary);padding-bottom:12px;margin-bottom:20px}
         .pc-title{font-family:var(--font-heading);font-size:22px;font-weight:700;color:var(--color-text-primary)}
@@ -149,7 +312,7 @@ export function ProjectComments({ targetType, targetId, apiBaseUrl, locale }: Pr
         .pc-avatar{width:40px;height:40px;border-radius:50%;background:#e57373;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative}
         .pc-avatar svg{color:#fff}
         .pc-avatar-dot{position:absolute;bottom:0;right:0;width:10px;height:10px;border-radius:50%;background:#4caf50;border:2px solid var(--color-bg)}
-        .pc-input-wrap{flex:1;border:1px solid var(--color-border);border-radius:4px;overflow:hidden;transition:border-color .15s}
+        .pc-input-wrap{flex:1;border:1px solid var(--color-border);border-radius:4px;transition:border-color .15s;position:relative}
         .pc-input-wrap:focus-within{border-color:var(--color-brand)}
         .pc-input{width:100%;padding:12px 14px;border:none;background:var(--color-bg);color:var(--color-text-primary);font-size:14px;font-family:inherit;resize:none;min-height:44px;outline:none}
         .pc-input::placeholder{color:var(--color-text-muted)}
@@ -164,6 +327,7 @@ export function ProjectComments({ targetType, targetId, apiBaseUrl, locale }: Pr
         .pc-name-input::placeholder{color:var(--color-text-muted)}
         .pc-img-preview{position:relative;margin:8px 14px;display:inline-block}
         .pc-img-preview img{max-height:100px;border-radius:4px}
+        .pc-img-preview video{max-height:120px;border-radius:4px}
         .pc-img-remove{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;background:var(--color-text-primary);color:var(--color-bg);border:none;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center}
         .pc-empty{text-align:center;padding:40px 20px;color:var(--color-text-muted)}
         .pc-empty-icon{margin:0 auto 12px;width:48px;height:48px;border-radius:50%;background:var(--color-bg-muted);display:flex;align-items:center;justify-content:center}
@@ -176,7 +340,15 @@ export function ProjectComments({ targetType, targetId, apiBaseUrl, locale }: Pr
         .pc-c-date{font-size:12px;color:var(--color-text-muted);margin-left:8px}
         .pc-c-text{font-size:14px;line-height:1.6;color:var(--color-text-secondary);margin-top:4px}
         .pc-c-img{margin-top:8px;max-width:300px;border-radius:4px}
+        video.pc-c-img{max-width:400px}
         .pc-success{padding:12px 16px;background:var(--color-bg-secondary);border:1px solid var(--color-border);border-radius:4px;font-size:13px;color:var(--color-text-secondary);margin-bottom:16px}
+        .pc-captcha{margin:12px 0 0;display:flex;align-items:center;gap:8px}
+        .pc-uploading{font-size:12px;color:var(--color-text-muted);padding:4px 14px}
+        .pc-emoji-wrap{position:relative;display:inline-flex}
+        .pc-emoji-panel{position:absolute;bottom:calc(100% + 8px);left:0;width:340px;background:var(--color-bg);border:1px solid var(--color-border);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.2);padding:12px;z-index:9999;display:grid;grid-template-columns:repeat(8,1fr);gap:4px}
+        .pc-emoji-panel::after{content:'';position:absolute;top:100%;left:20px;border:6px solid transparent;border-top-color:var(--color-border)}
+        .pc-emoji-btn{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border:none;background:none;cursor:pointer;font-size:20px;border-radius:8px;transition:all .15s}
+        .pc-emoji-btn:hover{background:var(--color-bg-muted);transform:scale(1.2)}
       `}</style>
 
       {/* Header */}
@@ -226,6 +398,7 @@ export function ProjectComments({ targetType, targetId, apiBaseUrl, locale }: Pr
             maxLength={255}
           />
           <textarea
+            ref={textareaRef}
             name="content"
             className="pc-input"
             placeholder={isEn ? 'Be the first to comment...' : 'İlk yorumu siz yazın...'}
@@ -234,27 +407,57 @@ export function ProjectComments({ targetType, targetId, apiBaseUrl, locale }: Pr
           {/* Image preview */}
           {imagePreview && (
             <div className="pc-img-preview">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={imagePreview} alt="preview" />
+              {uploadedMediaType === 'video' ? (
+                <video src={imagePreview} muted playsInline style={{ maxHeight: 120, borderRadius: 4 }} />
+              ) : (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={imagePreview} alt="preview" />
+              )}
               <button type="button" className="pc-img-remove" onClick={removeImage}>×</button>
+            </div>
+          )}
+          {uploading && (
+            <div className="pc-uploading">
+              {isEn ? 'Uploading image...' : 'Resim yükleniyor...'}
             </div>
           )}
           <div className="pc-input-bar">
             <div className="pc-input-actions">
               {/* Emoji */}
-              <button type="button" className="pc-input-btn" title={isEn ? 'Emoji' : 'Emoji'}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
-              </button>
-              {/* Photo */}
-              <button type="button" className="pc-input-btn" title={isEn ? 'Photo' : 'Fotoğraf'} onClick={handleImageSelect}>
+              <div className="pc-emoji-wrap" ref={emojiPickerRef}>
+                <button
+                  type="button"
+                  className="pc-input-btn"
+                  title="Emoji"
+                  onClick={() => setShowEmojiPicker((p) => !p)}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+                </button>
+                {showEmojiPicker && (
+                  <div className="pc-emoji-panel">
+                    {EMOJI_LIST.map((em) => (
+                      <button
+                        key={em}
+                        type="button"
+                        className="pc-emoji-btn"
+                        onClick={() => insertEmoji(em)}
+                      >
+                        {em}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+              {/* Photo / Video */}
+              <button type="button" className="pc-input-btn" title={isEn ? 'Photo / Video' : 'Fotoğraf / Video'} onClick={handleImageSelect}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
               </button>
-              {/* GIF */}
-              <button type="button" className="pc-input-btn" title="GIF">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><text x="6" y="16" fontSize="9" fill="currentColor" stroke="none" fontWeight="700">GIF</text></svg>
-              </button>
             </div>
-            <button type="submit" className="pc-submit" disabled={submitting}>
+            <button
+              type="submit"
+              className="pc-submit"
+              disabled={submitting || uploading || (!isLocalhost && !captchaToken)}
+            >
               {submitting
                 ? (isEn ? 'Sending...' : 'Gönderiliyor...')
                 : (isEn ? 'Comment' : 'Yorum Yap')}
@@ -263,12 +466,19 @@ export function ProjectComments({ targetType, targetId, apiBaseUrl, locale }: Pr
           <input
             ref={fileRef}
             type="file"
-            accept="image/*"
+            accept="image/*,video/mp4,video/webm,video/ogg"
             style={{ display: 'none' }}
             onChange={handleFileChange}
           />
         </div>
       </form>
+
+      {/* reCAPTCHA widget */}
+      {!isLocalhost && (
+        <div className="pc-captcha">
+          <div ref={captchaRef} />
+        </div>
+      )}
 
       {/* Comments list */}
       {loading && (
@@ -311,8 +521,19 @@ export function ProjectComments({ targetType, targetId, apiBaseUrl, locale }: Pr
                 </div>
                 <div className="pc-c-text">{c.content}</div>
                 {c.image_url && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img className="pc-c-img" src={c.image_url} alt={`${c.author_name} image`} />
+                  isVideoUrl(c.image_url) ? (
+                    <video
+                      className="pc-c-img"
+                      src={c.image_url}
+                      controls
+                      playsInline
+                      preload="metadata"
+                      style={{ maxWidth: 400 }}
+                    />
+                  ) : (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img className="pc-c-img" src={c.image_url} alt={`${c.author_name} image`} />
+                  )
                 )}
               </div>
             </div>

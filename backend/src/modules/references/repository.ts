@@ -24,7 +24,6 @@ import {
   type NewReferenceI18nRow,
 } from "./schema";
 import { categories } from "@/modules/categories/schema";
-import { subCategories } from "@/modules/subcategories/schema";
 import type { Locale } from '@/core/i18n';
 
 
@@ -45,7 +44,6 @@ export type ListParams = {
   slug?: string;
 
   category_id?: string;
-  sub_category_id?: string;
   module_key?: string;
   has_website?: boolean | 0 | 1 | "0" | "1" | "true" | "false";
 
@@ -117,10 +115,6 @@ export type ReferenceMerged = {
   category_name: string | null;
   category_slug: string | null;
 
-  sub_category_id: string | null;
-  sub_category_name: string | null;
-  sub_category_slug: string | null;
-
   title: string | null;
   slug: string | null;
   summary: string | null;
@@ -175,12 +169,6 @@ export async function listReferences(
   if (params.category_id) {
     conds.push(eq(referencesTable.category_id, params.category_id));
   }
-  if (params.sub_category_id) {
-    conds.push(
-      eq(referencesTable.sub_category_id, params.sub_category_id),
-    );
-  }
-
   // module_key => categories.module_key filtresi
   if (params.module_key) {
     conds.push(eq(categories.module_key, params.module_key));
@@ -247,17 +235,10 @@ export async function listReferences(
     website_url: referencesTable.website_url,
 
     category_id: referencesTable.category_id,
-    sub_category_id: referencesTable.sub_category_id,
 
     // Şu an kategori isimleri parent tabloda yok, NULL placeholder
     category_name: sql<string | null>`NULL`.as("category_name"),
     category_slug: sql<string | null>`NULL`.as("category_slug"),
-    sub_category_name: sql<string | null>`NULL`.as(
-      "sub_category_name",
-    ),
-    sub_category_slug: sql<string | null>`NULL`.as(
-      "sub_category_slug",
-    ),
 
     title: referencesI18n.title,
     slug: referencesI18n.slug,
@@ -279,10 +260,6 @@ export async function listReferences(
     .leftJoin(
       categories,
       eq(categories.id, referencesTable.category_id),
-    )
-    .leftJoin(
-      subCategories,
-      eq(subCategories.id, referencesTable.sub_category_id),
     );
 
   // where condition – and(...) SQL | undefined olduğundan cast ediyoruz
@@ -315,10 +292,6 @@ export async function listReferences(
     .leftJoin(
       categories,
       eq(categories.id, referencesTable.category_id),
-    )
-    .leftJoin(
-      subCategories,
-      eq(subCategories.id, referencesTable.sub_category_id),
     );
 
   const countQuery = whereCond
@@ -355,16 +328,9 @@ export async function getReferenceMergedById(
       website_url: referencesTable.website_url,
 
       category_id: referencesTable.category_id,
-      sub_category_id: referencesTable.sub_category_id,
 
       category_name: sql<string | null>`NULL`.as("category_name"),
       category_slug: sql<string | null>`NULL`.as("category_slug"),
-      sub_category_name: sql<string | null>`NULL`.as(
-        "sub_category_name",
-      ),
-      sub_category_slug: sql<string | null>`NULL`.as(
-        "sub_category_slug",
-      ),
 
       title: referencesI18n.title,
       slug: referencesI18n.slug,
@@ -386,10 +352,6 @@ export async function getReferenceMergedById(
     .leftJoin(
       categories,
       eq(categories.id, referencesTable.category_id),
-    )
-    .leftJoin(
-      subCategories,
-      eq(subCategories.id, referencesTable.sub_category_id),
     )
     .where(eq(referencesTable.id, id))
     .limit(1);
@@ -414,16 +376,9 @@ export async function getReferenceMergedBySlug(
       website_url: referencesTable.website_url,
 
       category_id: referencesTable.category_id,
-      sub_category_id: referencesTable.sub_category_id,
 
       category_name: sql<string | null>`NULL`.as("category_name"),
       category_slug: sql<string | null>`NULL`.as("category_slug"),
-      sub_category_name: sql<string | null>`NULL`.as(
-        "sub_category_name",
-      ),
-      sub_category_slug: sql<string | null>`NULL`.as(
-        "sub_category_slug",
-      ),
 
       title: referencesI18n.title,
       slug: referencesI18n.slug,
@@ -445,10 +400,6 @@ export async function getReferenceMergedBySlug(
     .leftJoin(
       categories,
       eq(categories.id, referencesTable.category_id),
-    )
-    .leftJoin(
-      subCategories,
-      eq(subCategories.id, referencesTable.sub_category_id),
     )
     .where(eq(referencesI18n.slug, slugStr))
     .limit(1);

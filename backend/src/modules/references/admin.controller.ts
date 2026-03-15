@@ -93,7 +93,6 @@ export const listReferencesAdmin: RouteHandler = async (req, reply) => {
     q: q.q,
     slug: q.slug,
     category_id: q.category_id,
-    sub_category_id: q.sub_category_id,
     module_key: q.module_key,
     has_website: q.has_website,
     locale,
@@ -185,7 +184,6 @@ export const createReferenceAdmin: RouteHandler = async (req, reply) => {
       website_url: typeof b.website_url !== 'undefined' ? b.website_url ?? null : null,
 
       category_id: typeof b.category_id !== 'undefined' ? b.category_id ?? null : null,
-      sub_category_id: typeof b.sub_category_id !== 'undefined' ? b.sub_category_id ?? null : null,
 
       created_at: new Date() as any,
       updated_at: new Date() as any,
@@ -256,7 +254,6 @@ export const updateReferenceAdmin: RouteHandler = async (req, reply) => {
       typeof b.featured_image !== 'undefined' ||
       typeof b.featured_image_asset_id !== 'undefined' ||
       typeof b.category_id !== 'undefined' ||
-      typeof b.sub_category_id !== 'undefined' ||
       typeof b.website_url !== 'undefined';
 
     if (hasParentFields) {
@@ -285,8 +282,6 @@ export const updateReferenceAdmin: RouteHandler = async (req, reply) => {
         website_url: typeof b.website_url !== 'undefined' ? b.website_url ?? null : undefined,
 
         category_id: typeof b.category_id !== 'undefined' ? b.category_id ?? null : undefined,
-        sub_category_id:
-          typeof b.sub_category_id !== 'undefined' ? b.sub_category_id ?? null : undefined,
       } as any);
     }
 

@@ -8,12 +8,14 @@
 // - enableMoveControls: Up/Down butonları göster
 // =============================================================
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { toast } from 'sonner';
 
-import { ArrowUp, ArrowDown, Save, Pencil, Trash2, Star } from 'lucide-react';
+import { ArrowUp, ArrowDown, Save, Pencil, Trash2, ImageOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
 import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
 
 import type { CustomPageDto } from '@/integrations/shared';
@@ -82,16 +84,33 @@ export const CustomPageList: React.FC<CustomPageListProps> = ({
     query: effectiveLocale ? { locale: effectiveLocale } : undefined,
   });
 
-  const renderStatus = (p: CustomPageDto) =>
-    p.is_published ? (
-      <span className="inline-flex items-center rounded-full border px-2 py-0.5 text-[11px]">
-        {t('admin.customPage.list.published')}
-      </span>
-    ) : (
-      <span className="inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] text-muted-foreground">
-        {t('admin.customPage.list.draft')}
-      </span>
+  const getThumbUrl = (p: CustomPageDto): string | null =>
+    p.featured_image || p.image_url || (p.images?.length ? p.images[0] : null) || null;
+
+  const renderThumb = (p: CustomPageDto, size = 40) => {
+    const url = getThumbUrl(p);
+    if (!url) {
+      return (
+        <div
+          className="flex shrink-0 items-center justify-center rounded border bg-muted"
+          style={{ width: size, height: size }}
+        >
+          <ImageOff className="size-4 text-muted-foreground" />
+        </div>
+      );
+    }
+    return (
+      <Image
+        src={url}
+        alt={p.title ?? ''}
+        width={size}
+        height={size}
+        className="shrink-0 rounded border object-cover"
+        style={{ width: size, height: size }}
+        unoptimized
+      />
     );
+  };
 
   const handleToggleFeatured = async (page: CustomPageDto) => {
     try {
@@ -109,22 +128,42 @@ export const CustomPageList: React.FC<CustomPageListProps> = ({
     }
   };
 
-  const renderFeatured = (p: CustomPageDto) => (
-    <button
-      type="button"
-      className={[
-        'inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] transition-colors disabled:opacity-60',
-        p.featured
-          ? 'border-amber-300 bg-amber-50 text-amber-700 hover:bg-amber-100'
-          : 'border-gray-200 bg-gray-50 text-muted-foreground hover:bg-gray-100',
-      ].join(' ')}
-      disabled={busy}
-      onClick={() => handleToggleFeatured(p)}
-      title={p.featured ? t('admin.customPage.list.unfeatured') : t('admin.customPage.list.featured')}
-    >
-      <Star className={['size-3', p.featured ? 'fill-amber-400 stroke-amber-500' : 'stroke-muted-foreground'].join(' ')} />
-      {p.featured ? t('admin.customPage.list.featured') : t('admin.customPage.list.unfeatured')}
-    </button>
+  const handleTogglePublished = async (page: CustomPageDto) => {
+    try {
+      await updatePage({ id: page.id, patch: { is_published: !page.is_published } }).unwrap();
+      toast.success(page.is_published ? 'Pasif yapıldı' : 'Aktif yapıldı');
+    } catch (err: unknown) {
+      const msg =
+        (err as { data?: { error?: { message?: string } } })?.data?.error?.message ??
+        t('admin.customPage.list.deleteError');
+      toast.error(msg);
+    }
+  };
+
+  const renderFeaturedSwitch = (p: CustomPageDto) => (
+    <div className="flex items-center gap-2">
+      <Switch
+        checked={!!p.featured}
+        onCheckedChange={() => handleToggleFeatured(p)}
+        disabled={busy}
+      />
+      <span className="text-[11px] text-muted-foreground whitespace-nowrap">
+        {p.featured ? 'Ana Sayfa' : 'Gösterilmiyor'}
+      </span>
+    </div>
+  );
+
+  const renderPublishedSwitch = (p: CustomPageDto) => (
+    <div className="flex items-center gap-2">
+      <Switch
+        checked={!!p.is_published}
+        onCheckedChange={() => handleTogglePublished(p)}
+        disabled={busy}
+      />
+      <span className="text-[11px] text-muted-foreground whitespace-nowrap">
+        {p.is_published ? 'Aktif' : 'Pasif'}
+      </span>
+    </div>
   );
 
   const handleDelete = async (page: CustomPageDto) => {
@@ -192,40 +231,43 @@ export const CustomPageList: React.FC<CustomPageListProps> = ({
             return (
               <div key={p.id} className="min-w-0 overflow-hidden rounded-lg border bg-card p-4">
                 <div className="flex items-start justify-between gap-4">
-                  <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] text-muted-foreground">
-                        #{idx + 1}
-                      </span>
-                      {renderStatus(p)}
-                      {renderFeatured(p)}
-                      {localeResolved ? (
+                  <div className="flex items-start gap-3 min-w-0">
+                    {renderThumb(p, 48)}
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-2">
                         <span className="inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] text-muted-foreground">
-                          Locale: <code className="ml-1">{localeResolved}</code>
+                          #{idx + 1}
                         </span>
-                      ) : null}
-                    </div>
-
-                    <div className="mt-2 truncate text-sm font-semibold">
-                      {p.title ?? <span className="text-muted-foreground">{t('admin.customPage.list.noTitle')}</span>}
-                    </div>
-
-                    {p.meta_title ? (
-                      <div
-                        className="mt-1 truncate text-xs text-muted-foreground"
-                        title={p.meta_title}
-                      >
-                        SEO: {p.meta_title}
+                        {renderPublishedSwitch(p)}
+                        {renderFeaturedSwitch(p)}
+                        {localeResolved ? (
+                          <span className="inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] text-muted-foreground">
+                            Locale: <code className="ml-1">{localeResolved}</code>
+                          </span>
+                        ) : null}
                       </div>
-                    ) : null}
 
-                    <div className="mt-1 truncate text-xs text-muted-foreground">
-                      Slug: <code className="break-all">{p.slug ?? '-'}</code>
-                    </div>
+                      <div className="mt-2 truncate text-sm font-semibold">
+                        {p.title ?? <span className="text-muted-foreground">{t('admin.customPage.list.noTitle')}</span>}
+                      </div>
 
-                    <div className="mt-2 text-xs text-muted-foreground">
-                      <div>{t('admin.customPage.list.created')}: {formatDate(p.created_at)}</div>
-                      <div>{t('admin.customPage.list.updated')}: {formatDate(p.updated_at)}</div>
+                      {p.meta_title ? (
+                        <div
+                          className="mt-1 truncate text-xs text-muted-foreground"
+                          title={p.meta_title}
+                        >
+                          SEO: {p.meta_title}
+                        </div>
+                      ) : null}
+
+                      <div className="mt-1 truncate text-xs text-muted-foreground">
+                        Slug: <code className="break-all">{p.slug ?? '-'}</code>
+                      </div>
+
+                      <div className="mt-2 text-xs text-muted-foreground">
+                        <div>{t('admin.customPage.list.created')}: {formatDate(p.created_at)}</div>
+                        <div>{t('admin.customPage.list.updated')}: {formatDate(p.updated_at)}</div>
+                      </div>
                     </div>
                   </div>
 
@@ -268,10 +310,12 @@ export const CustomPageList: React.FC<CustomPageListProps> = ({
           <thead>
             <tr className="border-b bg-muted/30 text-left">
               <th className="w-8 px-2 py-1.5 text-[11px] text-muted-foreground">#</th>
-              <th className="w-[25%] px-2 py-1.5 text-[11px]">{t('admin.customPage.form.title')}</th>
-              <th className="w-[25%] px-2 py-1.5 text-[11px]">Slug</th>
-              <th className="w-[8%] px-2 py-1.5 text-[11px] text-center">{t('admin.customPage.list.published')}</th>
-              <th className="w-[10%] px-2 py-1.5 text-[11px]">{t('admin.customPage.list.created')}</th>
+              <th className="w-12.5 px-2 py-1.5 text-[11px]" />
+              <th className="w-[22%] px-2 py-1.5 text-[11px]">{t('admin.customPage.form.title')}</th>
+              <th className="w-[20%] px-2 py-1.5 text-[11px]">Slug</th>
+              <th className="w-[10%] px-2 py-1.5 text-[11px]">Aktif/Pasif</th>
+              <th className="w-[10%] px-2 py-1.5 text-[11px]">Ana Sayfa</th>
+              <th className="w-[8%] px-2 py-1.5 text-[11px]">{t('admin.customPage.list.created')}</th>
               <th className="w-[100px] px-2 py-1.5 text-[11px] text-right">{t('admin.common.actions')}</th>
             </tr>
           </thead>
@@ -284,6 +328,10 @@ export const CustomPageList: React.FC<CustomPageListProps> = ({
                 <tr key={p.id} className="border-b hover:bg-muted/20">
                   <td className="px-2 py-1.5 text-muted-foreground">
                     {idx + 1}
+                  </td>
+
+                  <td className="px-2 py-1.5">
+                    {renderThumb(p, 36)}
                   </td>
 
                   <td className="px-2 py-1.5 min-w-0 overflow-hidden">
@@ -303,11 +351,12 @@ export const CustomPageList: React.FC<CustomPageListProps> = ({
                     <code className="text-[11px] truncate block">{p.slug ?? '-'}</code>
                   </td>
 
-                  <td className="px-2 py-1.5 text-center">
-                    <div className="inline-flex flex-wrap items-center justify-center gap-1">
-                      {renderStatus(p)}
-                      {renderFeatured(p)}
-                    </div>
+                  <td className="px-2 py-1.5">
+                    {renderPublishedSwitch(p)}
+                  </td>
+
+                  <td className="px-2 py-1.5">
+                    {renderFeaturedSwitch(p)}
                   </td>
 
                   <td className="px-2 py-1.5 text-[11px] text-muted-foreground" title={`${formatDate(p.created_at)}`}>

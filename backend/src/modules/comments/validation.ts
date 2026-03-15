@@ -10,14 +10,15 @@ export const CommentCreateSchema = z.object({
   target_type: z.string().max(50).default("project"),
   target_id: z.string().max(100),
   parent_id: z.string().uuid().optional().nullable(),
-  image_url: z.string().url().max(500).optional().nullable(),
+  image_url: z.string().max(1000).optional().nullable(),
+  captcha_token: z.string().optional().nullable(),
 });
 
 export const CommentUpdateSchema = z.object({
   author_name: z.string().min(2).max(255).optional(),
   author_email: z.string().email().max(255).optional().nullable(),
   content: z.string().min(1).max(5000).optional(),
-  image_url: z.string().url().max(500).optional().nullable(),
+  image_url: z.string().max(1000).optional().nullable(),
   is_approved: z.boolean().optional(),
   is_active: z.boolean().optional(),
 });

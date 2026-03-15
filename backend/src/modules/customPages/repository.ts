@@ -19,7 +19,6 @@ import { alias } from 'drizzle-orm/mysql-core';
 import { randomUUID } from 'crypto';
 
 import { categoryI18n } from '@/modules/categories/schema';
-import { subCategoryI18n } from '@/modules/subcategories/schema';
 
 /** Güvenilir sıralama kolonları */
 type Sortable = 'created_at' | 'updated_at' | 'display_order' | 'order_num';
@@ -37,7 +36,6 @@ export type ListParams = {
   slug?: string;
 
   category_id?: string;
-  sub_category_id?: string;
 
   /** ✅ parent module_key filter */
   module_key?: string;
@@ -142,10 +140,6 @@ export type CustomPageMerged = {
   category_name: string | null;
   category_slug: string | null;
 
-  sub_category_id: string | null;
-  sub_category_name: string | null;
-  sub_category_slug: string | null;
-
   title: string | null;
   slug: string | null;
   content: string | null;
@@ -162,8 +156,6 @@ function baseSelect(
   i18nDef: any,
   catReq: any,
   catDef: any,
-  subCatReq: any,
-  subCatDef: any,
 ) {
   return {
     id: customPages.id,
@@ -195,17 +187,9 @@ function baseSelect(
     updated_at: customPages.updated_at,
 
     category_id: customPages.category_id,
-    sub_category_id: customPages.sub_category_id,
 
     category_name: sql<string>`COALESCE(${catReq.name}, ${catDef.name})`.as('category_name'),
     category_slug: sql<string>`COALESCE(${catReq.slug}, ${catDef.slug})`.as('category_slug'),
-
-    sub_category_name: sql<string>`COALESCE(${subCatReq.name}, ${subCatDef.name})`.as(
-      'sub_category_name',
-    ),
-    sub_category_slug: sql<string>`COALESCE(${subCatReq.slug}, ${subCatDef.slug})`.as(
-      'sub_category_slug',
-    ),
 
     title: sql<string>`COALESCE(${i18nReq.title}, ${i18nDef.title})`.as('title'),
     slug: sql<string>`COALESCE(${i18nReq.slug}, ${i18nDef.slug})`.as('slug'),
@@ -249,9 +233,6 @@ export async function listCustomPages(params: ListParams) {
   const catReq = alias(categoryI18n, 'cat_req');
   const catDef = alias(categoryI18n, 'cat_def');
 
-  const subCatReq = alias(subCategoryI18n, 'subcat_req');
-  const subCatDef = alias(subCategoryI18n, 'subcat_def');
-
   const locale = params.locale.toLowerCase();
   const defaultLocale = params.defaultLocale.toLowerCase();
 
@@ -282,7 +263,6 @@ export async function listCustomPages(params: ListParams) {
   }
 
   if (params.category_id) filters.push(eq(customPages.category_id, params.category_id));
-  if (params.sub_category_id) filters.push(eq(customPages.sub_category_id, params.sub_category_id));
 
   /** ✅ module_key filter is on parent */
   if (params.module_key && params.module_key.trim()) {
@@ -316,7 +296,7 @@ export async function listCustomPages(params: ListParams) {
   const skip = params.offset && params.offset >= 0 ? params.offset : 0;
 
   const baseQuery = db
-    .select(baseSelect(i18nReq, i18nDef, catReq, catDef, subCatReq, subCatDef))
+    .select(baseSelect(i18nReq, i18nDef, catReq, catDef))
     .from(customPages)
     .leftJoin(i18nReq, and(eq(i18nReq.page_id, customPages.id), eq(i18nReq.locale, locale)))
     .leftJoin(i18nDef, and(eq(i18nDef.page_id, customPages.id), eq(i18nDef.locale, defaultLocale)))
@@ -328,17 +308,7 @@ export async function listCustomPages(params: ListParams) {
       catDef,
       and(eq(catDef.category_id, customPages.category_id), eq(catDef.locale, defaultLocale)),
     )
-    .leftJoin(
-      subCatReq,
-      and(eq(subCatReq.sub_category_id, customPages.sub_category_id), eq(subCatReq.locale, locale)),
-    )
-    .leftJoin(
-      subCatDef,
-      and(
-        eq(subCatDef.sub_category_id, customPages.sub_category_id),
-        eq(subCatDef.locale, defaultLocale),
-      ),
-    );
+;
 
   const rowsQuery = whereExpr ? baseQuery.where(whereExpr) : baseQuery;
   const rowsRaw = await rowsQuery.orderBy(orderBy).limit(take).offset(skip);
@@ -364,14 +334,12 @@ export async function getCustomPageMergedById(locale: string, defaultLocale: str
 
   const catReq = alias(categoryI18n, 'cat_req');
   const catDef = alias(categoryI18n, 'cat_def');
-  const subCatReq = alias(subCategoryI18n, 'subcat_req');
-  const subCatDef = alias(subCategoryI18n, 'subcat_def');
 
   const loc = locale.toLowerCase();
   const defLoc = defaultLocale.toLowerCase();
 
   const rows = await db
-    .select(baseSelect(i18nReq, i18nDef, catReq, catDef, subCatReq, subCatDef))
+    .select(baseSelect(i18nReq, i18nDef, catReq, catDef))
     .from(customPages)
     .leftJoin(i18nReq, and(eq(i18nReq.page_id, customPages.id), eq(i18nReq.locale, loc)))
     .leftJoin(i18nDef, and(eq(i18nDef.page_id, customPages.id), eq(i18nDef.locale, defLoc)))
@@ -379,14 +347,6 @@ export async function getCustomPageMergedById(locale: string, defaultLocale: str
     .leftJoin(
       catDef,
       and(eq(catDef.category_id, customPages.category_id), eq(catDef.locale, defLoc)),
-    )
-    .leftJoin(
-      subCatReq,
-      and(eq(subCatReq.sub_category_id, customPages.sub_category_id), eq(subCatReq.locale, loc)),
-    )
-    .leftJoin(
-      subCatDef,
-      and(eq(subCatDef.sub_category_id, customPages.sub_category_id), eq(subCatDef.locale, defLoc)),
     )
     .where(eq(customPages.id, id))
     .limit(1);
@@ -405,15 +365,13 @@ export async function getCustomPageMergedBySlug(
 
   const catReq = alias(categoryI18n, 'cat_req');
   const catDef = alias(categoryI18n, 'cat_def');
-  const subCatReq = alias(subCategoryI18n, 'subcat_req');
-  const subCatDef = alias(subCategoryI18n, 'subcat_def');
 
   const loc = locale.toLowerCase();
   const defLoc = defaultLocale.toLowerCase();
   const slugTrimmed = slug.trim();
 
   const rows = await db
-    .select(baseSelect(i18nReq, i18nDef, catReq, catDef, subCatReq, subCatDef))
+    .select(baseSelect(i18nReq, i18nDef, catReq, catDef))
     .from(customPages)
     .leftJoin(i18nReq, and(eq(i18nReq.page_id, customPages.id), eq(i18nReq.locale, loc)))
     .leftJoin(i18nDef, and(eq(i18nDef.page_id, customPages.id), eq(i18nDef.locale, defLoc)))
@@ -421,14 +379,6 @@ export async function getCustomPageMergedBySlug(
     .leftJoin(
       catDef,
       and(eq(catDef.category_id, customPages.category_id), eq(catDef.locale, defLoc)),
-    )
-    .leftJoin(
-      subCatReq,
-      and(eq(subCatReq.sub_category_id, customPages.sub_category_id), eq(subCatReq.locale, loc)),
-    )
-    .leftJoin(
-      subCatDef,
-      and(eq(subCatDef.sub_category_id, customPages.sub_category_id), eq(subCatDef.locale, defLoc)),
     )
     .where(sql`(${i18nReq.slug} = ${slugTrimmed} OR ${i18nDef.slug} = ${slugTrimmed})`)
     .limit(1);

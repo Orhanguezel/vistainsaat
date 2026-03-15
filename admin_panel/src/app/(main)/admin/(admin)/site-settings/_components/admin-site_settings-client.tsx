@@ -91,8 +91,15 @@ function buildLocalesOptions(appLocales: any[] | undefined, defaultLocale: any):
     return String(a?.code || '').localeCompare(String(b?.code || ''));
   });
 
+  const seen = new Set<string>();
   const mapped: LocaleOption[] = sorted
     .filter((x) => x?.code)
+    .filter((x) => {
+      const code = String(x.code);
+      if (seen.has(code)) return false;
+      seen.add(code);
+      return true;
+    })
     .map((x) => {
       const code = String(x.code);
       const labelBase = x.label ? `${x.label} (${code})` : code;
@@ -105,11 +112,15 @@ function buildLocalesOptions(appLocales: any[] | undefined, defaultLocale: any):
     });
 
   if (!mapped.length) {
-    return [
-      { value: def || 'de', label: def || 'de', isDefault: true, isActive: true },
+    const fallback: LocaleOption[] = [
+      { value: 'tr', label: 'Türkçe (tr)', isDefault: true, isActive: true },
       { value: 'en', label: 'English (en)', isDefault: false, isActive: true },
-      { value: 'tr', label: 'Türkçe (tr)', isDefault: false, isActive: true },
     ];
+    if (def && def !== 'tr' && def !== 'en') {
+      fallback.unshift({ value: def, label: def, isDefault: true, isActive: true });
+      fallback[1].isDefault = false;
+    }
+    return fallback;
   }
   return mapped;
 }
@@ -266,55 +277,25 @@ export default function AdminSiteSettingsClient() {
   const isGlobalTab = tab === 'global_list' || tab === 'smtp' || tab === 'locales';
 
   return (
-    <div className="w-full max-w-full space-y-6 overflow-x-hidden px-2 pb-6 md:px-0 md:pb-0">
-      {isScopedBrand ? (
-        <div className="rounded-xl border border-orange-200 bg-gradient-to-r from-orange-50 via-amber-50 to-white px-4 py-3 shadow-sm">
-          <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="default" className="bg-orange-600 text-white hover:bg-orange-600">
-              {String(brand || '').toUpperCase()} Workspace
-            </Badge>
-            <Badge variant="outline" className="border-orange-300 bg-white/80 text-orange-800">
-              Scope: {brandPrefix}
-            </Badge>
-          </div>
-          <p className="mt-2 text-sm text-orange-900">
-            Bu ekran Vista İnşaat projesine özeldir. Buradaki değişiklikler yalnızca vistainsaat__
-            prefix'li site_settings kayıtlarını etkiler.
-          </p>
-        </div>
-      ) : null}
-
-      {/* PAGE HEAD (UsersListClient style) */}
-      <div className="space-y-2">
-        <div className="flex flex-wrap items-center gap-2">
-          <h1 className="text-lg font-semibold">{t('admin.siteSettings.title')}</h1>
-          {isScopedBrand ? (
-            <Badge variant="default" className="gap-1.5">
-              <span className="size-1.5 rounded-full bg-white/80" />
-              {String(brand || '').toUpperCase()} Scope
-            </Badge>
-          ) : (
-            <Badge variant="secondary">{t('admin.siteSettings.badges.global')}</Badge>
-          )}
-        </div>
+    <div className="w-full min-w-0 space-y-4 overflow-hidden pb-6 sm:space-y-6">
+      {/* PAGE HEAD */}
+      <div className="space-y-1 px-1 sm:px-0">
+        <h1 className="text-lg font-semibold">{t('admin.siteSettings.title')}</h1>
         <p className="text-sm text-muted-foreground">
-          {isScopedBrand
-            ? `${t('admin.siteSettings.description')} Bu ekran yalnizca ${brand} namespace ayarlarini etkiler.`
-            : t('admin.siteSettings.description')}
+          {t('admin.siteSettings.description')}
         </p>
       </div>
 
-      {/* FILTERS (UsersListClient style) */}
+      {/* FILTERS */}
       <Card>
-        <CardHeader className="gap-2">
-          <CardTitle className="text-base">{t('admin.siteSettings.filters.title')}</CardTitle>
-          <CardDescription>{t('admin.siteSettings.filters.description')}</CardDescription>
+        <CardHeader className="px-3 py-3 sm:px-6 sm:py-4">
+          <CardTitle className="text-sm sm:text-base">{t('admin.siteSettings.filters.title')}</CardTitle>
         </CardHeader>
 
-        <CardContent className="space-y-4">
-          <div className="flex flex-col gap-3 lg:flex-row lg:items-end">
-            <div className="w-full flex-1 space-y-2">
-              <Label htmlFor="q">{t('admin.siteSettings.filters.search')}</Label>
+        <CardContent className="space-y-3 px-3 pb-3 sm:space-y-4 sm:px-6 sm:pb-6">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_180px_auto]">
+            <div className="space-y-1.5 sm:col-span-2 lg:col-span-1">
+              <Label htmlFor="q" className="text-xs sm:text-sm">{t('admin.siteSettings.filters.search')}</Label>
               <div className="relative">
                 <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
@@ -328,8 +309,8 @@ export default function AdminSiteSettingsClient() {
               </div>
             </div>
 
-            <div className="w-full space-y-2 lg:w-56">
-              <Label>{t('admin.siteSettings.filters.language')}</Label>
+            <div className="space-y-1.5">
+              <Label className="text-xs sm:text-sm">{t('admin.siteSettings.filters.language')}</Label>
               <Select
                 value={localeReady ? locale : ''}
                 onValueChange={(v) => {
@@ -364,22 +345,22 @@ export default function AdminSiteSettingsClient() {
               ) : null}
             </div>
 
-            <div className="flex w-full gap-2 lg:w-auto">
+            <div className="flex items-end gap-2">
               <Button
                 type="button"
                 variant="ghost"
+                size="icon"
                 onClick={onRefresh}
                 disabled={disabled}
                 title={t('admin.siteSettings.filters.refreshButton')}
-                className="flex-1 lg:flex-initial"
               >
                 <RefreshCcw className="size-4" />
-                <span className="ml-2 lg:hidden">{t('admin.siteSettings.filters.refreshButton')}</span>
               </Button>
 
               <Button
                 type="button"
                 variant="outline"
+                size="sm"
                 onClick={() => {
                   setSearch('');
                   if (!isGlobalTab) {
@@ -388,7 +369,6 @@ export default function AdminSiteSettingsClient() {
                   }
                 }}
                 disabled={disabled}
-                className="flex-1 lg:flex-initial"
               >
                 {t('admin.siteSettings.filters.resetButton')}
               </Button>
@@ -398,132 +378,108 @@ export default function AdminSiteSettingsClient() {
       </Card>
 
       {/* CONTENT */}
-      <Card>
-        <CardHeader className="gap-2">
-          <div className="flex items-start justify-between gap-3">
-            <div className="space-y-1">
-              <CardTitle className="text-base">{t('admin.siteSettings.management.title')}</CardTitle>
-              <CardDescription>
-                {tab === 'list' ? t('admin.siteSettings.management.localeRecords') : null}
-                {tab === 'global_list' ? t('admin.siteSettings.management.globalRecords') : null}
-                {tab === 'general' ? t('admin.siteSettings.general.title') : null}
-                {tab === 'seo' ? t('admin.siteSettings.tabs.seo') : null}
-                {tab === 'smtp' ? t('admin.siteSettings.tabs.smtp') : null}
-                {tab === 'cloudinary' ? t('admin.siteSettings.cloudinary.title') : null}
-                {tab === 'brand_media' ? t('admin.siteSettings.brandMedia.title') : null}
-                {tab === 'api' ? t('admin.siteSettings.api.title') : null}
-                {tab === 'locales' ? t('admin.siteSettings.locales.title') : null}
-                {tab === 'branding' ? t('admin.siteSettings.branding.title') : null}
-              </CardDescription>
-            </div>
-
-            <div className="flex items-center gap-2">
-              {isScopedBrand ? (
-                <Badge variant="outline" className="border-orange-200 bg-orange-50 text-orange-700">
-                  Scope: {brandPrefix}
-                </Badge>
-              ) : null}
-              {isGlobalTab ? <Badge variant="secondary">{t('admin.siteSettings.badges.global')}</Badge> : null}
-              {!isGlobalTab && localeReady ? <Badge variant="secondary">{locale}</Badge> : null}
-              {disabled ? <Badge variant="outline">{t('admin.siteSettings.messages.loading')}</Badge> : null}
+      <Card className="overflow-hidden">
+        <CardHeader className="px-3 py-3 sm:px-6 sm:py-4">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <CardTitle className="text-sm sm:text-base">{t('admin.siteSettings.management.title')}</CardTitle>
+            <div className="flex flex-wrap items-center gap-1.5">
+              {isGlobalTab ? <Badge variant="secondary" className="text-xs">{t('admin.siteSettings.badges.global')}</Badge> : null}
+              {!isGlobalTab && localeReady ? <Badge variant="secondary" className="text-xs">{locale}</Badge> : null}
+              {disabled ? <Badge variant="outline" className="text-xs">{t('admin.siteSettings.messages.loading')}</Badge> : null}
             </div>
           </div>
         </CardHeader>
 
-        <CardContent className="space-y-4">
+        <CardContent className="min-w-0 space-y-4 px-3 pb-3 sm:px-6 sm:pb-6">
           {!localeReady ? (
             <div className="rounded-md border p-4 text-sm text-muted-foreground">
               {t('admin.siteSettings.management.loadingMeta')}
             </div>
           ) : (
             <Tabs value={tab} onValueChange={(v) => setTab(v as SettingsTab)}>
-              <div className="-mx-2 overflow-x-auto px-2 md:mx-0 md:overflow-x-visible md:px-0">
-                <TabsList className="inline-flex min-w-full flex-nowrap justify-start md:flex-wrap">
-                  <TabsTrigger value="list" className="whitespace-nowrap">
+              <div className="overflow-x-auto">
+                <TabsList className="inline-flex h-auto w-max gap-1 p-1">
+                  <TabsTrigger value="list" className="whitespace-nowrap text-xs sm:text-sm">
                     {t('admin.siteSettings.tabs.list')}
                   </TabsTrigger>
-                  <TabsTrigger value="global_list" className="whitespace-nowrap">
+                  <TabsTrigger value="global_list" className="whitespace-nowrap text-xs sm:text-sm">
                     {t('admin.siteSettings.tabs.globalList')}
                   </TabsTrigger>
-                  <TabsTrigger value="general" className="whitespace-nowrap">
+                  <TabsTrigger value="general" className="whitespace-nowrap text-xs sm:text-sm">
                     {t('admin.siteSettings.tabs.general')}
                   </TabsTrigger>
-                  <TabsTrigger value="seo" className="whitespace-nowrap">
+                  <TabsTrigger value="seo" className="whitespace-nowrap text-xs sm:text-sm">
                     {t('admin.siteSettings.tabs.seo')}
                   </TabsTrigger>
+                  <TabsTrigger value="smtp" className="whitespace-nowrap text-xs sm:text-sm">
+                    {t('admin.siteSettings.tabs.smtp')}
+                  </TabsTrigger>
                   {!isScopedBrand ? (
-                    <TabsTrigger value="smtp" className="whitespace-nowrap">
-                      {t('admin.siteSettings.tabs.smtp')}
-                    </TabsTrigger>
-                  ) : null}
-                  {!isScopedBrand ? (
-                    <TabsTrigger value="cloudinary" className="whitespace-nowrap">
+                    <TabsTrigger value="cloudinary" className="whitespace-nowrap text-xs sm:text-sm">
                       {t('admin.siteSettings.tabs.cloudinary')}
                     </TabsTrigger>
                   ) : null}
-                  <TabsTrigger value="brand_media" className="whitespace-nowrap">
+                  <TabsTrigger value="brand_media" className="whitespace-nowrap text-xs sm:text-sm">
                     {t('admin.siteSettings.tabs.brandMedia')}
                   </TabsTrigger>
                   {!isScopedBrand ? (
-                    <TabsTrigger value="api" className="whitespace-nowrap">
+                    <TabsTrigger value="api" className="whitespace-nowrap text-xs sm:text-sm">
                       {t('admin.siteSettings.tabs.api')}
                     </TabsTrigger>
                   ) : null}
-                  <TabsTrigger value="locales" className="whitespace-nowrap">
+                  <TabsTrigger value="locales" className="whitespace-nowrap text-xs sm:text-sm">
                     {t('admin.siteSettings.tabs.locales')}
                   </TabsTrigger>
                   {!isScopedBrand ? (
-                    <TabsTrigger value="branding" className="whitespace-nowrap">
+                    <TabsTrigger value="branding" className="whitespace-nowrap text-xs sm:text-sm">
                       {t('admin.siteSettings.tabs.branding')}
                     </TabsTrigger>
                   ) : null}
                 </TabsList>
               </div>
 
-              <TabsContent value="list" className="mt-4">
+              <TabsContent value="list" className="mt-3 sm:mt-4">
                 <ListPanel locale={locale} search={search} prefix={brandPrefix} onDeleteRow={handleDeleteRow} />
               </TabsContent>
 
-              <TabsContent value="global_list" className="mt-4">
+              <TabsContent value="global_list" className="mt-3 sm:mt-4">
                 <ListPanel locale="*" search={search} prefix={brandPrefix} onDeleteRow={handleDeleteRow} />
               </TabsContent>
 
-              <TabsContent value="general" className="mt-4">
+              <TabsContent value="general" className="mt-3 sm:mt-4">
                 <GeneralSettingsTab locale={locale} settingPrefix={brandPrefix} />
               </TabsContent>
 
-              <TabsContent value="seo" className="mt-4">
+              <TabsContent value="seo" className="mt-3 sm:mt-4">
                 <SeoSettingsTab locale={locale} settingPrefix={brandPrefix} />
               </TabsContent>
 
-              {!isScopedBrand ? (
-                <TabsContent value="smtp" className="mt-4">
-                  <SmtpSettingsTab locale={locale} />
-                </TabsContent>
-              ) : null}
+              <TabsContent value="smtp" className="mt-3 sm:mt-4">
+                <SmtpSettingsTab locale={locale} />
+              </TabsContent>
 
               {!isScopedBrand ? (
-                <TabsContent value="cloudinary" className="mt-4">
+                <TabsContent value="cloudinary" className="mt-3 sm:mt-4">
                   <CloudinarySettingsTab locale={locale} />
                 </TabsContent>
               ) : null}
 
-              <TabsContent value="brand_media" className="mt-4">
+              <TabsContent value="brand_media" className="mt-3 sm:mt-4">
                 <BrandMediaTab locale={locale} settingPrefix={brandPrefix} />
               </TabsContent>
 
               {!isScopedBrand ? (
-                <TabsContent value="api" className="mt-4">
+                <TabsContent value="api" className="mt-3 sm:mt-4">
                   <ApiSettingsTab locale={locale} />
                 </TabsContent>
               ) : null}
 
-              <TabsContent value="locales" className="mt-4">
+              <TabsContent value="locales" className="mt-3 sm:mt-4">
                 <LocalesSettingsTab settingPrefix={brandPrefix} />
               </TabsContent>
 
               {!isScopedBrand ? (
-                <TabsContent value="branding" className="mt-4">
+                <TabsContent value="branding" className="mt-3 sm:mt-4">
                   <BrandingSettingsTab locale={locale} />
                 </TabsContent>
               ) : null}

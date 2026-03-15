@@ -52,7 +52,7 @@ import {
 } from './admin.reviews.controller';
 
 /* Kategori yardımcı uçları */
-import { adminListCategories, adminListSubcategories } from './helpers.categoryLists';
+import { adminListCategories } from './helpers.categoryLists';
 
 export async function registerProductsAdmin(app: FastifyInstance) {
   const BASE = '/products';
@@ -107,12 +107,6 @@ export async function registerProductsAdmin(app: FastifyInstance) {
 
   // -------- Category helpers --------
   app.get(`${BASE}/categories`, { preHandler: [requireAuth, requireAdmin] }, adminListCategories);
-
-  app.get(
-    `${BASE}/subcategories`,
-    { preHandler: [requireAuth, requireAdmin] },
-    adminListSubcategories,
-  );
 
   // -------- FAQs --------
   app.get(`${BASE}/:id/faqs`, { preHandler: [requireAuth, requireAdmin] }, adminListProductFaqs);

@@ -43,7 +43,7 @@ export const businessHourRowSchema = z
     close: hhmm,
     closed: z.boolean().default(false),
   })
-  .strict();
+  .passthrough();
 
 export const businessHoursSchema = z.array(businessHourRowSchema).default([]);
 

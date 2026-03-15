@@ -1,6 +1,6 @@
 -- =============================================================
 -- FILE: 150_offers.sql  (FINAL / DRIZZLE-ALIGNED)
--- Ensotek – Offers Schema (offers + offer_number_counters)
+-- Vista İnşaat – Offers Schema (offers + offer_number_counters)
 -- - Drizzle schema ile %100 uyumlu
 -- - product_id FK → products(id) ON DELETE SET NULL
 -- - service_id FK → services(id) ON DELETE SET NULL
@@ -81,12 +81,12 @@ CREATE TABLE IF NOT EXISTS `offers` (
 
 -- -------------------------------------------------------------
 -- 2) offer_number_counters (Sequence table)
---    - Yıl bazlı teklif numarası sayacı (ENS-YYYY-XXXX)
+--    - Yıl bazlı teklif numarası sayacı (VIS-YYYY-XXXX)
 -- -------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `offer_number_counters` (
   `year`     INT          NOT NULL,
   `last_seq` INT          NOT NULL,
-  `prefix`   VARCHAR(20)  NOT NULL DEFAULT 'ENS',
+  `prefix`   VARCHAR(20)  NOT NULL DEFAULT 'VIS',
 
   PRIMARY KEY (`year`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

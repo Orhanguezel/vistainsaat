@@ -61,7 +61,6 @@ type ListQuery = {
   slug?: string;
 
   category_id?: string;
-  sub_category_id?: string;
 
   module_key?: string;
 
@@ -90,7 +89,6 @@ export const listPages: RouteHandler<{ Querystring: ListQuery }> = async (req, r
     q: q.q,
     slug: q.slug,
     category_id: q.category_id,
-    sub_category_id: q.sub_category_id,
     module_key: q.module_key,
     locale,
     defaultLocale: def,

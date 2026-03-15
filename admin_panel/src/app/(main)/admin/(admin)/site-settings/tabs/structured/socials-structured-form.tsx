@@ -22,7 +22,7 @@ export const socialsSchema = z
     youtube: z.string().trim().optional(),
     x: z.string().trim().optional(),
   })
-  .strict();
+  .passthrough();
 
 export type SocialsFormState = z.infer<typeof socialsSchema>;
 

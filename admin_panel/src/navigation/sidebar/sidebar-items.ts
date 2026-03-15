@@ -72,7 +72,6 @@ export type AdminNavItemKey =
   | 'custom_pages'
   | 'categories'
   | 'subcategories'
-  | 'library'
   | 'products'
   | 'sparepart'
   | 'services'
@@ -132,15 +131,15 @@ export const adminNavConfig: AdminNavConfigGroup[] = [
     id: 2,
     key: 'vista_insaat',
     items: [
-      { key: 'vista_projects', url: '/admin/products?module=vistainsaat', icon: Layers },
+      { key: 'vista_projects', url: '/admin/products?type=vistainsaat', icon: Layers },
       { key: 'vista_categories', url: '/admin/categories?module=vistainsaat', icon: Folders },
       { key: 'vista_gallery', url: '/admin/gallery', icon: Images },
       { key: 'vista_offers', url: '/admin/offer?module=vistainsaat', icon: DollarSign },
       { key: 'vista_blog', url: '/admin/custompage?module=vistainsaat_blog', icon: Newspaper },
-      { key: 'vista_blog_comments', url: '/admin/reviews?target_type=custom_page', icon: MessageSquare },
+      { key: 'vista_blog_comments', url: '/admin/comments', icon: MessageSquare },
       { key: 'vista_corporate', url: '/admin/custompage?module=vistainsaat_about', icon: FileText },
       { key: 'vista_legal', url: '/admin/custompage?module=vistainsaat_legal', icon: FileSearch },
-      { key: 'vista_settings', url: '/admin/site-settings', icon: Settings },
+      { key: 'contacts', url: '/admin/contacts', icon: Contact2 },
     ],
   },
   {
@@ -151,6 +150,7 @@ export const adminNavConfig: AdminNavConfigGroup[] = [
       { key: 'notifications', url: '/admin/notifications', icon: Bell },
       { key: 'storage', url: '/admin/storage', icon: HardDrive },
       { key: 'audit', url: '/admin/audit', icon: FileSearch },
+      { key: 'vista_settings', url: '/admin/site-settings', icon: Settings },
     ],
   },
 ];
@@ -167,7 +167,6 @@ const FALLBACK_TITLES: Record<AdminNavItemKey, string> = {
   custom_pages: 'Custom Pages',
   categories: 'Categories',
   subcategories: 'Subcategories',
-  library: 'Library',
   products: 'Products',
   sparepart: 'Spare Parts',
   services: 'Services',

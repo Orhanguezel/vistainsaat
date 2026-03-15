@@ -1,17 +1,4 @@
-type TelegramNotifyPayload = {
-  templateKey?: string;
-  chatId?: string | number;
-  text?: string;
-  data?: Record<string, unknown>;
-  [key: string]: unknown;
-};
-
-/**
- * Kompozit backend'te telegram modulu router seviyesinde ayrildi.
- * Mevcut offer/contact akislarinin kirilmamasi icin notifier burada
- * no-op olarak korunuyor. Sonraki turda bu akislar kendi bildirim
- * stratejisine tasinacak.
- */
-export async function telegramNotify(_payload: TelegramNotifyPayload): Promise<void> {
-  return;
+// Telegram notification stub — module not configured
+export async function telegramNotify(_payload: unknown): Promise<void> {
+  // no-op: Telegram bot token not configured
 }

@@ -1,7 +1,7 @@
 -- =============================================================
 -- FILE: 160_footer_sections_schema.sql
 -- Footer Sections schema (parent + i18n)
--- Ensotek – FIXED
+-- Vista İnşaat – FIXED
 -- =============================================================
 
 SET NAMES utf8mb4;

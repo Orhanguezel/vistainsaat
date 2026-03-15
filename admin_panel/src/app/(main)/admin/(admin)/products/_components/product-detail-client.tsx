@@ -1,17 +1,13 @@
 // =============================================================
-// FILE: src/app/(main)/admin/(admin)/products/_components/product-detail-client.tsx
-// Product Detail/Edit Form — CLAUDE.md Standartı
-// - Form Tab: tüm alanlar + kategori + görsel sidebar
-// - Specs Tab: teknik özellikler (ürün kaydedildikten sonra aktif)
-// - FAQs Tab: sıkça sorulan sorular
-// - Reviews Tab: değerlendirmeler
-// - JSON Tab: tüm formData + görsel sidebar
-// Ensotek Admin Panel
+// FILE: product-detail-client.tsx
+// Product / Project Detail — Tab bazlı düzenli form
+// Genel | Görseller | Özellikler | SEO | SSS | Değerlendirmeler | JSON
 // =============================================================
 
 'use client';
 
 import * as React from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -19,16 +15,16 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { Badge } from '@/components/ui/badge';
 import RichContentEditor from '@/app/(main)/admin/_components/common/RichContentEditor';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
-import { ArrowLeft, Save, FileJson, ListChecks, HelpCircle, Star } from 'lucide-react';
+import {
+  ArrowLeft, Save, FileJson, ListChecks, HelpCircle, Star,
+  Images, Plus, Trash2, X, ImageOff, Search, FileText,
+} from 'lucide-react';
 import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
 import { usePreferencesStore } from '@/stores/preferences/preferences-provider';
 import { AdminLocaleSelect } from '@/app/(main)/admin/_components/common/AdminLocaleSelect';
@@ -43,33 +39,278 @@ import {
   useListProductCategoriesAdminQuery,
   useListProductSubcategoriesAdminQuery,
 } from '@/integrations/endpoints/admin/products_admin.endpoints';
-import { ProductSpecsTab } from './product-specs-tab';
 import { ProductFaqsTab } from './product-faqs-tab';
 import { ProductReviewsTab } from './product-reviews-tab';
+import type { ProductItemType } from '@/integrations/shared/product_admin.types';
 
 // ─── Props ───────────────────────────────────────────────────
-
-import type { ProductItemType } from '@/integrations/shared/product_admin.types';
 
 interface Props {
   id: string;
   itemType?: ProductItemType;
 }
 
-// ─── Bileşen ─────────────────────────────────────────────────
+type TabKey = 'general' | 'images' | 'specs' | 'seo' | 'faqs' | 'reviews' | 'json';
+
+// ─── Specifications Key-Value Editor ─────────────────────────
+
+// İnşaat projesi için önerilen özellik şablonları
+const PROJECT_SPEC_SUGGESTIONS = [
+  'lokasyon', 'yıl', 'alan', 'tip', 'durum',
+  'mimarlar', 'baş_mimar', 'fotoğraflar', 'üreticiler',
+  'kat_sayısı', 'arsa_alanı', 'yapı_türü', 'müteahhit',
+] as const;
+
+function SpecificationsEditor({
+  value,
+  onChange,
+  disabled,
+  isProject,
+}: {
+  value: Record<string, string>;
+  onChange: (v: Record<string, string>) => void;
+  disabled?: boolean;
+  isProject?: boolean;
+}) {
+  const entries = Object.entries(value);
+
+  const handleKeyChange = (oldKey: string, newKey: string) => {
+    if (newKey === oldKey) return;
+    const next: Record<string, string> = {};
+    for (const [k, v] of entries) {
+      next[k === oldKey ? newKey : k] = v;
+    }
+    onChange(next);
+  };
+
+  const handleValueChange = (key: string, newVal: string) => {
+    onChange({ ...value, [key]: newVal });
+  };
+
+  const handleRemove = (key: string) => {
+    const next = { ...value };
+    delete next[key];
+    onChange(next);
+  };
+
+  const handleAdd = () => {
+    let key = 'yeni_alan';
+    let i = 1;
+    while (value[key] !== undefined) key = `yeni_alan_${i++}`;
+    onChange({ ...value, [key]: '' });
+  };
+
+  const handleAddSuggested = (key: string) => {
+    if (value[key] !== undefined) return;
+    onChange({ ...value, [key]: '' });
+  };
+
+  // Henüz eklenmemiş öneriler
+  const availableSuggestions = isProject
+    ? PROJECT_SPEC_SUGGESTIONS.filter((s) => value[s] === undefined)
+    : [];
+
+  return (
+    <div className="space-y-3">
+      {entries.length === 0 && (
+        <p className="text-sm text-muted-foreground">Henüz özellik eklenmemiş.</p>
+      )}
+      {entries.map(([k, v], idx) => (
+        <div key={idx} className="flex items-center gap-2">
+          <Input
+            className="w-[200px] shrink-0"
+            value={k}
+            onChange={(e) => handleKeyChange(k, e.target.value)}
+            disabled={disabled}
+            placeholder="Özellik adı"
+          />
+          <Input
+            className="flex-1"
+            value={v}
+            onChange={(e) => handleValueChange(k, e.target.value)}
+            disabled={disabled}
+            placeholder="Değer"
+          />
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={() => handleRemove(k)}
+            disabled={disabled}
+            className="shrink-0"
+          >
+            <X className="h-4 w-4 text-destructive" />
+          </Button>
+        </div>
+      ))}
+
+      <div className="flex items-center gap-2 flex-wrap">
+        <Button type="button" variant="outline" size="sm" onClick={handleAdd} disabled={disabled}>
+          <Plus className="h-3.5 w-3.5 mr-1" />
+          Özellik Ekle
+        </Button>
+
+        {/* Hızlı ekleme önerileri */}
+        {availableSuggestions.length > 0 && (
+          <>
+            <span className="text-[11px] text-muted-foreground ml-2">Hızlı ekle:</span>
+            {availableSuggestions.slice(0, 6).map((s) => (
+              <button
+                key={s}
+                type="button"
+                className="rounded-full border px-2.5 py-0.5 text-[11px] text-muted-foreground hover:bg-muted transition-colors disabled:opacity-50"
+                onClick={() => handleAddSuggested(s)}
+                disabled={disabled}
+              >
+                + {s}
+              </button>
+            ))}
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Multiple Images Editor ──────────────────────────────────
+
+function ImagesEditor({
+  images,
+  onChange,
+  disabled,
+}: {
+  images: string[];
+  onChange: (v: string[]) => void;
+  disabled?: boolean;
+}) {
+  const handleRemove = (idx: number) => onChange(images.filter((_, i) => i !== idx));
+
+  const handleAdd = () => {
+    const url = prompt('Resim URL giriniz:');
+    if (url?.trim()) onChange([...images, url.trim()]);
+  };
+
+  const handleReorder = (from: number, to: number) => {
+    const next = [...images];
+    const [moved] = next.splice(from, 1);
+    next.splice(to, 0, moved);
+    onChange(next);
+  };
+
+  return (
+    <div className="space-y-4">
+      {images.length === 0 ? (
+        <div className="flex items-center justify-center rounded-lg border border-dashed p-12 text-muted-foreground">
+          <div className="text-center">
+            <ImageOff className="h-8 w-8 mx-auto mb-2 opacity-40" />
+            <p className="text-sm">Henüz resim eklenmemiş.</p>
+          </div>
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          {images.map((url, idx) => (
+            <div key={idx} className="group relative rounded-lg border overflow-hidden bg-muted">
+              <Image
+                src={url}
+                alt={`Resim ${idx + 1}`}
+                width={300}
+                height={200}
+                className="w-full h-36 object-cover"
+                unoptimized
+              />
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors" />
+              <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                {idx > 0 && (
+                  <button
+                    type="button"
+                    className="rounded-full bg-black/60 px-2 py-1 text-[10px] text-white"
+                    onClick={() => handleReorder(idx, idx - 1)}
+                    disabled={disabled}
+                  >
+                    ←
+                  </button>
+                )}
+                {idx < images.length - 1 && (
+                  <button
+                    type="button"
+                    className="rounded-full bg-black/60 px-2 py-1 text-[10px] text-white"
+                    onClick={() => handleReorder(idx, idx + 1)}
+                    disabled={disabled}
+                  >
+                    →
+                  </button>
+                )}
+                <button
+                  type="button"
+                  className="rounded-full bg-red-600/80 p-1.5 text-white"
+                  onClick={() => handleRemove(idx)}
+                  disabled={disabled}
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              </div>
+              <div className="px-2 py-1.5 text-[11px] text-muted-foreground flex items-center justify-between">
+                <span>{idx + 1}. resim</span>
+                {idx === 0 && <Badge variant="outline" className="text-[9px] px-1.5">Kapak</Badge>}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+      <Button type="button" variant="outline" size="sm" onClick={handleAdd} disabled={disabled}>
+        <Plus className="h-3.5 w-3.5 mr-1" />
+        Resim Ekle
+      </Button>
+    </div>
+  );
+}
+
+// ─── Save Bar (her tab altında ortak) ────────────────────────
+
+function SaveBar({
+  onBack,
+  onSave,
+  disabled,
+  submitType = 'button',
+}: {
+  onBack: () => void;
+  onSave?: () => void;
+  disabled?: boolean;
+  submitType?: 'submit' | 'button';
+}) {
+  return (
+    <div className="flex justify-end gap-3 pt-4 border-t">
+      <Button type="button" variant="outline" onClick={onBack} disabled={disabled}>
+        İptal
+      </Button>
+      <Button
+        type={submitType}
+        disabled={disabled}
+        onClick={submitType === 'button' ? onSave : undefined}
+      >
+        <Save className="h-4 w-4 mr-2" />
+        Kaydet
+      </Button>
+    </div>
+  );
+}
+
+// ─── Ana Bileşen ─────────────────────────────────────────────
 
 export default function ProductDetailClient({ id, itemType }: Props) {
   const t = useAdminT('admin.products');
   const router = useRouter();
   const adminLocale = usePreferencesStore((s) => s.adminLocale);
   const isNew = id === 'new';
-  const backUrl = itemType === 'sparepart' ? '/admin/products?type=sparepart' : '/admin/products';
+  const backUrl = itemType ? `/admin/products?type=${itemType}` : '/admin/products';
+  const isProject = itemType === 'vistainsaat';
 
   const { localeOptions } = useAdminLocales();
   const [activeLocale, setActiveLocale] = React.useState<string>(adminLocale || 'tr');
-  const [activeTab, setActiveTab] = React.useState<'form' | 'specs' | 'faqs' | 'reviews' | 'json'>('form');
+  const [activeTab, setActiveTab] = React.useState<TabKey>('general');
 
-  // ── RTK Query ──
+  // ── RTK Query ──────────────────────────────────────────────
+
   const { data: item, isFetching, refetch } = useGetProductAdminQuery(
     { id, locale: activeLocale, item_type: itemType },
     { skip: isNew },
@@ -83,7 +324,8 @@ export default function ProductDetailClient({ id, itemType }: Props) {
   const [createProduct, { isLoading: isCreating }] = useCreateProductAdminMutation();
   const [updateProduct, { isLoading: isUpdating }] = useUpdateProductAdminMutation();
 
-  // ── Form state ──
+  // ── Form state ─────────────────────────────────────────────
+
   const [formData, setFormData] = React.useState({
     locale: activeLocale,
     title: '',
@@ -94,23 +336,25 @@ export default function ProductDetailClient({ id, itemType }: Props) {
     description: '',
     image_alt: '',
     tags: '',
+    specifications: {} as Record<string, string>,
     category_id: '',
     sub_category_id: '',
     image_url: '',
     image_asset_id: '',
+    images: [] as string[],
     is_active: true,
     is_featured: false,
     meta_title: '',
     meta_description: '',
   });
 
-  // ── Subcat listesi (category'ye göre) ──
   const { data: subcategories = [] } = useListProductSubcategoriesAdminQuery(
     { category_id: formData.category_id, locale: activeLocale },
     { skip: !formData.category_id },
   );
 
-  // ── Veri yüklenince formData'yı doldur ──
+  // ── Veri yüklenince formData'yı doldur ─────────────────────
+
   React.useEffect(() => {
     if (item && !isNew) {
       setFormData({
@@ -123,10 +367,15 @@ export default function ProductDetailClient({ id, itemType }: Props) {
         description: item.description || '',
         image_alt: item.alt || '',
         tags: Array.isArray(item.tags) ? item.tags.join(', ') : (item.tags || ''),
+        specifications:
+          item.specifications && typeof item.specifications === 'object'
+            ? { ...item.specifications }
+            : {},
         category_id: item.category_id ? String(item.category_id) : '',
         sub_category_id: item.sub_category_id ? String(item.sub_category_id) : '',
         image_url: item.image_url || '',
         image_asset_id: item.storage_asset_id || '',
+        images: Array.isArray(item.images) ? [...item.images] : [],
         is_active: item.is_active === 1 || item.is_active === true,
         is_featured: item.is_featured === 1 || item.is_featured === true,
         meta_title: item.meta_title || '',
@@ -135,12 +384,12 @@ export default function ProductDetailClient({ id, itemType }: Props) {
     }
   }, [item, isNew, activeLocale]);
 
-  // ── Locale değişince yeniden çek ──
   React.useEffect(() => {
     if (!isNew && id) refetch();
   }, [activeLocale, id, isNew, refetch]);
 
-  // ── Handler'lar ──
+  // ── Handler'lar ────────────────────────────────────────────
+
   const handleBack = () => router.push(backUrl);
 
   const handleLocaleChange = (next: string) => {
@@ -161,32 +410,37 @@ export default function ProductDetailClient({ id, itemType }: Props) {
     e?.preventDefault();
 
     if (!formData.title.trim()) {
-      toast.error('Başlık (title) zorunludur');
+      toast.error('Başlık zorunludur');
+      setActiveTab('general');
       return;
     }
 
     const tagsArray = formData.tags
-      ? formData.tags
-          .toString()
-          .split(',')
-          .map((s) => s.trim())
-          .filter(Boolean)
+      ? formData.tags.toString().split(',').map((s) => s.trim()).filter(Boolean)
       : [];
+
+    const specsToSend =
+      Object.keys(formData.specifications).length > 0 ? formData.specifications : null;
 
     const payload = {
       locale: activeLocale,
       title: formData.title.trim(),
-      slug: formData.slug.trim() || formData.title.trim().toLowerCase().replace(/\s+/g, '-'),
+      slug:
+        formData.slug.trim() ||
+        formData.title.trim().toLowerCase().replace(/\s+/g, '-'),
       price: formData.price !== '' ? Number(formData.price) : 0,
-      stock_quantity: formData.stock_quantity !== '' ? Number(formData.stock_quantity) : undefined,
+      stock_quantity:
+        formData.stock_quantity !== '' ? Number(formData.stock_quantity) : undefined,
       product_code: formData.product_code || undefined,
       description: formData.description || undefined,
       alt: formData.image_alt || undefined,
       tags: tagsArray,
+      specifications: specsToSend,
       category_id: formData.category_id || '',
       sub_category_id: formData.sub_category_id || null,
       image_url: formData.image_url || null,
       storage_asset_id: formData.image_asset_id || null,
+      images: formData.images,
       is_active: formData.is_active,
       is_featured: formData.is_featured,
       meta_title: formData.meta_title || undefined,
@@ -197,14 +451,14 @@ export default function ProductDetailClient({ id, itemType }: Props) {
     try {
       if (isNew) {
         const result = await createProduct(payload).unwrap();
-        toast.success('Ürün oluşturuldu');
+        toast.success(isProject ? 'Proje oluşturuldu' : 'Ürün oluşturuldu');
         if (result?.id) {
-          const typeParam = itemType === 'sparepart' ? '?type=sparepart' : '';
+          const typeParam = itemType ? `?type=${itemType}` : '';
           router.push(`/admin/products/${result.id}${typeParam}`);
         }
       } else {
         await updateProduct({ id, patch: payload }).unwrap();
-        toast.success('Ürün güncellendi');
+        toast.success(isProject ? 'Proje güncellendi' : 'Ürün güncellendi');
       }
     } catch (error: any) {
       const msg = error?.data?.error?.message || error?.message || 'Hata oluştu';
@@ -214,19 +468,22 @@ export default function ProductDetailClient({ id, itemType }: Props) {
 
   const isLoading = isFetching || isCreating || isUpdating;
   const productId = isNew ? undefined : id;
+  const entityLabel = isProject ? 'Proje' : 'Ürün';
 
-  const localesForSelect = React.useMemo(() => {
-    return (localeOptions || []).map((l: any) => ({
-      value: String(l.value || ''),
-      label: String(l.label || l.value || ''),
-    }));
-  }, [localeOptions]);
+  const localesForSelect = React.useMemo(
+    () =>
+      (localeOptions || []).map((l: any) => ({
+        value: String(l.value || ''),
+        label: String(l.label || l.value || ''),
+      })),
+    [localeOptions],
+  );
 
-  // ─── Render ──────────────────────────────────────────────────
+  // ─── Render ────────────────────────────────────────────────
 
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {/* ── Header ─────────────────────────────────────────── */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -236,291 +493,489 @@ export default function ProductDetailClient({ id, itemType }: Props) {
               </Button>
               <div>
                 <CardTitle className="text-base">
-                  {isNew ? t('actions.create') : t('actions.edit')}
+                  {isNew ? `Yeni ${entityLabel}` : `${entityLabel} Düzenle`}
                 </CardTitle>
                 <CardDescription>
-                  {isNew ? 'Yeni ürün oluştur' : `${item?.title || ''} düzenle`}
+                  {isNew
+                    ? `Yeni ${entityLabel.toLowerCase()} oluştur`
+                    : item?.title || ''}
                 </CardDescription>
               </div>
             </div>
-            <AdminLocaleSelect
-              options={localesForSelect}
-              value={activeLocale}
-              onChange={handleLocaleChange}
-              disabled={isLoading}
-            />
+            <div className="flex items-center gap-3">
+              {/* Özet bilgi chip'leri */}
+              {item && !isNew && (
+                <>
+                  {item.category_name && (
+                    <Badge variant="outline">{item.category_name}</Badge>
+                  )}
+                  <Badge variant={formData.is_active ? 'default' : 'secondary'}>
+                    {formData.is_active ? 'Aktif' : 'Pasif'}
+                  </Badge>
+                </>
+              )}
+              <AdminLocaleSelect
+                options={localesForSelect}
+                value={activeLocale}
+                onChange={handleLocaleChange}
+                disabled={isLoading}
+              />
+            </div>
           </div>
         </CardHeader>
       </Card>
 
-      {/* Tabs */}
-      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
-        <TabsList>
-          <TabsTrigger value="form">Form</TabsTrigger>
-          <TabsTrigger value="specs" disabled={isNew}>
-            <ListChecks className="h-4 w-4 mr-2" />
+      {/* ── Tabs ───────────────────────────────────────────── */}
+      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as TabKey)}>
+        <TabsList className="flex-wrap">
+          <TabsTrigger value="general">
+            <FileText className="h-4 w-4 mr-1.5" />
+            Genel
+          </TabsTrigger>
+          <TabsTrigger value="images">
+            <Images className="h-4 w-4 mr-1.5" />
+            Görseller
+            {formData.images.length > 0 && (
+              <Badge variant="secondary" className="ml-1.5 text-[10px] px-1.5 py-0">
+                {formData.images.length}
+              </Badge>
+            )}
+          </TabsTrigger>
+          <TabsTrigger value="specs">
+            <ListChecks className="h-4 w-4 mr-1.5" />
             Özellikler
+            {Object.keys(formData.specifications).length > 0 && (
+              <Badge variant="secondary" className="ml-1.5 text-[10px] px-1.5 py-0">
+                {Object.keys(formData.specifications).length}
+              </Badge>
+            )}
+          </TabsTrigger>
+          <TabsTrigger value="seo">
+            <Search className="h-4 w-4 mr-1.5" />
+            SEO
           </TabsTrigger>
           <TabsTrigger value="faqs" disabled={isNew}>
-            <HelpCircle className="h-4 w-4 mr-2" />
+            <HelpCircle className="h-4 w-4 mr-1.5" />
             SSS
           </TabsTrigger>
           <TabsTrigger value="reviews" disabled={isNew}>
-            <Star className="h-4 w-4 mr-2" />
+            <Star className="h-4 w-4 mr-1.5" />
             Değerlendirmeler
           </TabsTrigger>
           <TabsTrigger value="json">
-            <FileJson className="h-4 w-4 mr-2" />
+            <FileJson className="h-4 w-4 mr-1.5" />
             JSON
           </TabsTrigger>
         </TabsList>
 
-        {/* ── Form Tab ─────────────────────────────────────────── */}
-        <TabsContent value="form">
+        {/* ════════════════════════════════════════════════════
+            TAB 1: GENEL
+            ════════════════════════════════════════════════════ */}
+        <TabsContent value="general">
           <form onSubmit={handleSubmit}>
             <Card>
-              <CardContent className="pt-6 space-y-6">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                  {/* Sol: form alanları */}
-                  <div className="lg:col-span-2 space-y-6">
-
-                    {/* Başlık */}
-                    <div className="space-y-2">
-                      <Label htmlFor="title">Başlık *</Label>
-                      <Input
-                        id="title"
-                        value={formData.title}
-                        onChange={(e) => handleChange('title', e.target.value)}
-                        disabled={isLoading}
-                        placeholder="Ürün başlığı"
-                      />
-                    </div>
-
-                    {/* Slug */}
-                    <div className="space-y-2">
-                      <Label htmlFor="slug">Slug</Label>
-                      <Input
-                        id="slug"
-                        value={formData.slug}
-                        onChange={(e) => handleChange('slug', e.target.value)}
-                        disabled={isLoading}
-                        placeholder="urun-slug"
-                      />
-                    </div>
-
-                    {/* Fiyat + Stok + Kod */}
-                    <div className="grid grid-cols-3 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="price">Fiyat</Label>
-                        <Input
-                          id="price"
-                          type="number"
-                          step="0.01"
-                          value={formData.price}
-                          onChange={(e) => handleChange('price', e.target.value)}
-                          disabled={isLoading}
-                          placeholder="0.00"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="stock_quantity">Stok</Label>
-                        <Input
-                          id="stock_quantity"
-                          type="number"
-                          value={formData.stock_quantity}
-                          onChange={(e) => handleChange('stock_quantity', e.target.value)}
-                          disabled={isLoading}
-                          placeholder="0"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="product_code">Ürün Kodu</Label>
-                        <Input
-                          id="product_code"
-                          value={formData.product_code}
-                          onChange={(e) => handleChange('product_code', e.target.value)}
-                          disabled={isLoading}
-                          placeholder="SKU-001"
-                        />
-                      </div>
-                    </div>
-
-                    {/* Açıklama */}
-                    <div className="space-y-2">
-                      <Label>Açıklama</Label>
-                      <RichContentEditor
-                        value={formData.description}
-                        onChange={(v) => handleChange('description', v)}
-                        disabled={isLoading}
-                      />
-                    </div>
-
-                    {/* Alt + Etiketler */}
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="image_alt">Görsel Alt Text</Label>
-                        <Input
-                          id="image_alt"
-                          value={formData.image_alt}
-                          onChange={(e) => handleChange('image_alt', e.target.value)}
-                          disabled={isLoading}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="tags">Etiketler</Label>
-                        <Input
-                          id="tags"
-                          value={formData.tags}
-                          onChange={(e) => handleChange('tags', e.target.value)}
-                          disabled={isLoading}
-                          placeholder="virgülle ayır"
-                        />
-                      </div>
-                    </div>
-
-                    {/* SEO */}
-                    <div className="space-y-4 rounded-md border p-4">
-                      <p className="text-sm font-medium text-muted-foreground">SEO</p>
-                      <div className="space-y-2">
-                        <Label htmlFor="meta_title">Meta Başlık</Label>
-                        <Input
-                          id="meta_title"
-                          value={formData.meta_title}
-                          onChange={(e) => handleChange('meta_title', e.target.value)}
-                          disabled={isLoading}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="meta_description">Meta Açıklama</Label>
-                        <Textarea
-                          id="meta_description"
-                          value={formData.meta_description}
-                          onChange={(e) => handleChange('meta_description', e.target.value)}
-                          disabled={isLoading}
-                          rows={2}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Toggles */}
-                    <div className="flex flex-wrap gap-6">
-                      <div className="flex items-center gap-2">
-                        <Switch
-                          id="is_active"
-                          checked={formData.is_active}
-                          onCheckedChange={(v) => handleChange('is_active', v)}
-                          disabled={isLoading}
-                        />
-                        <Label htmlFor="is_active" className="cursor-pointer">Aktif</Label>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Switch
-                          id="is_featured"
-                          checked={formData.is_featured}
-                          onCheckedChange={(v) => handleChange('is_featured', v)}
-                          disabled={isLoading}
-                        />
-                        <Label htmlFor="is_featured" className="cursor-pointer">Öne Çıkan</Label>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Sağ: kategori + görsel sidebar */}
-                  <div className="space-y-6">
-                    {/* Kategori */}
-                    <div className="space-y-2">
-                      <Label>Kategori</Label>
-                      <Select
-                        value={formData.category_id || 'none'}
-                        onValueChange={(v) => {
-                          handleChange('category_id', v === 'none' ? '' : v);
-                          handleChange('sub_category_id', '');
-                        }}
-                        disabled={isLoading}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Kategori seç" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="none">— Kategori seç —</SelectItem>
-                          {categories.map((cat: any) => (
-                            <SelectItem key={cat.id} value={String(cat.id)}>
-                              {cat.name || cat.slug}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    {/* Alt Kategori */}
-                    {formData.category_id && (
-                      <div className="space-y-2">
-                        <Label>Alt Kategori</Label>
-                        <Select
-                          value={formData.sub_category_id || 'none'}
-                          onValueChange={(v) =>
-                            handleChange('sub_category_id', v === 'none' ? '' : v)
-                          }
-                          disabled={isLoading || subcategories.length === 0}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Alt kategori seç" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="none">— Alt kategori seç —</SelectItem>
-                            {subcategories.map((sub: any) => (
-                              <SelectItem key={sub.id} value={String(sub.id)}>
-                                {sub.name || sub.slug}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    )}
-
-                    {/* Görsel */}
-                    <AdminImageUploadField
-                      label="Kapak Görseli"
-                      value={formData.image_url}
-                      onChange={handleImageChange}
+              <CardHeader>
+                <CardTitle className="text-sm">Temel Bilgiler</CardTitle>
+                <CardDescription>
+                  {isProject
+                    ? 'Proje adı, açıklaması, kategorisi ve durumu.'
+                    : 'Ürün başlığı, açıklaması ve temel bilgileri.'}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Başlık + Slug */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="title">Başlık *</Label>
+                    <Input
+                      id="title"
+                      value={formData.title}
+                      onChange={(e) => handleChange('title', e.target.value)}
                       disabled={isLoading}
+                      placeholder={isProject ? 'Proje adı' : 'Ürün başlığı'}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="slug">Slug</Label>
+                    <Input
+                      id="slug"
+                      value={formData.slug}
+                      onChange={(e) => handleChange('slug', e.target.value)}
+                      disabled={isLoading}
+                      placeholder="otomatik-olusturulur"
                     />
                   </div>
                 </div>
 
-                {/* Kaydet */}
-                <div className="flex justify-end gap-3 pt-4 border-t">
-                  <Button type="button" variant="outline" onClick={handleBack} disabled={isLoading}>
-                    {t('actions.cancel')}
-                  </Button>
-                  <Button type="submit" disabled={isLoading}>
-                    <Save className="h-4 w-4 mr-2" />
-                    {t('actions.save')}
-                  </Button>
+                {/* Kod + Kategori */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="product_code">
+                      {isProject ? 'Proje Kodu' : 'Ürün Kodu'}
+                    </Label>
+                    <Input
+                      id="product_code"
+                      value={formData.product_code}
+                      onChange={(e) => handleChange('product_code', e.target.value)}
+                      disabled={isLoading}
+                      placeholder={isProject ? 'VIS-KNT-001' : 'SKU-001'}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Kategori</Label>
+                    <Select
+                      value={formData.category_id || 'none'}
+                      onValueChange={(v) => {
+                        handleChange('category_id', v === 'none' ? '' : v);
+                        handleChange('sub_category_id', '');
+                      }}
+                      disabled={isLoading}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Kategori seç" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">— Kategori seç —</SelectItem>
+                        {categories.map((cat: any) => (
+                          <SelectItem key={cat.id} value={String(cat.id)}>
+                            {cat.name || cat.slug}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
+
+                {/* Alt Kategori */}
+                {formData.category_id && subcategories.length > 0 && (
+                  <div className="space-y-2 sm:w-1/2">
+                    <Label>Alt Kategori</Label>
+                    <Select
+                      value={formData.sub_category_id || 'none'}
+                      onValueChange={(v) =>
+                        handleChange('sub_category_id', v === 'none' ? '' : v)
+                      }
+                      disabled={isLoading}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Alt kategori seç" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">— Alt kategori seç —</SelectItem>
+                        {subcategories.map((sub: any) => (
+                          <SelectItem key={sub.id} value={String(sub.id)}>
+                            {sub.name || sub.slug}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+
+                {/* Fiyat + Stok (ürün için) */}
+                {!isProject && (
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="price">Fiyat</Label>
+                      <Input
+                        id="price"
+                        type="number"
+                        step="0.01"
+                        value={formData.price}
+                        onChange={(e) => handleChange('price', e.target.value)}
+                        disabled={isLoading}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="stock_quantity">Stok</Label>
+                      <Input
+                        id="stock_quantity"
+                        type="number"
+                        value={formData.stock_quantity}
+                        onChange={(e) => handleChange('stock_quantity', e.target.value)}
+                        disabled={isLoading}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Açıklama */}
+                <div className="space-y-2">
+                  <Label>Açıklama</Label>
+                  <RichContentEditor
+                    value={formData.description}
+                    onChange={(v) => handleChange('description', v)}
+                    disabled={isLoading}
+                  />
+                </div>
+
+                {/* Toggles */}
+                <div className="flex flex-wrap gap-6 rounded-md border p-4">
+                  <div className="flex items-center gap-2">
+                    <Switch
+                      id="is_active"
+                      checked={formData.is_active}
+                      onCheckedChange={(v) => handleChange('is_active', v)}
+                      disabled={isLoading}
+                    />
+                    <Label htmlFor="is_active" className="cursor-pointer">
+                      Aktif
+                    </Label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Switch
+                      id="is_featured"
+                      checked={formData.is_featured}
+                      onCheckedChange={(v) => handleChange('is_featured', v)}
+                      disabled={isLoading}
+                    />
+                    <Label htmlFor="is_featured" className="cursor-pointer">
+                      Öne Çıkan
+                    </Label>
+                  </div>
+                </div>
+
+                {/* Meta bilgi (readonly) */}
+                {item && !isNew && (
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 rounded-md border p-4 text-xs text-muted-foreground">
+                    <div>
+                      <span className="font-medium text-foreground block">Oluşturma</span>
+                      {new Date(item.created_at).toLocaleDateString('tr-TR')}
+                    </div>
+                    <div>
+                      <span className="font-medium text-foreground block">Güncelleme</span>
+                      {new Date(item.updated_at).toLocaleDateString('tr-TR')}
+                    </div>
+                    <div>
+                      <span className="font-medium text-foreground block">Puan</span>
+                      {item.rating} ({item.review_count} yorum)
+                    </div>
+                    <div>
+                      <span className="font-medium text-foreground block">Sıra</span>
+                      {item.order_num}
+                    </div>
+                  </div>
+                )}
+
+                <SaveBar onBack={handleBack} disabled={isLoading} submitType="submit" />
               </CardContent>
             </Card>
           </form>
         </TabsContent>
 
-        {/* ── Specs Tab ────────────────────────────────────────── */}
-        <TabsContent value="specs">
-          {productId ? (
-            <ProductSpecsTab
-              productId={productId}
-              locale={activeLocale}
-              disabled={isLoading}
-            />
-          ) : (
+        {/* ════════════════════════════════════════════════════
+            TAB 2: GÖRSELLER
+            ════════════════════════════════════════════════════ */}
+        <TabsContent value="images">
+          <div className="space-y-6">
+            {/* Kapak Görseli */}
             <Card>
-              <CardContent className="py-8 text-center text-muted-foreground text-sm">
-                Teknik özellikler eklemek için önce ürünü kaydedin.
+              <CardHeader>
+                <CardTitle className="text-sm">Kapak Görseli</CardTitle>
+                <CardDescription>
+                  {isProject
+                    ? 'Proje listesinde ve detayda ana görsel olarak kullanılır.'
+                    : 'Ürün kartında görünen ana görsel.'}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="max-w-sm">
+                  <AdminImageUploadField
+                    label=""
+                    value={formData.image_url}
+                    onChange={handleImageChange}
+                    disabled={isLoading}
+                  />
+                </div>
+                <div className="mt-3 space-y-2">
+                  <Label htmlFor="image_alt">Alt Text</Label>
+                  <Input
+                    id="image_alt"
+                    value={formData.image_alt}
+                    onChange={(e) => handleChange('image_alt', e.target.value)}
+                    disabled={isLoading}
+                    placeholder="Görsel açıklaması (SEO için önemli)"
+                    className="max-w-md"
+                  />
+                </div>
               </CardContent>
             </Card>
-          )}
+
+            {/* Galeri */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-sm">
+                  Galeri
+                  {formData.images.length > 0 && (
+                    <Badge variant="secondary" className="ml-2 text-[10px]">
+                      {formData.images.length} resim
+                    </Badge>
+                  )}
+                </CardTitle>
+                <CardDescription>
+                  {isProject
+                    ? 'Proje detay sayfasında galeri olarak gösterilir. Sıralamayı ok tuşlarıyla değiştirebilirsiniz.'
+                    : 'Ürün detay sayfasındaki ek görseller.'}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ImagesEditor
+                  images={formData.images}
+                  onChange={(v) => handleChange('images', v)}
+                  disabled={isLoading}
+                />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="pt-6">
+                <SaveBar
+                  onBack={handleBack}
+                  onSave={() => handleSubmit()}
+                  disabled={isLoading}
+                />
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
-        {/* ── FAQs Tab ─────────────────────────────────────────── */}
+        {/* ════════════════════════════════════════════════════
+            TAB 3: ÖZELLİKLER
+            ════════════════════════════════════════════════════ */}
+        <TabsContent value="specs">
+          <div className="space-y-6">
+            {/* Inline specifications (product_i18n.specifications JSON) */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-sm">
+                  {isProject ? 'Proje Özellikleri' : 'Teknik Özellikler'}
+                </CardTitle>
+                <CardDescription>
+                  {isProject
+                    ? 'Lokasyon, yıl, alan, tip, durum, mimarlar gibi proje bilgilerini ekleyin. Yeni özellik eklemek için "Özellik Ekle" butonunu kullanın.'
+                    : 'Ürüne ait teknik detayları ekleyin.'}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <SpecificationsEditor
+                  value={formData.specifications}
+                  onChange={(v) => handleChange('specifications', v)}
+                  disabled={isLoading}
+                  isProject={isProject}
+                />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="pt-6">
+                <SaveBar
+                  onBack={handleBack}
+                  onSave={() => handleSubmit()}
+                  disabled={isLoading}
+                />
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        {/* ════════════════════════════════════════════════════
+            TAB 4: SEO
+            ════════════════════════════════════════════════════ */}
+        <TabsContent value="seo">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-sm">SEO & Etiketler</CardTitle>
+              <CardDescription>
+                Arama motorları için meta bilgiler ve etiketler.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Meta Title */}
+              <div className="space-y-2">
+                <Label htmlFor="meta_title">Meta Başlık</Label>
+                <Input
+                  id="meta_title"
+                  value={formData.meta_title}
+                  onChange={(e) => handleChange('meta_title', e.target.value)}
+                  disabled={isLoading}
+                  placeholder={formData.title || 'Sayfa başlığı'}
+                />
+                <p className="text-[11px] text-muted-foreground">
+                  {formData.meta_title.length}/60 karakter
+                </p>
+              </div>
+
+              {/* Meta Description */}
+              <div className="space-y-2">
+                <Label htmlFor="meta_description">Meta Açıklama</Label>
+                <Textarea
+                  id="meta_description"
+                  value={formData.meta_description}
+                  onChange={(e) => handleChange('meta_description', e.target.value)}
+                  disabled={isLoading}
+                  rows={3}
+                  placeholder="Arama sonuçlarında görünecek açıklama"
+                />
+                <p className="text-[11px] text-muted-foreground">
+                  {formData.meta_description.length}/160 karakter
+                </p>
+              </div>
+
+              {/* Etiketler */}
+              <div className="space-y-2">
+                <Label htmlFor="tags">Etiketler</Label>
+                <Input
+                  id="tags"
+                  value={formData.tags}
+                  onChange={(e) => handleChange('tags', e.target.value)}
+                  disabled={isLoading}
+                  placeholder="virgülle ayır: konut, rezidans, istanbul"
+                />
+                {formData.tags && (
+                  <div className="flex flex-wrap gap-1.5 pt-1">
+                    {formData.tags
+                      .split(',')
+                      .map((tag) => tag.trim())
+                      .filter(Boolean)
+                      .map((tag, i) => (
+                        <Badge key={i} variant="outline" className="text-[11px]">
+                          {tag}
+                        </Badge>
+                      ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Arama Önizleme */}
+              <div className="space-y-2 rounded-md border p-4 bg-muted/30">
+                <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
+                  Google Önizleme
+                </p>
+                <div>
+                  <p className="text-[#1a0dab] text-base truncate">
+                    {formData.meta_title || formData.title || 'Sayfa Başlığı'}
+                  </p>
+                  <p className="text-[#006621] text-xs truncate">
+                    vistainsaat.com/projeler/{formData.slug || 'proje-slug'}
+                  </p>
+                  <p className="text-[#545454] text-xs line-clamp-2 mt-0.5">
+                    {formData.meta_description || 'Meta açıklama buraya gelecek...'}
+                  </p>
+                </div>
+              </div>
+
+              <SaveBar
+                onBack={handleBack}
+                onSave={() => handleSubmit()}
+                disabled={isLoading}
+              />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* ════════════════════════════════════════════════════
+            TAB 5: SSS
+            ════════════════════════════════════════════════════ */}
         <TabsContent value="faqs">
           {productId ? (
             <ProductFaqsTab
@@ -530,70 +985,51 @@ export default function ProductDetailClient({ id, itemType }: Props) {
             />
           ) : (
             <Card>
-              <CardContent className="py-8 text-center text-muted-foreground text-sm">
-                SSS eklemek için önce ürünü kaydedin.
+              <CardContent className="py-12 text-center text-muted-foreground text-sm">
+                SSS eklemek için önce {entityLabel.toLowerCase()}u kaydedin.
               </CardContent>
             </Card>
           )}
         </TabsContent>
 
-        {/* ── Reviews Tab ──────────────────────────────────────── */}
+        {/* ════════════════════════════════════════════════════
+            TAB 6: DEĞERLENDİRMELER
+            ════════════════════════════════════════════════════ */}
         <TabsContent value="reviews">
           {productId ? (
-            <ProductReviewsTab
-              productId={productId}
-              disabled={isLoading}
-            />
+            <ProductReviewsTab productId={productId} disabled={isLoading} />
           ) : (
             <Card>
-              <CardContent className="py-8 text-center text-muted-foreground text-sm">
-                Değerlendirmeler eklemek için önce ürünü kaydedin.
+              <CardContent className="py-12 text-center text-muted-foreground text-sm">
+                Değerlendirmeler için önce {entityLabel.toLowerCase()}u kaydedin.
               </CardContent>
             </Card>
           )}
         </TabsContent>
 
-        {/* ── JSON Tab ─────────────────────────────────────────── */}
+        {/* ════════════════════════════════════════════════════
+            TAB 7: JSON
+            ════════════════════════════════════════════════════ */}
         <TabsContent value="json">
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Ürün Verisi (JSON)</CardTitle>
+              <CardTitle className="text-sm">{entityLabel} Verisi (JSON)</CardTitle>
               <CardDescription>
-                Tüm alanları JSON olarak düzenleyebilirsiniz.
+                Tüm alanları ham JSON olarak görüntüleyip düzenleyebilirsiniz.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Sol: tüm formData JSON editörde */}
-                <div className="lg:col-span-2">
-                  <AdminJsonEditor
-                    value={formData}
-                    onChange={handleJsonChange}
-                    disabled={isLoading}
-                    height={500}
-                  />
-                </div>
-
-                {/* Sağ: görsel önizleme/yükleme */}
-                <div className="space-y-4">
-                  <AdminImageUploadField
-                    label="Kapak Görseli"
-                    value={formData.image_url}
-                    onChange={handleImageChange}
-                    disabled={isLoading}
-                  />
-                </div>
-              </div>
-
-              <div className="flex justify-end gap-3 pt-4 border-t">
-                <Button type="button" variant="outline" onClick={handleBack} disabled={isLoading}>
-                  {t('actions.cancel')}
-                </Button>
-                <Button onClick={() => handleSubmit()} disabled={isLoading}>
-                  <Save className="h-4 w-4 mr-2" />
-                  {t('actions.save')}
-                </Button>
-              </div>
+              <AdminJsonEditor
+                value={formData}
+                onChange={handleJsonChange}
+                disabled={isLoading}
+                height={600}
+              />
+              <SaveBar
+                onBack={handleBack}
+                onSave={() => handleSubmit()}
+                disabled={isLoading}
+              />
             </CardContent>
           </Card>
         </TabsContent>

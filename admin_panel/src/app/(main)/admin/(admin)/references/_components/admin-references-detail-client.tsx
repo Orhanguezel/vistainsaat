@@ -190,7 +190,7 @@ export default function AdminReferenceDetailClient({ id }: { id: string }) {
       if (def && canUse(def)) return def;
 
       const first = localeShortClient((localeOptions as any)?.[0]?.value);
-      return first || 'de';
+      return first || 'tr';
     });
   }, [localeOptions, localeSet, urlLocale, apiLocaleFromDb]);
 
@@ -240,13 +240,13 @@ export default function AdminReferenceDetailClient({ id }: { id: string }) {
   const busy = loading || saving;
 
   const [values, setValues] = React.useState<FormValues>(() =>
-    emptyForm(queryLocale || 'de'),
+    emptyForm(queryLocale || 'tr'),
   );
   const [slugTouched, setSlugTouched] = React.useState(false);
 
   React.useEffect(() => {
     if (isCreateMode) {
-      setValues(emptyForm(queryLocale || 'de'));
+      setValues(emptyForm(queryLocale || 'tr'));
       return;
     }
     if (reference) {
@@ -274,7 +274,7 @@ export default function AdminReferenceDetailClient({ id }: { id: string }) {
   };
 
   function onCancel() {
-    router.push(`/admin/references?locale=${encodeURIComponent(queryLocale || 'de')}`);
+    router.push(`/admin/references?locale=${encodeURIComponent(queryLocale || 'tr')}`);
   }
 
   async function onSubmit(e: React.FormEvent) {

@@ -21,7 +21,7 @@ export const uiHeaderSchema = z
     nav_contact: z.string().trim().optional(),
     cta_label: z.string().trim().optional(),
   })
-  .strict();
+  .passthrough();
 
 export type UiHeaderFormState = z.infer<typeof uiHeaderSchema>;
 

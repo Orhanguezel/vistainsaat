@@ -35,19 +35,22 @@ function parseFlags(argv: string[]): Flags {
 const PROFILE_PREFIXES: Record<NonNullable<Flags['profile']>, string[]> = {
   vistainsaat: [
     // ── Temel şema dosyaları (CREATE TABLE) ──────────────────────────────
-    '001', '002', '003', '004', '005', '006', '007',
-    '010', '012', '013', '017', '018',  // 012: sub_categories tablo şeması (FK için gerekli)
+    '001', '003', '004', '005',
+    '008', '009', '010',  // vistainsaat_catalog_schema, products_schema, references_schema
+    '017', '018',
     '020',
     '030', '031', '032',
     '040',  // site_settings şema + 040.1 (301 override eder)
-    '050', '060', '070', '080', '095',
-    '100', '110', '120', '130', '140', '150', '160', '170', '180', '190',
-    '200', '201', '220', '230', '240',
-    // ── Vista İnşaat'a özgü veri dosyaları ───────────────────────────────
-    '299', '300', '301', '302', '303', '304', '305', '306', '307', '308', '310',
-    // 309 (auth_role_patch) atlandı: role kolonu artık 001_auth_schema.sql'de mevcut
-    // Atlananlar (Ensotek-özgü veri): 011,012,021-024,051-055,071,101,
-    //   121,131,141,151,161,171,181,191,202,203,211,212,231-233
+    '050', '060', '080', '090', '095',
+    '110', '120', '130', '140', '150', '160', '170', '180', '190',
+    '220', '230', '240',
+    // ── Vista İnşaat'a özgü şema + veri dosyaları ───────────────────────
+    '131',  // vistainsaat_storage_assets
+    '296',  // vistainsaat_catalog_schema (categories, catalog_requests)
+    '297',  // vistainsaat_products_schema
+    '299', '300', '301', '302', '303', '304', '305', '306', '307', '308',
+    '309',  // vistainsaat_news_categories + auth_role_patch
+    '310', '311',  // vistainsaat_admin_settings
   ],
 };
 

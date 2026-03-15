@@ -118,7 +118,6 @@ export const listPagesAdmin: RouteHandler<{ Querystring: CustomPageListQuery }> 
     q: q.q,
     slug: q.slug,
     category_id: q.category_id,
-    sub_category_id: q.sub_category_id,
     module_key: q.module_key,
     locale,
     defaultLocale: def,
@@ -195,7 +194,6 @@ export const createPageAdmin: RouteHandler<{ Body: UpsertCustomPageBody }> = asy
       order_num: typeof b.order_num !== 'undefined' ? (b.order_num as number) : 0,
 
       category_id: typeof b.category_id !== 'undefined' ? b.category_id ?? null : null,
-      sub_category_id: typeof b.sub_category_id !== 'undefined' ? b.sub_category_id ?? null : null,
 
       // Some live DBs still miss LONGTEXT JSON defaults on these columns.
       images: Array.isArray((b as any).images) ? (b as any).images : [],
@@ -297,9 +295,6 @@ export const updatePageAdmin: RouteHandler<{
       parentPatch.featured_image_asset_id = b.featured_image_asset_id ?? null;
 
     if (typeof b.category_id !== 'undefined') parentPatch.category_id = b.category_id ?? null;
-    if (typeof b.sub_category_id !== 'undefined')
-      parentPatch.sub_category_id = b.sub_category_id ?? null;
-
     if (typeof b.display_order !== 'undefined')
       parentPatch.display_order = b.display_order as number;
     if (typeof b.order_num !== 'undefined') parentPatch.order_num = b.order_num as number;

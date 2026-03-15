@@ -5,8 +5,6 @@
 'use client';
 
 import tr from '@/locale/tr.json';
-import en from '@/locale/en.json';
-import de from '@/locale/de.json';
 import { normLocaleTag } from './localeUtils';
 import { buildTranslator, getValueByPath, type TranslateFn } from './translation-utils';
 
@@ -99,14 +97,12 @@ function normalizeAdminLocaleJson(raw: unknown): PlainObject {
 
 const translations = {
   tr: normalizeAdminLocaleJson(tr),
-  en: normalizeAdminLocaleJson(en),
-  de: normalizeAdminLocaleJson(de),
 } as const;
 
 /**
  * Supported languages for admin panel
  */
-export type AdminLocale = 'tr' | 'en' | 'de';
+export type AdminLocale = 'tr';
 
 /**
  * Dynamically derived list of available admin locales from translations JSON.
@@ -115,8 +111,6 @@ export const ADMIN_LOCALE_LIST = Object.keys(translations) as AdminLocale[];
 
 const ADMIN_LOCALE_LABELS: Record<string, string> = {
   tr: 'Türkçe',
-  en: 'English',
-  de: 'Deutsch',
 };
 
 export const ADMIN_LOCALE_OPTIONS: { value: string; label: string }[] =
@@ -136,7 +130,7 @@ export function getAdminTranslations(locale: AdminLocale = 'tr'): TranslateFn {
   const normalized = normLocaleTag(locale);
   const activeLocale: AdminLocale = isAdminLocale(normalized) ? normalized : 'tr';
 
-  const fallbackChain = [activeLocale, 'tr', 'en', 'de'] as const satisfies readonly AdminLocale[];
+  const fallbackChain = [activeLocale, 'tr'] as const satisfies readonly AdminLocale[];
 
   return buildTranslator<AdminLocale>({
     translations,

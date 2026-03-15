@@ -53,8 +53,11 @@ export function resolveBaseUrl(): string {
   const apiOrigin = (process.env.NEXT_PUBLIC_API_ORIGIN || '').trim();
   const apiBase = (process.env.NEXT_PUBLIC_API_BASE || '').trim();
 
-  // 1) Full URL preferred
-  if (apiUrl && isAbsUrl(apiUrl)) return trimSlash(apiUrl);
+  // 1) Full or relative URL preferred
+  if (apiUrl) {
+    if (isAbsUrl(apiUrl)) return trimSlash(apiUrl);
+    return ensureLeadingSlash(trimSlash(apiUrl));
+  }
 
   // 2) origin + base together
   if (apiOrigin && apiBase) return joinOriginAndBase(apiOrigin, apiBase);

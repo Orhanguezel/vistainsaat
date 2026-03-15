@@ -26,7 +26,6 @@ import { getEffectiveLocale, getLocalesForCreate, normalizeLocale } from './i18n
 type AdminListQuery = {
   q?: string;
   category_id?: string;
-  sub_category_id?: string;
   locale?: string;
   is_active?: string | number | boolean;
   item_type?: ItemType;
@@ -59,7 +58,7 @@ async function urlsForAssets(ids: string[]) {
 
 /**
  * GET /admin/products
- *  ?q=&category_id=&sub_category_id=&locale=&is_active=&item_type=&limit=&offset=&sort=&order=
+ *  ?q=&category_id=&locale=&is_active=&item_type=&limit=&offset=&sort=&order=
  */
 export const adminListProducts: RouteHandler = async (req, reply) => {
   const q = (req.query || {}) as AdminListQuery;
@@ -71,8 +70,6 @@ export const adminListProducts: RouteHandler = async (req, reply) => {
 
   if (q.q) conds.push(like(productI18n.title, `%${q.q}%`));
   if (q.category_id) conds.push(eq(products.category_id, q.category_id));
-  if (q.sub_category_id) conds.push(eq(products.sub_category_id, q.sub_category_id));
-
   if (q.is_active !== undefined) {
     const v = String(q.is_active).toLowerCase();
     conds.push(eq(products.is_active, (v === '1' || v === 'true') as any));
@@ -186,7 +183,6 @@ export const adminCreateProduct: RouteHandler = async (req, reply) => {
       id: productId,
       item_type: itemType,
       category_id: input.category_id,
-      sub_category_id: input.sub_category_id ?? null,
       price: input.price,
 
       image_url,

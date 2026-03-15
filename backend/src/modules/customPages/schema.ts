@@ -20,7 +20,6 @@ import {
 import { sql } from 'drizzle-orm';
 
 import { categories } from '@/modules/categories/schema';
-import { subCategories } from '@/modules/subcategories/schema';
 
 /** LONGTEXT */
 const longtext = customType<{ data: string; driverData: string }>({
@@ -89,7 +88,6 @@ export const customPages = mysqlTable(
 
     /** kategori bağları */
     category_id: char('category_id', { length: 36 }),
-    sub_category_id: char('sub_category_id', { length: 36 }),
 
     created_at: datetime('created_at', { fsp: 3 })
       .notNull()
@@ -112,7 +110,6 @@ export const customPages = mysqlTable(
     index('custom_pages_storage_asset_idx').on(t.storage_asset_id),
 
     index('custom_pages_category_id_idx').on(t.category_id),
-    index('custom_pages_sub_category_id_idx').on(t.sub_category_id),
 
     index('custom_pages_display_order_idx').on(t.display_order),
     index('custom_pages_order_num_idx').on(t.order_num),
@@ -125,13 +122,6 @@ export const customPages = mysqlTable(
       .onDelete('set null')
       .onUpdate('cascade'),
 
-    foreignKey({
-      columns: [t.sub_category_id],
-      foreignColumns: [subCategories.id],
-      name: 'fk_custom_pages_sub_category',
-    })
-      .onDelete('set null')
-      .onUpdate('cascade'),
   ],
 );
 

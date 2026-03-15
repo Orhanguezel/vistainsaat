@@ -1,7 +1,7 @@
 // =============================================================
 // FILE: src/app/(main)/admin/(admin)/products/_components/products-list-panel.tsx
 // Products List Panel — Shadcn/UI + RTK Query
-// Ensotek Admin Panel Standartı
+// Vista İnşaat Admin Panel
 // =============================================================
 
 'use client';
@@ -29,7 +29,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { RefreshCw, Plus, Pencil, Trash2 } from 'lucide-react';
+import Image from 'next/image';
+import { RefreshCw, Plus, Pencil, Trash2, ImageOff, X, Filter } from 'lucide-react';
 import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
 import { useAdminLocales } from '@/app/(main)/admin/_components/common/useAdminLocales';
 import {
@@ -47,6 +48,31 @@ import type { AdminProductDto, ProductItemType } from '@/integrations/shared/pro
 
 const isTruthy = (v: unknown) => v === 1 || v === true || v === '1' || v === 'true';
 
+/* ── Spec-based filter dimensions (same as frontend ProjectsView) ── */
+const SPEC_FILTER_KEYS = [
+  { key: 'tip', label: { tr: 'Tip', en: 'Type', de: 'Typ' } },
+  { key: 'lokasyon', label: { tr: 'Lokasyon', en: 'Location', de: 'Standort' } },
+  { key: 'durum', label: { tr: 'Durum', en: 'Status', de: 'Status' } },
+  { key: 'yıl', label: { tr: 'Yıl', en: 'Year', de: 'Jahr' } },
+  { key: 'mimarlar', label: { tr: 'Mimarlar', en: 'Architects', de: 'Architekten' } },
+  { key: 'alan', label: { tr: 'Alan', en: 'Area', de: 'Fläche' } },
+  { key: 'kat', label: { tr: 'Kat', en: 'Floors', de: 'Stockwerke' } },
+  { key: 'malzeme', label: { tr: 'Malzeme', en: 'Materials', de: 'Materialien' } },
+  { key: 'isveren', label: { tr: 'İşveren', en: 'Client', de: 'Auftraggeber' } },
+] as const;
+
+function extractSpecValues(items: AdminProductDto[], specKey: string): string[] {
+  const set = new Set<string>();
+  for (const item of items) {
+    const specs = item.specifications;
+    if (!specs) continue;
+    // Check both Turkish and English key variants
+    const val = specs[specKey] || specs[specKey.toLowerCase()];
+    if (typeof val === 'string' && val.trim()) set.add(val.trim());
+  }
+  return Array.from(set).sort();
+}
+
 interface Props {
   itemType?: ProductItemType;
 }
@@ -55,8 +81,7 @@ export default function ProductsListPanel({ itemType }: Props) {
   const t = useAdminT('admin.products');
   const router = useRouter();
 
-  const isSparepart = itemType === 'sparepart';
-  const newUrl = isSparepart ? '/admin/products/new?type=sparepart' : '/admin/products/new';
+  const newUrl = itemType ? `/admin/products/new?type=${itemType}` : '/admin/products/new';
 
   const { localeOptions, defaultLocaleFromDb } = useAdminLocales();
 
@@ -66,6 +91,7 @@ export default function ProductsListPanel({ itemType }: Props) {
   const [categoryFilter, setCategoryFilter] = React.useState('');
   const [showOnlyActive, setShowOnlyActive] = React.useState(false);
   const [showOnlyFeatured, setShowOnlyFeatured] = React.useState(false);
+  const [specFilters, setSpecFilters] = React.useState<Record<string, string>>({});
 
   // Set default locale once options load
   React.useEffect(() => {
@@ -100,7 +126,34 @@ export default function ProductsListPanel({ itemType }: Props) {
     { skip: !locale },
   );
 
-  const items: AdminProductDto[] = productData?.items ?? [];
+  const rawItems: AdminProductDto[] = productData?.items ?? [];
+
+  // Compute spec filter dimensions from all items
+  const specDimensions = React.useMemo(() => {
+    return SPEC_FILTER_KEYS
+      .map((dim) => ({
+        key: dim.key,
+        label: dim.label[(locale as 'tr' | 'en' | 'de') || 'tr'] || dim.label.tr,
+        options: extractSpecValues(rawItems, dim.key),
+      }))
+      .filter((d) => d.options.length > 0);
+  }, [rawItems, locale]);
+
+  // Apply client-side spec filters
+  const items = React.useMemo(() => {
+    const activeSpecFilters = Object.entries(specFilters).filter(([, v]) => v);
+    if (activeSpecFilters.length === 0) return rawItems;
+    return rawItems.filter((item) => {
+      const specs = item.specifications;
+      if (!specs) return false;
+      return activeSpecFilters.every(([key, val]) => {
+        const specVal = specs[key] || specs[key.toLowerCase()];
+        return typeof specVal === 'string' && specVal.trim() === val;
+      });
+    });
+  }, [rawItems, specFilters]);
+
+  const activeSpecCount = Object.values(specFilters).filter(Boolean).length;
 
   const [updateProduct] = useUpdateProductAdminMutation();
   const [deleteProduct, { isLoading: isDeleting }] = useDeleteProductAdminMutation();
@@ -141,6 +194,28 @@ export default function ProductsListPanel({ itemType }: Props) {
 
   const isLoading = isFetching || isDeleting;
 
+  const renderThumb = (item: AdminProductDto) => {
+    const url = item.image_url || (item.images?.length ? item.images[0] : null);
+    if (!url) {
+      return (
+        <div className="flex shrink-0 items-center justify-center rounded border bg-muted" style={{ width: 36, height: 36 }}>
+          <ImageOff className="size-4 text-muted-foreground" />
+        </div>
+      );
+    }
+    return (
+      <Image
+        src={url}
+        alt={item.title || ''}
+        width={36}
+        height={36}
+        className="shrink-0 rounded border object-cover"
+        style={{ width: 36, height: 36 }}
+        unoptimized
+      />
+    );
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -149,10 +224,10 @@ export default function ProductsListPanel({ itemType }: Props) {
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h2 className="text-base font-semibold">
-                {isSparepart ? t('header.title_sparepart') : t('header.title')}
+                {itemType === 'sparepart' ? t('header.title_sparepart') : t('header.title')}
               </h2>
               <p className="text-sm text-muted-foreground">
-                {isSparepart ? t('header.description_sparepart') : t('header.description')}
+                {itemType === 'sparepart' ? t('header.description_sparepart') : t('header.description')}
               </p>
             </div>
             <div className="flex items-center gap-2">
@@ -239,6 +314,62 @@ export default function ProductsListPanel({ itemType }: Props) {
               </div>
             </div>
           </div>
+
+          {/* Spec-based filters (like frontend ProjectsView) */}
+          {specDimensions.length > 0 && (
+            <div className="mt-3 pt-3 border-t">
+              <div className="flex items-center gap-2 mb-2">
+                <Filter className="h-3.5 w-3.5 text-muted-foreground" />
+                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  {locale === 'en' ? 'Specifications' : locale === 'de' ? 'Spezifikationen' : 'Özellikler'}
+                </span>
+                {activeSpecCount > 0 && (
+                  <Badge variant="secondary" className="text-xs px-1.5 py-0">
+                    {activeSpecCount}
+                  </Badge>
+                )}
+                {activeSpecCount > 0 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-6 text-xs text-muted-foreground"
+                    onClick={() => setSpecFilters({})}
+                  >
+                    <X className="h-3 w-3 mr-1" />
+                    {locale === 'en' ? 'Clear' : locale === 'de' ? 'Löschen' : 'Temizle'}
+                  </Button>
+                )}
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {specDimensions.map((dim) => (
+                  <div key={dim.key} className="w-[160px]">
+                    <Select
+                      value={specFilters[dim.key] || 'all'}
+                      onValueChange={(v) =>
+                        setSpecFilters((prev) => ({
+                          ...prev,
+                          [dim.key]: v === 'all' ? '' : v,
+                        }))
+                      }
+                      disabled={isLoading}
+                    >
+                      <SelectTrigger className="h-8 text-xs">
+                        <SelectValue placeholder={dim.label} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">{dim.label}</SelectItem>
+                        {dim.options.map((opt) => (
+                          <SelectItem key={opt} value={opt}>
+                            {opt}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -249,6 +380,7 @@ export default function ProductsListPanel({ itemType }: Props) {
             <TableHeader>
               <TableRow>
                 <TableHead className="w-[48px]">#</TableHead>
+                <TableHead className="w-13" />
                 <TableHead>{t('list.columns.title')}</TableHead>
                 <TableHead className="w-[80px]">{t('list.columns.locale')}</TableHead>
                 <TableHead className="w-[140px]">{t('list.columns.category')}</TableHead>
@@ -262,13 +394,13 @@ export default function ProductsListPanel({ itemType }: Props) {
             <TableBody>
               {isFetching && items.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={9} className="py-8 text-center text-muted-foreground text-sm">
+                  <TableCell colSpan={10} className="py-8 text-center text-muted-foreground text-sm">
                     {t('list.loading')}
                   </TableCell>
                 </TableRow>
               ) : items.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={9} className="py-8 text-center text-muted-foreground text-sm">
+                  <TableCell colSpan={10} className="py-8 text-center text-muted-foreground text-sm">
                     {t('list.empty')}
                   </TableCell>
                 </TableRow>
@@ -280,6 +412,10 @@ export default function ProductsListPanel({ itemType }: Props) {
                   return (
                     <TableRow key={item.id} className={!isActive ? 'opacity-50' : ''}>
                       <TableCell className="text-muted-foreground text-sm">{idx + 1}</TableCell>
+
+                      <TableCell className="py-1">
+                        {renderThumb(item)}
+                      </TableCell>
 
                       <TableCell>
                         <div

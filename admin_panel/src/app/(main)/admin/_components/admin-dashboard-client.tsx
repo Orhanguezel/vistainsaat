@@ -29,18 +29,15 @@ import { useAdminSettings } from './admin-settings-provider';
 const ROUTE_MAP: Record<string, string> = {
   products: '/admin/products',
   categories: '/admin/categories',
-  subcategories: '/admin/subcategories',
   contacts: '/admin/contacts',
   site_settings: '/admin/site-settings',
   custom_pages: '/admin/custompage',
   menu_items: '/admin/menuitem',
-  library: '/admin/library',
   reviews: '/admin/reviews',
   users: '/admin/users',
   offers: '/admin/offer',
   storage: '/admin/storage',
   references: '/admin/references',
-  audit: '/admin/audit',
   gallery: '/admin/gallery',
 };
 

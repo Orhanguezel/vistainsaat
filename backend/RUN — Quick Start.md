@@ -79,7 +79,10 @@ pm2 reload ecosystem.config.cjs --env production
 pm2 logs ensotek-backend --lines 100
 
 
+Admin Panel Giriş Bilgileri
 
+Email: orhanguzell@gmail.com
+Şifre: admin123
 
 
 ```

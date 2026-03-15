@@ -42,7 +42,6 @@ export const referencesListQuerySchema = z.object({
   select: z.string().optional(),
 
   category_id: z.string().uuid().optional(),
-  sub_category_id: z.string().uuid().optional(),
 
   module_key: z.string().optional(),
   has_website: boolLike.optional(),
@@ -72,7 +71,6 @@ export const upsertReferenceParentBodySchema = z.object({
   website_url: z.string().max(500).url().nullable().optional(),
 
   category_id: z.string().uuid().nullable().optional(),
-  sub_category_id: z.string().uuid().nullable().optional(),
 });
 
 export type UpsertReferenceParentBody = z.infer<typeof upsertReferenceParentBodySchema>;
@@ -128,7 +126,6 @@ export const upsertReferenceBodySchema = upsertReferenceI18nBodySchema.extend({
   featured_image_asset_id: z.string().length(36).nullable().optional(),
 
   category_id: z.string().uuid().nullable().optional(),
-  sub_category_id: z.string().uuid().nullable().optional(),
   website_url: z.string().max(500).url().nullable().optional(),
 });
 
@@ -143,7 +140,6 @@ export const patchReferenceBodySchema = patchReferenceI18nBodySchema.extend({
   featured_image_asset_id: z.string().length(36).nullable().optional(),
 
   category_id: z.string().uuid().nullable().optional(),
-  sub_category_id: z.string().uuid().nullable().optional(),
   website_url: z.string().max(500).url().nullable().optional(),
 });
 

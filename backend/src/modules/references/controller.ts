@@ -57,7 +57,6 @@ export const listReferencesPublic: RouteHandler = async (req, reply) => {
     q: q.q,
     slug: q.slug,
     category_id: q.category_id,
-    sub_category_id: q.sub_category_id,
     module_key: q.module_key,
     has_website: q.has_website,
     locale,

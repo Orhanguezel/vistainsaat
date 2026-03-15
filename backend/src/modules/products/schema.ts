@@ -22,7 +22,6 @@ import {
 } from 'drizzle-orm/mysql-core';
 import { sql } from 'drizzle-orm';
 import { categories } from '../categories/schema';
-import { subCategories } from '../subcategories/schema';
 
 export type ProductItemType = 'product' | 'sparepart' | 'vistainsaat';
 
@@ -39,7 +38,6 @@ export const products = mysqlTable(
 
     // Dilden bağımsız alanlar
     category_id: char('category_id', { length: 36 }).notNull(),
-    sub_category_id: char('sub_category_id', { length: 36 }),
 
     price: decimal('price', { precision: 10, scale: 2 }).notNull(),
 
@@ -77,7 +75,6 @@ export const products = mysqlTable(
 
     index('products_item_type_idx').on(t.item_type), // ✅ yeni index
     index('products_category_id_idx').on(t.category_id),
-    index('products_sub_category_id_idx').on(t.sub_category_id),
     index('products_active_idx').on(t.is_active),
     index('products_asset_idx').on(t.storage_asset_id),
     index('products_order_idx').on(t.order_num),
@@ -90,13 +87,6 @@ export const products = mysqlTable(
       .onDelete('restrict')
       .onUpdate('cascade'),
 
-    foreignKey({
-      columns: [t.sub_category_id],
-      foreignColumns: [subCategories.id],
-      name: 'fk_products_subcategory',
-    })
-      .onDelete('set null')
-      .onUpdate('cascade'),
   ],
 );
 

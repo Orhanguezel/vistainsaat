@@ -22,7 +22,7 @@ export const contactInfoSchema = z
     address: z.string().trim().optional(),
     whatsapp: z.string().trim().optional(),
   })
-  .strict();
+  .passthrough();
 
 export type ContactInfoFormState = z.infer<typeof contactInfoSchema>;
 

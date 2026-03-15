@@ -14,7 +14,6 @@ import {
 } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
 import { categories } from "@/modules/categories/schema";
-import { subCategories } from "@/modules/subcategories/schema";
 
 /** LONGTEXT -> string */
 const longtext = customType<{ data: string; driverData: string }>({
@@ -41,7 +40,6 @@ export const referencesTable = mysqlTable(
     website_url: varchar("website_url", { length: 500 }),
 
     category_id: char("category_id", { length: 36 }),
-    sub_category_id: char("sub_category_id", { length: 36 }),
 
     created_at: datetime("created_at", { fsp: 3 })
       .notNull()
@@ -60,7 +58,6 @@ export const referencesTable = mysqlTable(
     index("references_featured_asset_idx").on(t.featured_image_asset_id),
 
     index("references_category_id_idx").on(t.category_id),
-    index("references_sub_category_id_idx").on(t.sub_category_id),
 
     // FK'ler
     {
@@ -68,13 +65,6 @@ export const referencesTable = mysqlTable(
         columns: [t.category_id],
         foreignColumns: [categories.id],
         name: "fk_references_category",
-        onDelete: "set null",
-        onUpdate: "cascade",
-      },
-      fk_sub_category: {
-        columns: [t.sub_category_id],
-        foreignColumns: [subCategories.id],
-        name: "fk_references_sub_category",
         onDelete: "set null",
         onUpdate: "cascade",
       },

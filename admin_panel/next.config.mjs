@@ -25,13 +25,13 @@ const nextConfig = {
       {
         protocol: 'http',
         hostname: 'localhost',
-        port: '8186',
+        port: '8086',
         pathname: '/**',
       },
       {
         protocol: 'http',
         hostname: '127.0.0.1',
-        port: '8186',
+        port: '8086',
         pathname: '/**',
       },
       {
@@ -59,7 +59,7 @@ const nextConfig = {
     const apiBase = (
       process.env.PANEL_API_URL ||
       process.env.NEXT_PUBLIC_PANEL_API_URL ||
-      'http://127.0.0.1:8186'
+      'http://127.0.0.1:8086'
     ).replace(/\/+$/, '');
 
     const csp = [
@@ -67,7 +67,7 @@ const nextConfig = {
       "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "img-src 'self' blob: data: https://res.cloudinary.com https://www.vistainsaat.com https://vistainsaat.com",
-      `connect-src 'self' ${isDev ? apiBase : ''} https://cdn.jsdelivr.net https://api.cloudinary.com https://www.vistainsaat.com https://vistainsaat.com https://api.vistainsaat.com`.trim(),
+      `connect-src 'self' https://cdn.jsdelivr.net https://api.cloudinary.com https://www.vistainsaat.com https://vistainsaat.com https://api.vistainsaat.com`,
       "font-src 'self' https://fonts.gstatic.com data:",
       "object-src 'none'",
       "base-uri 'self'",

@@ -101,7 +101,7 @@ export default function AdminReferencesClient() {
       if (urlLoc && canUse(urlLoc)) return { ...prev, locale: urlLoc };
       if (defLoc && canUse(defLoc)) return { ...prev, locale: defLoc };
 
-      return { ...prev, locale: localeShortClient((localeOptions as any)?.[0]?.value) || 'de' };
+      return { ...prev, locale: localeShortClient((localeOptions as any)?.[0]?.value) || 'tr' };
     });
   }, [localeOptions, urlLocale, apiLocale]);
 

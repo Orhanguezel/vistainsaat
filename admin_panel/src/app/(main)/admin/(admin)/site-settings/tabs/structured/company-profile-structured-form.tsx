@@ -19,7 +19,7 @@ export const companyProfileSchema = z
     slogan: z.string().trim().optional(),
     about: z.string().trim().optional(),
   })
-  .strict();
+  .passthrough();
 
 export type CompanyProfileFormState = z.infer<typeof companyProfileSchema>;
 

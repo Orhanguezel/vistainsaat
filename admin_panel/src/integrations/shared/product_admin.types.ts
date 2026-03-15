@@ -14,10 +14,12 @@ export interface AdminProductDto {
   description?: string | null;
   alt?: string | null;
   tags: string[];
+  specifications?: Record<string, string> | null;
   price: number | string;
   stock_quantity: number;
   product_code?: string | null;
   category_id: string;
+  category_name?: string | null;
   sub_category_id?: string | null;
   image_url?: string | null;
   storage_asset_id?: string | null;
@@ -63,10 +65,12 @@ export interface AdminProductCreatePayload {
   description?: string;
   alt?: string;
   tags?: string[];
+  specifications?: Record<string, string> | null;
   category_id: string;
   sub_category_id?: string | null;
   image_url?: string | null;
   storage_asset_id?: string | null;
+  images?: string[];
   is_active?: boolean;
   is_featured?: boolean;
   meta_title?: string;

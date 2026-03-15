@@ -18,8 +18,8 @@ DROP TABLE IF EXISTS `sites`;
 CREATE TABLE IF NOT EXISTS `sites` (
   `id`          CHAR(36)      NOT NULL,
   `name`        VARCHAR(100)  NOT NULL,
-  `slug`        VARCHAR(64)   NOT NULL,          -- 'kuhlturm' | 'ensotek_de' | 'ensotek_tr' | 'ensotek_com'
-  `domain`      VARCHAR(255)  NOT NULL,          -- 'kuhlturm.com'
+  `slug`        VARCHAR(64)   NOT NULL,          -- 'vistainsaat' | 'vistainsaat_tr' | 'vistainsaat_com'
+  `domain`      VARCHAR(255)  NOT NULL,          -- 'vistainsaat.com'
   `is_active`   TINYINT(1)    NOT NULL DEFAULT 1,
 
   `created_at`  DATETIME(3)   NOT NULL DEFAULT CURRENT_TIMESTAMP(3),

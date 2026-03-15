@@ -9,7 +9,8 @@ interface Props {
 export default async function Page({ params, searchParams }: Props) {
   const { id } = await params;
   const { type } = await searchParams;
+  const validTypes: ProductItemType[] = ['product', 'sparepart', 'vistainsaat'];
   const itemType: ProductItemType | undefined =
-    type === 'sparepart' ? 'sparepart' : type === 'product' ? 'product' : undefined;
+    validTypes.includes(type as ProductItemType) ? (type as ProductItemType) : undefined;
   return <ProductDetailClient id={id} itemType={itemType} />;
 }

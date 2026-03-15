@@ -10,7 +10,7 @@ export const API_BASE_URL =
 
 // Resmi barındıran sunucu (API URL'inden /api kısmını çıkarıyoruz)
 export const ASSETS_URL =
-  process.env.NEXT_PUBLIC_ASSETS_URL ?? API_BASE_URL.replace('/api', '');
+  process.env.NEXT_PUBLIC_ASSETS_URL ?? API_BASE_URL.replace(/\/api$/, '');
 
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.vistainsaat.com';

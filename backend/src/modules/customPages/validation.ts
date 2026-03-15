@@ -83,7 +83,6 @@ export const customPageListQuerySchema = z.object({
   select: z.string().optional(),
 
   category_id: z.string().uuid().optional(),
-  sub_category_id: z.string().uuid().optional(),
 
   /** parent filter */
   module_key: MODULE_KEY.optional(),
@@ -115,7 +114,6 @@ export const upsertCustomPageParentBodySchema = z.object({
   storage_image_ids: UuidArrayLike.optional(),
 
   category_id: z.string().uuid().nullable().optional(),
-  sub_category_id: z.string().uuid().nullable().optional(),
 });
 
 export type UpsertCustomPageParentBody = z.infer<typeof upsertCustomPageParentBodySchema>;
@@ -174,7 +172,6 @@ export const upsertCustomPageBodySchema = upsertCustomPageI18nBodySchema.extend(
   featured_image_asset_id: UUID36.nullable().optional(),
 
   category_id: z.string().uuid().nullable().optional(),
-  sub_category_id: z.string().uuid().nullable().optional(),
 
   display_order: z.coerce.number().int().min(0).optional(),
   order_num: z.coerce.number().int().min(0).optional(),
@@ -199,7 +196,6 @@ export const patchCustomPageBodySchema = patchCustomPageI18nBodySchema.extend({
   featured_image_asset_id: UUID36.nullable().optional(),
 
   category_id: z.string().uuid().nullable().optional(),
-  sub_category_id: z.string().uuid().nullable().optional(),
 
   display_order: z.coerce.number().int().min(0).optional(),
   order_num: z.coerce.number().int().min(0).optional(),

@@ -193,7 +193,7 @@ export default function AdminGalleryDetailClient({ id }: { id: string }) {
       if (def && canUse(def)) return def;
 
       const first = localeShortClient((localeOptions as any)?.[0]?.value);
-      return first || 'de';
+      return first || 'tr';
     });
   }, [localeOptions, localeSet, urlLocale, apiLocaleFromDb]);
 
@@ -243,13 +243,13 @@ export default function AdminGalleryDetailClient({ id }: { id: string }) {
   const busy = loading || saving;
 
   const [values, setValues] = React.useState<FormValues>(() =>
-    emptyForm(queryLocale || 'de'),
+    emptyForm(queryLocale || 'tr'),
   );
   const [slugTouched, setSlugTouched] = React.useState(false);
 
   React.useEffect(() => {
     if (isCreateMode) {
-      setValues(emptyForm(queryLocale || 'de'));
+      setValues(emptyForm(queryLocale || 'tr'));
       return;
     }
     if (gallery) {
@@ -277,7 +277,7 @@ export default function AdminGalleryDetailClient({ id }: { id: string }) {
   };
 
   function onCancel() {
-    router.push(`/admin/gallery?locale=${encodeURIComponent(queryLocale || 'de')}`);
+    router.push(`/admin/gallery?locale=${encodeURIComponent(queryLocale || 'tr')}`);
   }
 
   async function onSubmit(e: React.FormEvent) {
@@ -763,7 +763,7 @@ export default function AdminGalleryDetailClient({ id }: { id: string }) {
                 <TabsContent value="images" className="mt-4">
                   <GalleryImagesTab
                     galleryId={String((gallery as any)?.id ?? id)}
-                    locale={queryLocale || 'de'}
+                    locale={queryLocale || 'tr'}
                     disabled={disabled}
                   />
                 </TabsContent>

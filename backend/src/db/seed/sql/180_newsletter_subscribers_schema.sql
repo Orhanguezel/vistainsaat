@@ -1,6 +1,6 @@
 -- =============================================================
 -- 180_newsletter_subscribers_schema.sql
--- Newsletter subscribers schema (Ensotek pattern)
+-- Newsletter subscribers schema (Vista İnşaat pattern)
 -- MySQL 8.x FIX:
 -- - TEXT/LONGTEXT columns cannot have DEFAULT values
 -- =============================================================

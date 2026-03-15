@@ -31,8 +31,8 @@ export const DEFAULT_BRANDING: AdminBrandingConfig = {
   app_copyright: 'Vista İnşaat',
   html_lang: 'tr',
   theme_color: '#ea580c',
-  favicon_16: '/favicon/favicon-16.svg',
-  favicon_32: '/favicon/favicon-32.svg',
+  favicon_16: '/favicon/favicon-16.png',
+  favicon_32: '/favicon/favicon-32.png',
   apple_touch_icon: '/favicon/apple-touch-icon.png',
   meta: {
     title: 'Vista İnşaat Admin Panel',

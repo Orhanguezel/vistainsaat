@@ -154,15 +154,15 @@ export const SmtpSettingsTab: React.FC<SmtpSettingsTabProps> = ({ locale }) => {
 
   return (
     <Card>
-      <CardHeader className="gap-2">
-        <div className="flex flex-col gap-2 lg:flex-row lg:items-start lg:justify-between">
+      <CardHeader className="gap-2 px-3 py-3 sm:px-6 sm:py-4">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
           <div className="space-y-1">
-            <CardTitle className="text-base">{t('admin.siteSettings.smtp.title')}</CardTitle>
-            <CardDescription>{t('admin.siteSettings.smtp.description')}</CardDescription>
+            <CardTitle className="text-sm sm:text-base">{t('admin.siteSettings.smtp.title')}</CardTitle>
+            <CardDescription className="text-xs sm:text-sm">{t('admin.siteSettings.smtp.description')}</CardDescription>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="secondary">{t('admin.siteSettings.smtp.badge', { locale: locale || '—' })}</Badge>
+            <Badge variant="secondary" className="text-xs">{t('admin.siteSettings.smtp.badge', { locale: locale || '—' })}</Badge>
             <Button type="button" variant="outline" size="sm" onClick={refetch} disabled={busy}>
               {t('admin.common.refresh')}
             </Button>
@@ -170,15 +170,15 @@ export const SmtpSettingsTab: React.FC<SmtpSettingsTabProps> = ({ locale }) => {
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-4 px-3 pb-3 sm:space-y-6 sm:px-6 sm:pb-6">
         {busy && (
           <div>
             <Badge variant="secondary">{t('admin.common.loading')}</Badge>
           </div>
         )}
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-12">
-          <div className="space-y-2 md:col-span-6">
+        <div className="grid grid-cols-1 gap-3 sm:gap-4 sm:grid-cols-12">
+          <div className="space-y-2 sm:col-span-6">
             <Label htmlFor="smtp-host" className="text-sm">
               {t('admin.siteSettings.smtp.host')}
             </Label>
@@ -191,7 +191,7 @@ export const SmtpSettingsTab: React.FC<SmtpSettingsTabProps> = ({ locale }) => {
             />
           </div>
 
-          <div className="space-y-2 md:col-span-3">
+          <div className="space-y-2 sm:col-span-3">
             <Label htmlFor="smtp-port" className="text-sm">
               {t('admin.siteSettings.smtp.port')}
             </Label>
@@ -204,7 +204,7 @@ export const SmtpSettingsTab: React.FC<SmtpSettingsTabProps> = ({ locale }) => {
             />
           </div>
 
-          <div className="flex items-end md:col-span-3">
+          <div className="flex items-end sm:col-span-3">
             <div className="flex items-center space-x-2">
               <Switch
                 id="smtp-ssl"
@@ -218,7 +218,7 @@ export const SmtpSettingsTab: React.FC<SmtpSettingsTabProps> = ({ locale }) => {
             </div>
           </div>
 
-          <div className="space-y-2 md:col-span-6">
+          <div className="space-y-2 sm:col-span-6">
             <Label htmlFor="smtp-username" className="text-sm">
               {t('admin.siteSettings.smtp.username')}
             </Label>
@@ -231,7 +231,7 @@ export const SmtpSettingsTab: React.FC<SmtpSettingsTabProps> = ({ locale }) => {
             />
           </div>
 
-          <div className="space-y-2 md:col-span-6">
+          <div className="space-y-2 sm:col-span-6">
             <Label htmlFor="smtp-password" className="text-sm">
               {t('admin.siteSettings.smtp.password')}
             </Label>
@@ -245,7 +245,7 @@ export const SmtpSettingsTab: React.FC<SmtpSettingsTabProps> = ({ locale }) => {
             />
           </div>
 
-          <div className="space-y-2 md:col-span-6">
+          <div className="space-y-2 sm:col-span-6">
             <Label htmlFor="smtp-from-email" className="text-sm">
               {t('admin.siteSettings.smtp.fromEmail')}
             </Label>
@@ -261,7 +261,7 @@ export const SmtpSettingsTab: React.FC<SmtpSettingsTabProps> = ({ locale }) => {
             </p>
           </div>
 
-          <div className="space-y-2 md:col-span-6">
+          <div className="space-y-2 sm:col-span-6">
             <Label htmlFor="smtp-from-name" className="text-sm">
               {t('admin.siteSettings.smtp.fromName')}
             </Label>
@@ -281,7 +281,7 @@ export const SmtpSettingsTab: React.FC<SmtpSettingsTabProps> = ({ locale }) => {
           SMTP test aksiyonu bu panelde devre dışıdır. Yalnızca SMTP ayarlarını yönetiyoruz.
         </div>
 
-        <div className="mt-3 flex justify-end gap-2 md:justify-end">
+        <div className="mt-3 flex justify-end gap-2">
           <Button type="button" variant="default" disabled={busy} onClick={handleSave}>
             {isSaving ? t('admin.common.saving') : t('admin.common.save')}
           </Button>

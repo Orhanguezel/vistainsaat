@@ -64,11 +64,6 @@ CREATE TABLE IF NOT EXISTS `custom_pages` (
   CONSTRAINT `fk_custom_pages_category`
     FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`)
     ON DELETE SET NULL
-    ON UPDATE CASCADE,
-
-  CONSTRAINT `fk_custom_pages_sub_category`
-    FOREIGN KEY (`sub_category_id`) REFERENCES `sub_categories` (`id`)
-    ON DELETE SET NULL
     ON UPDATE CASCADE
 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

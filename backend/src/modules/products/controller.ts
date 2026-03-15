@@ -8,7 +8,6 @@ import { and, asc, desc, eq, like, ne, sql } from 'drizzle-orm';
 import { db } from '@/db/client';
 import { products, productFaqs, productSpecs, product_reviews, productI18n } from './schema';
 import { categories, categoryI18n } from '@/modules/categories/schema';
-import { subCategories, subCategoryI18n } from '@/modules/subcategories/schema';
 import { toBoolDefault, toInt } from '@/modules/_shared';
 import { normalizeProduct, normalizeItemType, type ItemType } from './helpers.shared';
 
@@ -16,7 +15,6 @@ import { normalizeProduct, normalizeItemType, type ItemType } from './helpers.sh
 type ListProductsQuery = {
   category_id?: string;
   category_slug?: string;
-  sub_category_id?: string;
   is_active?: string;
   is_featured?: string;
   exclude_id?: string;
@@ -60,7 +58,7 @@ const normalizeLocaleFromString = (raw?: string | null, fallback = 'de') => {
 
 /**
  * GET /products
- * ?category_id=&sub_category_id=&is_active=&q=&limit=&offset=&sort=&order=&slug=&locale=&item_type=
+ * ?category_id=&is_active=&q=&limit=&offset=&sort=&order=&slug=&locale=&item_type=
  *
  * ✅ default item_type=product
  */
@@ -96,34 +94,13 @@ export const listProducts: RouteHandler = async (req, reply) => {
           name: categoryI18n.name,
           slug: categoryI18n.slug,
         },
-        s: {
-          id: subCategories.id,
-          category_id: subCategories.category_id,
-          image_url: subCategories.image_url,
-          storage_asset_id: subCategories.storage_asset_id,
-          alt: subCategories.alt,
-          icon: subCategories.icon,
-          is_active: subCategories.is_active,
-          is_featured: subCategories.is_featured,
-          display_order: subCategories.display_order,
-          name: subCategoryI18n.name,
-          slug: subCategoryI18n.slug,
-        },
-      })
+        })
       .from(products)
       .innerJoin(productI18n, eq(productI18n.product_id, products.id))
       .leftJoin(categories, eq(products.category_id, categories.id))
       .leftJoin(
         categoryI18n,
         and(eq(categoryI18n.category_id, categories.id), eq(categoryI18n.locale, locale)),
-      )
-      .leftJoin(subCategories, eq(products.sub_category_id, subCategories.id))
-      .leftJoin(
-        subCategoryI18n,
-        and(
-          eq(subCategoryI18n.sub_category_id, subCategories.id),
-          eq(subCategoryI18n.locale, locale),
-        ),
       )
       .where(and(...conds))
       .limit(1);
@@ -137,7 +114,6 @@ export const listProducts: RouteHandler = async (req, reply) => {
     return reply.send({
       ...normalizeProduct(merged),
       category: r.c,
-      sub_category: r.s,
     });
   }
 
@@ -147,7 +123,6 @@ export const listProducts: RouteHandler = async (req, reply) => {
   ];
 
   if (q.category_id) conds.push(eq(products.category_id, q.category_id));
-  if (q.sub_category_id) conds.push(eq(products.sub_category_id, q.sub_category_id));
 
   // Filter by category slug (resolve via categoryI18n join)
   if (q.category_slug) {
@@ -244,19 +219,6 @@ export const listProducts: RouteHandler = async (req, reply) => {
         name: categoryI18n.name,
         slug: categoryI18n.slug,
       },
-      s: {
-        id: subCategories.id,
-        category_id: subCategories.category_id,
-        image_url: subCategories.image_url,
-        storage_asset_id: subCategories.storage_asset_id,
-        alt: subCategories.alt,
-        icon: subCategories.icon,
-        is_active: subCategories.is_active,
-        is_featured: subCategories.is_featured,
-        display_order: subCategories.display_order,
-        name: subCategoryI18n.name,
-        slug: subCategoryI18n.slug,
-      },
     })
     .from(products)
     .innerJoin(productI18n, eq(productI18n.product_id, products.id))
@@ -264,14 +226,6 @@ export const listProducts: RouteHandler = async (req, reply) => {
     .leftJoin(
       categoryI18n,
       and(eq(categoryI18n.category_id, categories.id), eq(categoryI18n.locale, locale)),
-    )
-    .leftJoin(subCategories, eq(products.sub_category_id, subCategories.id))
-    .leftJoin(
-      subCategoryI18n,
-      and(
-        eq(subCategoryI18n.sub_category_id, subCategories.id),
-        eq(subCategoryI18n.locale, locale),
-      ),
     )
     .where(whereExpr as any);
 
@@ -283,7 +237,6 @@ export const listProducts: RouteHandler = async (req, reply) => {
     return {
       ...normalizeProduct(merged),
       category: r.c,
-      sub_category: r.s,
     };
   });
 
@@ -335,19 +288,6 @@ export const getProductByIdOrSlug: RouteHandler = async (req, reply) => {
         name: categoryI18n.name,
         slug: categoryI18n.slug,
       },
-      s: {
-        id: subCategories.id,
-        category_id: subCategories.category_id,
-        image_url: subCategories.image_url,
-        storage_asset_id: subCategories.storage_asset_id,
-        alt: subCategories.alt,
-        icon: subCategories.icon,
-        is_active: subCategories.is_active,
-        is_featured: subCategories.is_featured,
-        display_order: subCategories.display_order,
-        name: subCategoryI18n.name,
-        slug: subCategoryI18n.slug,
-      },
     })
     .from(products)
     .innerJoin(productI18n, eq(productI18n.product_id, products.id))
@@ -355,14 +295,6 @@ export const getProductByIdOrSlug: RouteHandler = async (req, reply) => {
     .leftJoin(
       categoryI18n,
       and(eq(categoryI18n.category_id, categories.id), eq(categoryI18n.locale, locale)),
-    )
-    .leftJoin(subCategories, eq(products.sub_category_id, subCategories.id))
-    .leftJoin(
-      subCategoryI18n,
-      and(
-        eq(subCategoryI18n.sub_category_id, subCategories.id),
-        eq(subCategoryI18n.locale, locale),
-      ),
     )
     .where(and(...conds))
     .limit(1);
@@ -376,7 +308,6 @@ export const getProductByIdOrSlug: RouteHandler = async (req, reply) => {
   return reply.send({
     ...normalizeProduct(merged),
     category: r.c,
-    sub_category: r.s,
   });
 };
 
@@ -408,19 +339,6 @@ export const getProductById: RouteHandler = async (req, reply) => {
         name: categoryI18n.name,
         slug: categoryI18n.slug,
       },
-      s: {
-        id: subCategories.id,
-        category_id: subCategories.category_id,
-        image_url: subCategories.image_url,
-        storage_asset_id: subCategories.storage_asset_id,
-        alt: subCategories.alt,
-        icon: subCategories.icon,
-        is_active: subCategories.is_active,
-        is_featured: subCategories.is_featured,
-        display_order: subCategories.display_order,
-        name: subCategoryI18n.name,
-        slug: subCategoryI18n.slug,
-      },
     })
     .from(products)
     .innerJoin(productI18n, eq(productI18n.product_id, products.id))
@@ -428,14 +346,6 @@ export const getProductById: RouteHandler = async (req, reply) => {
     .leftJoin(
       categoryI18n,
       and(eq(categoryI18n.category_id, categories.id), eq(categoryI18n.locale, locale)),
-    )
-    .leftJoin(subCategories, eq(products.sub_category_id, subCategories.id))
-    .leftJoin(
-      subCategoryI18n,
-      and(
-        eq(subCategoryI18n.sub_category_id, subCategories.id),
-        eq(subCategoryI18n.locale, locale),
-      ),
     )
     .where(
       and(
@@ -453,7 +363,6 @@ export const getProductById: RouteHandler = async (req, reply) => {
   return reply.send({
     ...normalizeProduct(merged),
     category: r.c,
-    sub_category: r.s,
   });
 };
 
@@ -511,20 +420,7 @@ export const getProductBySlug: RouteHandler<{
           name: categoryI18n.name,
           slug: categoryI18n.slug,
         },
-        s: {
-          id: subCategories.id,
-          category_id: subCategories.category_id,
-          image_url: subCategories.image_url,
-          storage_asset_id: subCategories.storage_asset_id,
-          alt: subCategories.alt,
-          icon: subCategories.icon,
-          is_active: subCategories.is_active,
-          is_featured: subCategories.is_featured,
-          display_order: subCategories.display_order,
-          name: subCategoryI18n.name,
-          slug: subCategoryI18n.slug,
-        },
-      })
+        })
       .from(products)
       // i18n MUST match locale for the payload language
       .innerJoin(
@@ -535,14 +431,6 @@ export const getProductBySlug: RouteHandler<{
       .leftJoin(
         categoryI18n,
         and(eq(categoryI18n.category_id, categories.id), eq(categoryI18n.locale, loc)),
-      )
-      .leftJoin(subCategories, eq(products.sub_category_id, subCategories.id))
-      .leftJoin(
-        subCategoryI18n,
-        and(
-          eq(subCategoryI18n.sub_category_id, subCategories.id),
-          eq(subCategoryI18n.locale, loc),
-        ),
       )
       .where(
         and(
@@ -597,7 +485,7 @@ export const getProductBySlug: RouteHandler<{
       return reply.code(404).send({ error: { message: 'not_found' } });
     }
 
-    // hit yoksa category/subcategory lokalizasyonu da en azından requestedLocale ile gelsin
+    // hit yoksa category lokalizasyonu da en azından requestedLocale ile gelsin
     // (burada minimal tutuyoruz)
     const merged0 = { ...anyRow[0].p, ...anyRow[0].i };
     const normalized0 = normalizeProduct(merged0);
@@ -605,7 +493,6 @@ export const getProductBySlug: RouteHandler<{
       ...normalized0,
       locale: anyRow[0].i.locale, // gerçek dönen locale
       category: null,
-      sub_category: null,
     });
   }
 
@@ -618,7 +505,6 @@ export const getProductBySlug: RouteHandler<{
     // response locale: hangi locale içeriği döndüysek onu belirtmek daha doğru
     locale: usedLocale,
     category: hit.c,
-    sub_category: hit.s,
   });
 };
 
