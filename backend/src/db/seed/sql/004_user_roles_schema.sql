@@ -1,4 +1,4 @@
---- 004_user_roles_schema.sql
+-- 004_user_roles_schema.sql
 
 SET NAMES utf8mb4;
 SET time_zone = '+00:00';
