@@ -85,6 +85,7 @@ export async function createApp() {
 
   const app = buildFastify({
     logger: env.NODE_ENV !== 'production',
+    trustProxy: true,
   }) as FastifyInstance;
 
   app.setValidatorCompiler(validatorCompiler);
