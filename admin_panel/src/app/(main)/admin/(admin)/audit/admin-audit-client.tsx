@@ -639,26 +639,28 @@ export default function AdminAuditClient() {
       </div>
 
       <Tabs value={tab} onValueChange={onTabChange}>
-        <TabsList className="flex-wrap">
-          <TabsTrigger value="analytics">
-            <BarChart3 className="mr-2 h-4 w-4" /> {t('tabs.analytics')}
-          </TabsTrigger>
-          <TabsTrigger value="requests">
-            <Activity className="mr-2 h-4 w-4" /> {t('tabs.requests')}
-          </TabsTrigger>
-          <TabsTrigger value="auth">
-            <UserCheck className="mr-2 h-4 w-4" /> {t('tabs.auth')}
-          </TabsTrigger>
-          <TabsTrigger value="metrics">
-            <ShieldCheck className="mr-2 h-4 w-4" /> {t('tabs.metrics')}
-          </TabsTrigger>
-          <TabsTrigger value="map">
-            <Globe className="mr-2 h-4 w-4" /> {t('tabs.map')}
-          </TabsTrigger>
-          <TabsTrigger value="blocklist">
-            <Ban className="mr-2 h-4 w-4" /> {t('tabs.blocklist')}
-          </TabsTrigger>
-        </TabsList>
+        <div className="overflow-x-auto -mx-1 px-1">
+          <TabsList className="inline-flex w-auto min-w-full sm:w-full">
+            <TabsTrigger value="analytics">
+              <BarChart3 className="mr-1.5 h-4 w-4" /> <span className="hidden sm:inline">{t('tabs.analytics')}</span><span className="sm:hidden">Analitik</span>
+            </TabsTrigger>
+            <TabsTrigger value="requests">
+              <Activity className="mr-1.5 h-4 w-4" /> <span className="hidden sm:inline">{t('tabs.requests')}</span><span className="sm:hidden">İstek</span>
+            </TabsTrigger>
+            <TabsTrigger value="auth">
+              <UserCheck className="mr-1.5 h-4 w-4" /> <span className="hidden sm:inline">{t('tabs.auth')}</span><span className="sm:hidden">Auth</span>
+            </TabsTrigger>
+            <TabsTrigger value="metrics">
+              <ShieldCheck className="mr-1.5 h-4 w-4" /> <span className="hidden sm:inline">{t('tabs.metrics')}</span><span className="sm:hidden">Metrik</span>
+            </TabsTrigger>
+            <TabsTrigger value="map">
+              <Globe className="mr-1.5 h-4 w-4" /> <span className="hidden sm:inline">{t('tabs.map')}</span><span className="sm:hidden">Harita</span>
+            </TabsTrigger>
+            <TabsTrigger value="blocklist">
+              <Ban className="mr-1.5 h-4 w-4" /> <span className="hidden sm:inline">{t('tabs.blocklist')}</span><span className="sm:hidden">Engel</span>
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
         {/* ==================== ANALYTICS TAB ==================== */}
         <TabsContent value="analytics" className="space-y-4">
