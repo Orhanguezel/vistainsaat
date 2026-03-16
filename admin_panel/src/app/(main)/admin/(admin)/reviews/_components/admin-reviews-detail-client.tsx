@@ -262,7 +262,7 @@ export default function AdminReviewsDetailClient({ id }: { id: string }) {
 
     // ✅ FIXED: Correct usage of resolveAdminApiLocale
     const apiLocale =
-      formData.locale || resolveAdminApiLocale(localeOptions, defaultLocaleFromDb, 'de');
+      formData.locale || resolveAdminApiLocale(localeOptions, defaultLocaleFromDb  , 'tr');
 
     try {
       if (isNew) {

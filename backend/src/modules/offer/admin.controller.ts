@@ -1,6 +1,6 @@
 // =============================================================
 // FILE: src/modules/offer/admin.controller.ts
-// Ensotek – Offer Module Admin Controller
+// Vista İnşaat – Offer Module Admin Controller
 //   - LIST / GET / CREATE / UPDATE / DELETE
 //   - SEND: PDF üret + mail + notification (service.ts hook)
 // =============================================================
@@ -131,7 +131,7 @@ export const createOfferAdmin: RouteHandler = async (req, reply) => {
   try {
     const id = await createOffer({
       status: b.status ?? 'new',
-      source: b.source ?? 'ensotek',
+      source: b.source ?? 'vistainsaat',
       locale: b.locale ?? (req as any).locale ?? null,
       country_code,
       customer_name: b.customer_name.trim(),

@@ -11,7 +11,7 @@ type LocaleItem = {
 };
 
 type RuntimeLocaleSettings = {
-  activeLocales: string[];
+  activeLocales: { code: string; label: string }[];
   defaultLocale: string;
 };
 
@@ -40,18 +40,28 @@ function parseMaybeJson(value: unknown): unknown {
   return value;
 }
 
-function normalizeAppLocales(value: unknown): { activeLocales: string[]; defaultLocale?: string } {
+function normalizeAppLocales(value: unknown): { activeLocales: { code: string; label: string }[]; defaultLocale?: string } {
   const parsed = parseMaybeJson(value);
   const rawItems = Array.isArray(parsed) ? parsed : [];
 
-  const activeLocales: string[] = [];
+  const activeLocales: { code: string; label: string }[] = [];
   let defaultLocale = '';
 
   for (const item of rawItems as LocaleItem[]) {
     const code = toShortLocale(item?.code ?? item);
-    if (!code || !AVAILABLE_LOCALES.includes(code)) continue;
+    if (!code) continue;
+    
+    // Safety: only allow locales that are actually supported by our i18n config
+    if (!AVAILABLE_LOCALES.includes(code)) continue;
+
     if (item?.is_active === false) continue;
-    if (!activeLocales.includes(code)) activeLocales.push(code);
+    
+    const label = String(item?.label || code.toUpperCase());
+    
+    if (!activeLocales.find(l => l.code === code)) {
+      activeLocales.push({ code, label });
+    }
+    
     if (!defaultLocale && item?.is_default === true) defaultLocale = code;
   }
 
@@ -60,7 +70,7 @@ function normalizeAppLocales(value: unknown): { activeLocales: string[]; default
 
 async function fetchSettingValue(key: string): Promise<unknown> {
   const res = await fetch(`${API_BASE_URL}/site_settings/${encodeURIComponent(key)}?prefix=vistainsaat__`, {
-    next: { revalidate: 300 },
+    next: { revalidate: 60 },
   });
 
   if (!res.ok) return null;
@@ -76,11 +86,11 @@ export async function getLocaleSettings(): Promise<RuntimeLocaleSettings> {
     const parsedLocales = normalizeAppLocales(appLocalesValue);
     const activeLocales = parsedLocales.activeLocales.length
       ? parsedLocales.activeLocales
-      : AVAILABLE_LOCALES.filter((locale) => locale === FALLBACK_LOCALE);
+      : [{ code: FALLBACK_LOCALE, label: 'Türkçe' }];
 
-    const normalizedDefault = activeLocales.includes(FALLBACK_LOCALE)
+    const normalizedDefault = activeLocales.find(l => l.code === FALLBACK_LOCALE)
       ? FALLBACK_LOCALE
-      : activeLocales[0] || FALLBACK_LOCALE;
+      : activeLocales[0]?.code || FALLBACK_LOCALE;
 
     return {
       activeLocales,
@@ -88,7 +98,7 @@ export async function getLocaleSettings(): Promise<RuntimeLocaleSettings> {
     };
   } catch {
     return {
-      activeLocales: AVAILABLE_LOCALES.filter((locale) => locale === FALLBACK_LOCALE),
+      activeLocales: [{ code: FALLBACK_LOCALE, label: 'Türkçe' }],
       defaultLocale: FALLBACK_LOCALE,
     };
   }

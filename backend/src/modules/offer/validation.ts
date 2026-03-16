@@ -1,6 +1,6 @@
 // =============================================================
 // FILE: src/modules/offer/validation.ts
-// Ensotek – Offer Module Validation (Zod schemas)
+// Vista İnşaat – Offer Module Validation (Zod schemas)
 // =============================================================
 
 import { z } from 'zod';
@@ -8,13 +8,17 @@ import { boolLike } from '@/modules/_shared';
 
 // Teklif durumları – hem DB hem API için ortak enum
 export const OFFER_STATUSES = [
-  'new', // yeni geldi, incelenmedi
-  'in_review', // teknik ekip inceliyor
-  'quoted', // fiyat tekliflendirildi (taslak)
-  'sent', // teklif müşteriye gönderildi
-  'accepted', // müşteri teklifi kabul etti
-  'rejected', // müşteri reddetti
-  'cancelled', // iptal (iç süreç)
+  'new',                    // yeni geldi
+  'in_review',              // inceleniyor
+  'quoted',                 // fiyat tekliflendirildi
+  'sent',                   // müşteriye gönderildi
+  'accepted',               // kabul edildi
+  'rejected',               // reddedildi
+  'cancelled',              // iptal
+  'site_survey',            // keşif yapılacak
+  'contract_signed',        // sözleşme imzalandı
+  'construction_started',   // inşaat başladı
+  'construction_completed', // inşaat tamamlandı
 ] as const;
 
 export type OfferStatus = (typeof OFFER_STATUSES)[number];
@@ -32,7 +36,7 @@ const countryFreeTextSchema = z.string().trim().min(2).max(80);
  * ------------------------------------------------------------- */
 
 export const offerRequestBodySchema = z.object({
-  source: z.string().min(1).max(64).default('ensotek'),
+  source: z.string().min(1).max(64).default('vistainsaat'),
   locale: z.string().max(10).optional(),
 
   // ✅ Serbest metin (kısıt yok, sadece uzunluk)
@@ -47,8 +51,8 @@ export const offerRequestBodySchema = z.object({
   subject: z.string().max(255).trim().optional().nullable(),
   message: z.string().optional().nullable(),
 
-  product_id: z.string().uuid().optional().nullable(),
-  service_id: z.string().uuid().optional().nullable(),
+  product_id: z.string().min(1).optional().nullable(),
+  service_id: z.string().min(1).optional().nullable(),
 
   form_data: z.record(z.any()).optional().default({}),
 
@@ -78,8 +82,8 @@ export const offerListQuerySchema = z.object({
 
   q: z.string().optional(),
   email: z.string().optional(),
-  product_id: z.string().uuid().optional(),
-  service_id: z.string().uuid().optional(),
+  product_id: z.string().min(1).optional(),
+  service_id: z.string().min(1).optional(),
 
   created_from: z.string().optional(),
   created_to: z.string().optional(),
@@ -94,7 +98,7 @@ export type OfferListQuery = z.infer<typeof offerListQuerySchema>;
 export const upsertOfferAdminBodySchema = offerRequestBodySchema.extend({
   status: OFFER_STATUS_ENUM.optional().default('new'),
 
-  currency: z.string().max(10).default('EUR'),
+  currency: z.string().max(10).default('TRY'),
   net_total: z.coerce.number().min(0).optional(),
   vat_rate: z.coerce.number().min(0).max(100).optional(), // YENİ
   vat_total: z.coerce.number().min(0).optional(),
@@ -129,7 +133,7 @@ export type PatchOfferAdminBody = z.infer<typeof patchOfferAdminBodySchema>;
  * ------------------------------------------------------------- */
 
 export const offerIdParamsSchema = z.object({
-  id: z.string().uuid(),
+  id: z.string().min(1),
 });
 
 export type OfferIdParams = z.infer<typeof offerIdParamsSchema>;

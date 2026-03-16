@@ -8,24 +8,32 @@ import { OfferFormClient } from '@/components/sections/OfferForm';
 import { buildPageMetadata, localizedPath } from '@/seo';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs';
 
+import { fetchSeoPage } from '@/seo/server';
+
 export async function generateMetadata({
   params,
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ product?: string }>;
+  searchParams: Promise<{ product?: string; project?: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const { product } = await searchParams;
+  const sp = await searchParams;
+  const projectName = sp.project || sp.product;
+  const seo = await fetchSeoPage(locale, 'teklif');
   const t = await getTranslations({ locale, namespace: 'offer' });
+
   return buildPageMetadata({
     locale,
     pathname: '/teklif',
-    title: locale.startsWith('en')
-      ? `${t('title')} - Vista Construction Quote & Project Evaluation`
-      : `${t('title')} - Teklif ve Proje Değerlendirme`,
-    description: t('description'),
-    noIndex: Boolean(product),
+    title: projectName 
+        ? `${projectName} - ${t('title')}`
+        : (seo?.title || (locale.startsWith('en')
+          ? `${t('title')} - Vista Construction Quote & Project Evaluation`
+          : `${t('title')} - Teklif ve Proje Değerlendirme`)),
+    description: seo?.description || t('description'),
+    ogImage: seo?.og_image || undefined,
+    noIndex: seo?.no_index || Boolean(projectName),
   });
 }
 
@@ -34,10 +42,11 @@ export default async function OfferPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ product?: string }>;
+  searchParams: Promise<{ product?: string; project?: string }>;
 }) {
   const { locale } = await params;
-  const { product } = await searchParams;
+  const sp = await searchParams;
+  const product = sp.project || sp.product;
   const t = await getTranslations({ locale });
   const benefitItems = Object.values(t.raw('offer.benefits.items') as Record<string, string>);
 

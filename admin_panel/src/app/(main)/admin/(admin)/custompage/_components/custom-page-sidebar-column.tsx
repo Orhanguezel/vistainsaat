@@ -1,8 +1,5 @@
 // =============================================================
-// FILE: src/app/(main)/admin/(admin)/custompage/_components/CustomPageSidebarColumn.tsx
-// FINAL — Sidebar: tags, content-image insertion, SEO
-// - ✅ Uses AdminImageUploadField (new path)
-// - ✅ No category/subcategory
+// CustomPageSidebarColumn — Sadece içerik içi görsel ekleme
 // =============================================================
 
 'use client';
@@ -34,7 +31,6 @@ type Props = {
 };
 
 export const CustomPageSidebarColumn: React.FC<Props> = ({
-  values,
   disabled,
   imageMetadata,
   contentImageSize,
@@ -46,58 +42,46 @@ export const CustomPageSidebarColumn: React.FC<Props> = ({
   setManualImageUrl,
   setManualImageAlt,
   handleAddManualImage,
-  setValues,
 }) => {
   const t = useAdminT();
+
   return (
-    <div className="rounded-lg border bg-card p-3 space-y-4">
-      <div>
-        <label className="mb-1 block text-xs text-muted-foreground">{t('admin.customPage.form.tags')}</label>
-        <input
-          type="text"
-          className="w-full rounded-md border bg-background px-3 py-2 text-sm"
-          placeholder="ör: guezelwebdesign, kampanya, blog"
-          value={values.tags}
-          onChange={(e) => setValues((prev) => ({ ...prev, tags: e.target.value }))}
-          disabled={disabled}
-        />
-      </div>
+    <div className="rounded-lg border bg-card p-3 space-y-3">
+      <h3 className="text-xs font-medium">İçeriğe Görsel Ekle</h3>
 
       <div>
-        <label className="mb-1 block text-xs text-muted-foreground">{t('admin.customPage.form.imageSize')}</label>
+        <label className="mb-1 block text-[10px] text-muted-foreground">Boyut</label>
         <select
-          className="w-full rounded-md border bg-background px-2 py-2 text-sm"
+          className="w-full rounded-md border bg-background px-2 py-1.5 text-xs"
           value={contentImageSize}
           onChange={(e) => setContentImageSize(e.target.value as ContentImageSize)}
           disabled={disabled}
         >
-          <option value="sm">{t('admin.customPage.form.imageSizeSm')}</option>
-          <option value="md">{t('admin.customPage.form.imageSizeMd')}</option>
-          <option value="lg">{t('admin.customPage.form.imageSizeLg')}</option>
-          <option value="full">{t('admin.customPage.form.imageSizeFull')}</option>
+          <option value="sm">Küçük</option>
+          <option value="md">Orta</option>
+          <option value="lg">Büyük</option>
+          <option value="full">Tam Genişlik</option>
         </select>
       </div>
 
       <AdminImageUploadField
-        label={t('admin.customPage.form.content') + ' ' + t('admin.common.upload')}
-        helperText={<>{t('admin.customPage.form.uploadHelperText')}</>}
+        label="Görsel Yükle"
         bucket="public"
         folder="custom_pages/content"
         metadata={{ ...(imageMetadata || {}), section: 'content' }}
-        multiple
         value={contentImagePreview}
         onChange={(url) => handleAddContentImage(url)}
         disabled={disabled}
         openLibraryHref="/admin/storage"
+        previewAspect="16x9"
+        previewObjectFit="cover"
       />
 
-      <div className="space-y-2">
-        <label className="block text-xs text-muted-foreground">
-          {t('admin.customPage.form.manualUrl')}
-        </label>
+      <div className="space-y-1.5">
+        <label className="block text-[10px] text-muted-foreground">Manuel Görsel URL</label>
         <input
           type="url"
-          className="w-full rounded-md border bg-background px-3 py-2 text-sm"
+          className="h-7 w-full rounded-md border bg-background px-2 text-xs"
           placeholder="https://..."
           value={manualImageUrl}
           onChange={(e) => setManualImageUrl(e.target.value)}
@@ -105,42 +89,20 @@ export const CustomPageSidebarColumn: React.FC<Props> = ({
         />
         <input
           type="text"
-          className="w-full rounded-md border bg-background px-3 py-2 text-sm"
-          placeholder={t('admin.customPage.form.altTextPlaceholder')}
+          className="h-7 w-full rounded-md border bg-background px-2 text-xs"
+          placeholder="Alt metin (opsiyonel)"
           value={manualImageAlt}
           onChange={(e) => setManualImageAlt(e.target.value)}
           disabled={disabled}
         />
         <button
           type="button"
-          className="rounded-md border px-3 py-2 text-xs disabled:opacity-60"
+          className="rounded-md border px-2 py-1 text-[10px] disabled:opacity-60"
           onClick={handleAddManualImage}
           disabled={disabled}
         >
-          {t('admin.customPage.form.addManualUrl')}
+          Serbest URL'yi İçeriğe Ekle
         </button>
-      </div>
-
-      <div>
-        <label className="mb-1 block text-xs text-muted-foreground">{t('admin.customPage.form.metaTitle')}</label>
-        <input
-          type="text"
-          className="w-full rounded-md border bg-background px-3 py-2 text-sm"
-          value={values.meta_title}
-          onChange={(e) => setValues((prev) => ({ ...prev, meta_title: e.target.value }))}
-          disabled={disabled}
-        />
-      </div>
-
-      <div>
-        <label className="mb-1 block text-xs text-muted-foreground">{t('admin.customPage.form.metaDescription')}</label>
-        <textarea
-          className="w-full rounded-md border bg-background px-3 py-2 text-sm"
-          rows={3}
-          value={values.meta_description}
-          onChange={(e) => setValues((prev) => ({ ...prev, meta_description: e.target.value }))}
-          disabled={disabled}
-        />
       </div>
     </div>
   );

@@ -7,6 +7,7 @@ import { notFound } from 'next/navigation';
 import { API_BASE_URL, absoluteAssetUrl } from '@/lib/utils';
 import { JsonLd, buildPageMetadata, jsonld, localizedPath, localizedUrl, organizationJsonLd } from '@/seo';
 import { fetchRelatedContent } from '@/lib/related-content';
+import { fetchSetting } from '@/i18n/server';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs';
 import { RelatedLinks } from '@/components/seo/RelatedLinks';
 import { buildMediaAlt, buildMediaCaption, buildMediaSchemaText, isMeaningfulMediaDate, resolveMediaDimensions } from '@/lib/media-seo';
@@ -35,22 +36,18 @@ export async function generateMetadata({
   const { locale, slug } = await params;
   const gallery = await fetchGallery(slug, locale);
   if (!gallery) return {};
+  const t = await getTranslations({ locale });
   return buildPageMetadata({
     locale,
     pathname: `/galeri/${slug}`,
     title:
-      gallery.meta_title ||
-      (locale.startsWith('en')
-        ? `${gallery.title} - Construction Project Gallery`
-        : `${gallery.title} - İnşaat Proje Galerisi`),
+      gallery.meta_title || `${gallery.title} - ${t('seo.defaultTitle')}`,
     description:
       gallery.meta_description ||
       gallery.description ||
-      (locale.startsWith('en')
-        ? `${gallery.title}. Review visuals from construction projects, architectural details and completed applications.`
-        : `${gallery.title}. Proje detayları, mimari çözümler ve tamamlanan uygulamalardan görselleri inceleyin.`),
+      t('gallery.description'),
     ogImage: gallery.cover_image_url_resolved || gallery.cover_image,
-    includeLocaleAlternates: false,
+    includeLocaleAlternates: true,
   });
 }
 
@@ -62,8 +59,15 @@ export default async function GalleryDetailPage({
   const { locale, slug } = await params;
   const t = await getTranslations({ locale });
   const isEn = locale.startsWith('en');
-  const gallery = await fetchGallery(slug, locale);
+  const [gallery, profile] = await Promise.all([
+    fetchGallery(slug, locale),
+    fetchSetting('company_profile', locale),
+  ]);
+  
   if (!gallery) notFound();
+
+  const companyProfile = (profile?.value as any) ?? {};
+  const companyName = companyProfile.company_name || 'Vista İnşaat';
 
   const images = Array.isArray(gallery.images)
     ? gallery.images.map((img: any) => ({
@@ -99,8 +103,8 @@ export default async function GalleryDetailPage({
   const related = await fetchRelatedContent(gallery, slug, locale);
   const galleryUrl = localizedUrl(locale, `/galeri/${slug}`);
   const breadcrumbs = [
-    { label: 'Vista İnşaat', href: localizedPath(locale, '/') },
-    { label: isEn ? 'Gallery' : 'Galeri', href: localizedPath(locale, '/galeri') },
+    { label: companyName, href: localizedPath(locale, '/') },
+    { label: t('gallery.title'), href: localizedPath(locale, '/galeri') },
     { label: gallery.title },
   ];
 
@@ -173,7 +177,7 @@ export default async function GalleryDetailPage({
         </h1>
         {sortedImages.length > 0 && (
           <span style={{ fontSize: 15, color: 'var(--color-text-muted)', fontWeight: 400 }}>
-            | {sortedImages.length} {isEn ? 'photos' : 'fotoğraf'}
+            | {sortedImages.length} {t('gallery.photos')}
           </span>
         )}
       </div>

@@ -70,8 +70,13 @@ function clipText(input: string, max: number): string {
 export function buildSeoTitle(title: string, suffix = DEFAULT_TITLE_SUFFIX): string {
   const clean = stripHtml(title).trim();
   if (!clean) return suffix;
-  if (clean.includes(suffix)) return clipText(clean, 60);
-  return clipText(`${clean} | ${suffix}`, 60);
+  // Strip any existing suffix variants to avoid duplication
+  const stripped = clean
+    .replace(/\s*\|\s*Vista\s+İnşaat\s*$/i, '')
+    .replace(/\s*\|\s*Vista\s+Construction\s*$/i, '')
+    .trim();
+  if (!stripped) return suffix;
+  return clipText(`${stripped} | ${suffix}`, 60);
 }
 
 export function buildSeoDescription(...parts: Array<string | null | undefined>): string {
@@ -123,7 +128,9 @@ export function buildPageMetadata(input: {
   const includeLocaleAlternates = input.includeLocaleAlternates ?? true;
 
   return {
-    title,
+    title: {
+      absolute: title,
+    },
     description,
     alternates: {
       canonical: url,
@@ -162,4 +169,8 @@ export function asObj(v: unknown): Record<string, unknown> {
 
 export function compact<T>(arr: (T | null | undefined | false)[]): T[] {
   return arr.filter(Boolean) as T[];
+}
+export function readSettingValue(input: unknown): Record<string, unknown> {
+  const raw = (input as { value?: unknown } | null)?.value;
+  return asObj(raw);
 }

@@ -80,20 +80,14 @@ function getErrMessage(err: unknown, fallback: string): string {
   return fallback;
 }
 
-function buildLocalesOptions(appLocales: any[] | undefined, defaultLocale: any): LocaleOption[] {
+function buildLocalesOptions(appLocales: any[] | undefined, _defaultLocale: any): LocaleOption[] {
   const items = Array.isArray(appLocales) ? appLocales : [];
-  const def = typeof defaultLocale === 'string' ? defaultLocale : safeStr(defaultLocale);
 
-  const sorted = [...items].sort((a, b) => {
-    const aa = a?.is_active === false ? 1 : 0;
-    const bb = b?.is_active === false ? 1 : 0;
-    if (aa !== bb) return aa - bb;
-    return String(a?.code || '').localeCompare(String(b?.code || ''));
-  });
+  // Sadece aktif dilleri göster
+  const active = items.filter((x) => x?.code && x?.is_active !== false);
 
   const seen = new Set<string>();
-  const mapped: LocaleOption[] = sorted
-    .filter((x) => x?.code)
+  const mapped: LocaleOption[] = active
     .filter((x) => {
       const code = String(x.code);
       if (seen.has(code)) return false;
@@ -102,38 +96,43 @@ function buildLocalesOptions(appLocales: any[] | undefined, defaultLocale: any):
     })
     .map((x) => {
       const code = String(x.code);
-      const labelBase = x.label ? `${x.label} (${code})` : code;
       return {
         value: code,
-        label: labelBase,
+        label: x.label ? `${x.label} (${code})` : code,
         isDefault: x.is_default === true,
-        isActive: x.is_active !== false,
+        isActive: true,
       };
     });
 
+  // Hiç aktif dil yoksa fallback
   if (!mapped.length) {
-    const fallback: LocaleOption[] = [
+    return [
       { value: 'tr', label: 'Türkçe (tr)', isDefault: true, isActive: true },
-      { value: 'en', label: 'English (en)', isDefault: false, isActive: true },
     ];
-    if (def && def !== 'tr' && def !== 'en') {
-      fallback.unshift({ value: def, label: def, isDefault: true, isActive: true });
-      fallback[1].isDefault = false;
-    }
-    return fallback;
   }
+
+  // Varsayılan dili başa al
+  mapped.sort((a, b) => {
+    if (a.isDefault && !b.isDefault) return -1;
+    if (!a.isDefault && b.isDefault) return 1;
+    return a.value.localeCompare(b.value);
+  });
+
   return mapped;
 }
 
-function pickInitialLocale(appLocales: any[] | undefined, defaultLocale: any): string {
+function pickInitialLocale(appLocales: any[] | undefined, _defaultLocale: any): string {
   const items = Array.isArray(appLocales) ? appLocales : [];
-  const def =
-    typeof defaultLocale === 'string' ? defaultLocale.trim() : safeStr(defaultLocale).trim();
 
-  if (def) return def;
+  // Önce varsayılan aktif dili bul
+  const defaultActive = items.find((x) => x?.is_default === true && x?.is_active !== false && x?.code);
+  if (defaultActive) return String(defaultActive.code);
 
-  const firstActive = items.find((x) => x?.is_active !== false && x?.code)?.code;
-  return firstActive ? String(firstActive) : 'de';
+  // Yoksa ilk aktif dili al
+  const firstActive = items.find((x) => x?.is_active !== false && x?.code);
+  if (firstActive) return String(firstActive.code);
+
+  return 'tr';
 }
 
 function editHref(key: string, locale: string) {
@@ -228,17 +227,13 @@ export default function AdminSiteSettingsClient() {
   const adminLocale = usePreferencesStore((s) => s.adminLocale);
   const t = useAdminTranslations(adminLocale || undefined);
 
+  // Otomatik dil seçimi: varsayılan aktif dili kullan
   React.useEffect(() => {
-    if (!localeTouched && adminLocale) {
-      setLocale(adminLocale);
-    }
-  }, [adminLocale, localeTouched, initialLocale]);
-
-  React.useEffect(() => {
-    if (!locale && !localeTouched && initialLocale) {
+    if (localeTouched) return;
+    if (initialLocale) {
       setLocale(initialLocale);
     }
-  }, [initialLocale, locale, localeTouched]);
+  }, [initialLocale, localeTouched]);
 
   const headerLoading =
     localeSettingsQ.isFetching ||
@@ -332,17 +327,12 @@ export default function AdminSiteSettingsClient() {
                   {(localeOptions ?? []).map((o) => (
                     <SelectItem key={o.value} value={o.value}>
                       {o.label}
-                      {o.isDefault ? ` • ${t('admin.siteSettings.filters.defaultSuffix')}` : ''}
-                      {o.isActive === false ? ` • ${t('admin.siteSettings.filters.inactiveSuffix')}` : ''}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              {isGlobalTab ? (
-                <div className="text-xs text-muted-foreground">
-                  {t('admin.siteSettings.filters.languageDisabledNote')}
-                </div>
-              ) : null}
+
+
             </div>
 
             <div className="flex items-end gap-2">
@@ -414,27 +404,15 @@ export default function AdminSiteSettingsClient() {
                   <TabsTrigger value="smtp" className="whitespace-nowrap text-xs sm:text-sm">
                     {t('admin.siteSettings.tabs.smtp')}
                   </TabsTrigger>
-                  {!isScopedBrand ? (
-                    <TabsTrigger value="cloudinary" className="whitespace-nowrap text-xs sm:text-sm">
-                      {t('admin.siteSettings.tabs.cloudinary')}
-                    </TabsTrigger>
-                  ) : null}
                   <TabsTrigger value="brand_media" className="whitespace-nowrap text-xs sm:text-sm">
                     {t('admin.siteSettings.tabs.brandMedia')}
                   </TabsTrigger>
-                  {!isScopedBrand ? (
-                    <TabsTrigger value="api" className="whitespace-nowrap text-xs sm:text-sm">
-                      {t('admin.siteSettings.tabs.api')}
-                    </TabsTrigger>
-                  ) : null}
+                  <TabsTrigger value="api" className="whitespace-nowrap text-xs sm:text-sm">
+                    API & Servisler
+                  </TabsTrigger>
                   <TabsTrigger value="locales" className="whitespace-nowrap text-xs sm:text-sm">
                     {t('admin.siteSettings.tabs.locales')}
                   </TabsTrigger>
-                  {!isScopedBrand ? (
-                    <TabsTrigger value="branding" className="whitespace-nowrap text-xs sm:text-sm">
-                      {t('admin.siteSettings.tabs.branding')}
-                    </TabsTrigger>
-                  ) : null}
                 </TabsList>
               </div>
 
@@ -458,31 +436,20 @@ export default function AdminSiteSettingsClient() {
                 <SmtpSettingsTab locale={locale} />
               </TabsContent>
 
-              {!isScopedBrand ? (
-                <TabsContent value="cloudinary" className="mt-3 sm:mt-4">
-                  <CloudinarySettingsTab locale={locale} />
-                </TabsContent>
-              ) : null}
-
               <TabsContent value="brand_media" className="mt-3 sm:mt-4">
                 <BrandMediaTab locale={locale} settingPrefix={brandPrefix} />
               </TabsContent>
 
-              {!isScopedBrand ? (
-                <TabsContent value="api" className="mt-3 sm:mt-4">
-                  <ApiSettingsTab locale={locale} />
-                </TabsContent>
-              ) : null}
+              <TabsContent value="api" className="mt-3 sm:mt-4">
+                <ApiSettingsTab locale={locale} />
+              </TabsContent>
 
               <TabsContent value="locales" className="mt-3 sm:mt-4">
                 <LocalesSettingsTab settingPrefix={brandPrefix} />
               </TabsContent>
 
-              {!isScopedBrand ? (
-                <TabsContent value="branding" className="mt-3 sm:mt-4">
-                  <BrandingSettingsTab locale={locale} />
-                </TabsContent>
-              ) : null}
+
+
             </Tabs>
           )}
         </CardContent>

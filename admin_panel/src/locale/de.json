@@ -342,6 +342,7 @@
       "save": "Speichern",
       "saving": "Speichern...",
       "cancel": "Abbrechen",
+      "delete": "Löschen",
       "deleteConfirm": "\"{item}\" löschen?",
       "deleted": "\"{item}\" gelöscht.",
       "edit": "Bearbeiten",
@@ -814,7 +815,8 @@
         "marketing": "Marketing",
         "communication": "Kommunikation & CRM",
         "system": "System & Einstellungen",
-        "vista_insaat": "Vista İnşaat"
+        "vista_insaat": "Vista İnşaat",
+        "vista_content": "Inhaltsverwaltung"
       }
     },
     "dashboard": {
@@ -2336,8 +2338,8 @@
         "deleted": "\"{key}\" ({locale}) gelöscht.",
         "deleteError": "Einstellung konnte nicht gelöscht werden.",
         "modes": {
-          "structured": "Strukturiert",
-          "raw": "Raw"
+          "structured": "Formular",
+          "raw": "JSON"
         },
         "structuredMissingTitle": "Structured Renderer fehlt",
         "structuredMissingDesc": "Für diesen Schlüssel ist kein Structured Renderer definiert. Verwenden Sie den Raw-Modus.",

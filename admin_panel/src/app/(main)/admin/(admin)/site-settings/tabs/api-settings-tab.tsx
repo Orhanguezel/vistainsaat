@@ -1,272 +1,260 @@
 'use client';
 
 // =============================================================
-// FILE: src/app/(main)/admin/(admin)/site-settings/tabs/api-settings-tab.tsx
-// API & Entegrasyon Ayarları (GLOBAL)
-// - Shadcn/ui components
-// - Responsive design
-// - TypeScript safe
+// API & 3. Taraf Servisler Tab
+// Google OAuth, Cloudinary, reCAPTCHA, AI Modelleri, Analytics
 // =============================================================
 
 import * as React from 'react';
 import { toast } from 'sonner';
-import { RefreshCcw } from 'lucide-react';
-import { useAdminTranslations } from '@/i18n';
-import { usePreferencesStore } from '@/stores/preferences/preferences-provider';
+import { RefreshCcw, Save } from 'lucide-react';
 
 import {
   useListSiteSettingsAdminQuery,
   useUpdateSiteSettingAdminMutation,
 } from '@/integrations/hooks';
 
-import type { SettingValue, SiteSetting } from '@/integrations/shared';
+import type { SettingValue } from '@/integrations/shared';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-export type ApiSettingsTabProps = {
-  locale: string;
-};
+/* ── config ── */
 
-const API_KEYS = [
-  'google_client_id',
-  'google_client_secret',
-  'gtm_container_id',
-  'ga4_measurement_id',
-  'cookie_consent',
+const ALL_KEYS = [
+  'google_client_id', 'google_client_secret',
+  'cloudinary_cloud_name', 'cloudinary_api_key', 'cloudinary_api_secret', 'cloudinary_folder', 'cloudinary_unsigned_preset',
+  'gtm_container_id', 'ga4_measurement_id',
+  'ai_provider_order',
+  'groq_api_key', 'groq_model',
+  'openai_api_key', 'openai_model',
+  'anthropic_api_key', 'anthropic_model',
+  'xai_api_key', 'xai_model',
 ] as const;
 
-type ApiKey = (typeof API_KEYS)[number];
-type ApiForm = Record<ApiKey, string>;
+type FormKey = (typeof ALL_KEYS)[number];
+type FormData = Record<FormKey, string>;
 
-const EMPTY_FORM: ApiForm = {
-  google_client_id: '',
-  google_client_secret: '',
-  gtm_container_id: '',
-  ga4_measurement_id: '',
-  cookie_consent: '',
-};
+const EMPTY: FormData = Object.fromEntries(ALL_KEYS.map((k) => [k, ''])) as FormData;
 
-function valueToString(v: unknown): string {
+function valStr(v: unknown): string {
   if (v === null || v === undefined) return '';
-  if (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean') return String(v);
-  try {
-    return JSON.stringify(v, null, 2);
-  } catch {
-    return String(v);
-  }
+  return String(v);
 }
 
-function toMap(settings?: any) {
-  const map = new Map<string, any>();
-  if (settings) for (const s of settings) map.set(s.key, s);
-  return map;
-}
+/* ── sections ── */
 
-function tryParseJsonOrString(input: string): SettingValue {
-  const s = String(input ?? '').trim();
-  if (!s) return '' as any;
-  try {
-    return JSON.parse(s) as any;
-  } catch {
-    return s as any;
-  }
-}
+type FieldDef = { key: FormKey; label: string; type?: 'password' | 'text'; placeholder?: string };
 
-export const ApiSettingsTab: React.FC<ApiSettingsTabProps> = ({ locale }) => {
-  const {
-    data: settings,
-    isLoading,
-    isFetching,
-    refetch,
-  } = useListSiteSettingsAdminQuery({
-    keys: API_KEYS as unknown as string[],
-    locale: '*', // ✅ Global settings
+const SECTIONS: { title: string; fields: FieldDef[]; testEndpoint?: string }[] = [
+  {
+    title: 'Google OAuth',
+    testEndpoint: '/api/admin/site_settings/test/google',
+    fields: [
+      { key: 'google_client_id', label: 'Client ID', placeholder: '...apps.googleusercontent.com' },
+      { key: 'google_client_secret', label: 'Client Secret', type: 'password' },
+    ],
+  },
+  {
+    title: 'Cloudinary',
+    testEndpoint: '/api/admin/site_settings/test/cloudinary',
+    fields: [
+      { key: 'cloudinary_cloud_name', label: 'Cloud Name' },
+      { key: 'cloudinary_api_key', label: 'API Key' },
+      { key: 'cloudinary_api_secret', label: 'API Secret', type: 'password' },
+      { key: 'cloudinary_folder', label: 'Klasör', placeholder: 'uploads/vistainsaat' },
+      { key: 'cloudinary_unsigned_preset', label: 'Unsigned Preset' },
+    ],
+  },
+  {
+    title: 'Analytics',
+    fields: [
+      { key: 'gtm_container_id', label: 'GTM Container ID', placeholder: 'GTM-XXXXXXX' },
+      { key: 'ga4_measurement_id', label: 'GA4 Measurement ID', placeholder: 'G-XXXXXXXXXX' },
+    ],
+  },
+  {
+    title: 'Groq (Ücretsiz)',
+    testEndpoint: '/api/admin/site_settings/test/groq',
+    fields: [
+      { key: 'groq_api_key', label: 'API Key', type: 'password' },
+      { key: 'groq_model', label: 'Model', placeholder: 'llama-3.3-70b-versatile' },
+    ],
+  },
+  {
+    title: 'OpenAI',
+    testEndpoint: '/api/admin/site_settings/test/openai',
+    fields: [
+      { key: 'openai_api_key', label: 'API Key', type: 'password' },
+      { key: 'openai_model', label: 'Model', placeholder: 'gpt-4o-mini' },
+    ],
+  },
+  {
+    title: 'Anthropic (Claude)',
+    testEndpoint: '/api/admin/site_settings/test/anthropic',
+    fields: [
+      { key: 'anthropic_api_key', label: 'API Key', type: 'password' },
+      { key: 'anthropic_model', label: 'Model', placeholder: 'claude-3-5-haiku-latest' },
+    ],
+  },
+  {
+    title: 'Grok / xAI',
+    testEndpoint: '/api/admin/site_settings/test/grok',
+    fields: [
+      { key: 'xai_api_key', label: 'API Key', type: 'password' },
+      { key: 'xai_model', label: 'Model', placeholder: 'grok-2-latest' },
+    ],
+  },
+];
+
+/* ── component ── */
+
+export type ApiSettingsTabProps = { locale: string };
+
+export const ApiSettingsTab: React.FC<ApiSettingsTabProps> = () => {
+  const { data: settings, isLoading, isFetching, refetch } = useListSiteSettingsAdminQuery({
+    keys: ALL_KEYS as unknown as string[],
+    locale: '*',
   } as any);
 
   const [updateSetting, { isLoading: isSaving }] = useUpdateSiteSettingAdminMutation();
-
-  const [form, setForm] = React.useState<ApiForm>(EMPTY_FORM);
-
-  const adminLocale = usePreferencesStore((s) => s.adminLocale);
-  const t = useAdminTranslations(adminLocale || undefined);
+  const [form, setForm] = React.useState<FormData>(EMPTY);
 
   React.useEffect(() => {
-    const map = toMap(settings);
-    const next: ApiForm = { ...EMPTY_FORM };
-    API_KEYS.forEach((k) => {
-      next[k] = valueToString(map.get(k)?.value);
-    });
+    if (!settings) return;
+    const map = new Map<string, any>();
+    for (const s of settings as any[]) map.set(s.key, s);
+    const next = { ...EMPTY };
+    for (const k of ALL_KEYS) next[k] = valStr(map.get(k)?.value);
     setForm(next);
   }, [settings]);
 
-  const loading = isLoading || isFetching;
-  const busy = loading || isSaving;
-
-  const handleChange = (field: ApiKey, value: string) => setForm((p) => ({ ...p, [field]: value }));
+  const busy = isLoading || isFetching || isSaving;
 
   const handleSave = async () => {
     try {
-      const updates: { key: ApiKey; value: SettingValue }[] = [
-        { key: 'google_client_id', value: form.google_client_id.trim() },
-        { key: 'google_client_secret', value: form.google_client_secret.trim() },
-        { key: 'gtm_container_id', value: form.gtm_container_id.trim() },
-        { key: 'ga4_measurement_id', value: form.ga4_measurement_id.trim() },
-        { key: 'cookie_consent', value: tryParseJsonOrString(form.cookie_consent) },
-      ];
-
-      for (const u of updates) {
-        await updateSetting({ key: u.key, value: u.value, locale: '*' }).unwrap();
+      for (const k of ALL_KEYS) {
+        await updateSetting({ key: k, value: form[k].trim() as SettingValue, locale: '*' }).unwrap();
       }
-
-      toast.success(t('admin.siteSettings.api.saved'));
+      toast.success('API ayarları kaydedildi');
       await refetch();
     } catch (err: any) {
-      const msg =
-        err?.data?.error?.message || err?.message || t('admin.siteSettings.api.saveError');
-      toast.error(msg);
+      toast.error(err?.data?.error?.message || 'Kaydetme hatası');
     }
   };
 
   return (
     <Card>
-      <CardHeader className="gap-2">
-        <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
-          <div className="space-y-1">
-            <CardTitle className="text-base">{t('admin.siteSettings.api.title')}</CardTitle>
-            <CardDescription>
-              {t('admin.siteSettings.api.description')}
-            </CardDescription>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="secondary">{t('admin.siteSettings.api.badge')}</Badge>
-            {locale && <Badge variant="outline">{t('admin.siteSettings.api.uiBadge', { locale })}</Badge>}
-            {busy && <Badge variant="outline">{t('admin.siteSettings.messages.loading')}</Badge>}
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => refetch()}
-              disabled={busy}
-              title={t('admin.siteSettings.actions.refresh')}
-            >
-              <RefreshCcw className="size-4" />
+      <CardHeader>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <CardTitle className="text-base">API & 3. Taraf Servisler</CardTitle>
+          <div className="flex items-center gap-2">
+            {busy && <Badge variant="outline">Yükleniyor</Badge>}
+            <Button type="button" size="sm" onClick={handleSave} disabled={busy}>
+              <Save className="mr-2 h-3.5 w-3.5" />
+              Kaydet
+            </Button>
+            <Button type="button" variant="ghost" size="icon" className="h-8 w-8" onClick={() => refetch()} disabled={busy}>
+              <RefreshCcw className="h-4 w-4" />
             </Button>
           </div>
         </div>
       </CardHeader>
 
       <CardContent className="space-y-6">
-        <div className="text-sm text-muted-foreground">
-          {t('admin.siteSettings.api.note')}
-        </div>
-
-        <div className="grid gap-6 md:grid-cols-2">
-          {/* Google Client ID */}
-          <div className="space-y-2">
-            <Label htmlFor="google_client_id">
-              {t('admin.siteSettings.api.googleClientId')}
-              <code className="ml-2 text-xs text-muted-foreground">(google_client_id)</code>
-            </Label>
-            <Input
-              id="google_client_id"
-              value={form.google_client_id}
-              onChange={(e) => handleChange('google_client_id', e.target.value)}
-              placeholder="Google OAuth Client ID"
-              disabled={busy}
-            />
-            <p className="text-xs text-muted-foreground">
-              {t('admin.siteSettings.api.googleClientIdHelp')}
-            </p>
-          </div>
-
-          {/* Google Client Secret */}
-          <div className="space-y-2">
-            <Label htmlFor="google_client_secret">
-              {t('admin.siteSettings.api.googleClientSecret')}
-              <code className="ml-2 text-xs text-muted-foreground">(google_client_secret)</code>
-            </Label>
-            <Input
-              id="google_client_secret"
-              type="password"
-              value={form.google_client_secret}
-              onChange={(e) => handleChange('google_client_secret', e.target.value)}
-              placeholder="Google OAuth Client Secret"
-              disabled={busy}
-            />
-            <p className="text-xs text-muted-foreground">
-              {t('admin.siteSettings.api.googleClientSecretHelp')}
-            </p>
-          </div>
-
-          {/* GTM Container ID */}
-          <div className="space-y-2">
-            <Label htmlFor="gtm_container_id">
-              {t('admin.siteSettings.api.gtmContainerId')}
-              <code className="ml-2 text-xs text-muted-foreground">(gtm_container_id)</code>
-            </Label>
-            <Input
-              id="gtm_container_id"
-              value={form.gtm_container_id}
-              onChange={(e) => handleChange('gtm_container_id', e.target.value)}
-              placeholder={t('admin.siteSettings.api.gtmContainerIdPlaceholder')}
-              disabled={busy}
-            />
-            <p className="text-xs text-muted-foreground">
-              {t('admin.siteSettings.api.gtmContainerIdHelp')}
-            </p>
-          </div>
-
-          {/* GA4 Measurement ID */}
-          <div className="space-y-2">
-            <Label htmlFor="ga4_measurement_id">
-              {t('admin.siteSettings.api.ga4MeasurementId')}
-              <code className="ml-2 text-xs text-muted-foreground">(ga4_measurement_id)</code>
-            </Label>
-            <Input
-              id="ga4_measurement_id"
-              value={form.ga4_measurement_id}
-              onChange={(e) => handleChange('ga4_measurement_id', e.target.value)}
-              placeholder={t('admin.siteSettings.api.ga4MeasurementIdPlaceholder')}
-              disabled={busy}
-            />
-            <p className="text-xs text-muted-foreground">
-              {t('admin.siteSettings.api.ga4MeasurementIdHelp')}
-            </p>
-          </div>
-        </div>
-
-        {/* Cookie Consent - Full Width */}
+        {/* Provider sırası — AI bölümünden önce */}
         <div className="space-y-2">
-          <Label htmlFor="cookie_consent">
-            {t('admin.siteSettings.api.cookieConsent')}
-            <code className="ml-2 text-xs text-muted-foreground">(cookie_consent)</code>
-          </Label>
-          <Textarea
-            id="cookie_consent"
-            rows={10}
-            value={form.cookie_consent}
-            onChange={(e) => handleChange('cookie_consent', e.target.value)}
-            placeholder={t('admin.siteSettings.api.cookieConsentPlaceholder')}
+          <Label className="text-xs text-muted-foreground">AI Provider Öncelik Sırası</Label>
+          <Input
+            value={form.ai_provider_order}
+            onChange={(e) => setForm((p) => ({ ...p, ai_provider_order: e.target.value }))}
             disabled={busy}
-            className="font-mono text-xs"
+            className="h-8"
+            placeholder="groq,openai,anthropic,grok"
           />
-          <p className="text-xs text-muted-foreground">
-            {t('admin.siteSettings.api.cookieConsentHelp')}
+          <p className="text-[10px] text-muted-foreground">
+            Virgülle ayırın. İlk yanıt veren kullanılır.
           </p>
         </div>
 
-        {/* Save Button */}
-        <div className="flex justify-end">
-          <Button type="button" onClick={handleSave} disabled={busy}>
-            {isSaving ? t('admin.siteSettings.actions.saving') : t('admin.siteSettings.actions.save')}
-          </Button>
-        </div>
+        {SECTIONS.map((section) => (
+          <div key={section.title} className="space-y-3">
+            <div className="flex items-center justify-between border-b pb-1">
+              <h3 className="text-sm font-medium">{section.title}</h3>
+              {section.testEndpoint && (
+                <TestButton endpoint={section.testEndpoint} label={section.title} />
+              )}
+            </div>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {section.fields.map((f) => (
+                <div key={f.key} className="space-y-1">
+                  <Label className="text-xs text-muted-foreground">{f.label}</Label>
+                  <Input
+                    type={f.type || 'text'}
+                    value={form[f.key]}
+                    onChange={(e) => setForm((p) => ({ ...p, [f.key]: e.target.value }))}
+                    disabled={busy}
+                    className="h-8"
+                    placeholder={f.placeholder}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
       </CardContent>
     </Card>
   );
 };
+
+/* ── Test Button ── */
+
+function TestButton({ endpoint, label }: { endpoint: string; label: string }) {
+  const [testing, setTesting] = React.useState(false);
+  const [result, setResult] = React.useState<{ ok: boolean; message: string } | null>(null);
+
+  const handleTest = async () => {
+    setTesting(true);
+    setResult(null);
+    try {
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: '{}',
+      });
+      const data = await res.json();
+      const ok = data.ok === true;
+      setResult({ ok, message: data.message || (ok ? 'Başarılı' : 'Hata') });
+      if (ok) toast.success(`${label}: ${data.message}`);
+      else toast.error(`${label}: ${data.message}`);
+    } catch (err: any) {
+      setResult({ ok: false, message: err.message || 'Bağlantı hatası' });
+      toast.error(`${label}: Bağlantı hatası`);
+    } finally {
+      setTesting(false);
+    }
+  };
+
+  return (
+    <div className="flex items-center gap-2">
+      {result && (
+        <span className={`text-[10px] ${result.ok ? 'text-green-600' : 'text-destructive'}`}>
+          {result.ok ? '✓' : '✗'} {result.message.slice(0, 50)}
+        </span>
+      )}
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        className="h-6 px-2 text-[10px]"
+        onClick={handleTest}
+        disabled={testing}
+      >
+        {testing ? 'Test...' : 'Test'}
+      </Button>
+    </div>
+  );
+}

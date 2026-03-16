@@ -9,6 +9,7 @@ import { OptimizedImage } from '@/components/ui/OptimizedImage';
 import { getFallbackBlogPosts } from '@/lib/content-fallbacks';
 import { buildMediaAlt } from '@/lib/media-seo';
 import { SeoIssueBeacon } from '@/components/monitoring/SeoIssueBeacon';
+import { fetchSetting } from '@/i18n/server';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs';
 
 const NEWS_PLACEHOLDER = '/media/blog-placeholder.svg';
@@ -60,6 +61,8 @@ async function fetchSidebarNews(locale: string, limit = 4) {
   }
 }
 
+import { fetchSeoPage } from '@/seo/server';
+
 export async function generateMetadata({
   params,
   searchParams,
@@ -69,19 +72,20 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const { category } = await searchParams;
-  const t = await getTranslations({ locale, namespace: 'blog' });
+  const seo = await fetchSeoPage(locale, 'haberler');
+  const t = await getTranslations({ locale });
+
   return buildPageMetadata({
     locale,
     pathname: '/haberler',
-    title: locale.startsWith('en')
-      ? `${t('title')} - Architecture & Construction News`
-      : `${t('title')} - Mimarlık ve İnşaat Haberleri`,
-    description: t('description'),
-    noIndex: Boolean(category),
+    title: seo?.title || `${t('blog.title')} - ${t('seo.defaultTitle')}`,
+    description: seo?.description || t('blog.description'),
+    ogImage: seo?.og_image || undefined,
+    noIndex: seo?.no_index || Boolean(category),
   });
 }
 
-function formatRelativeTime(dateStr: string, isEn: boolean): string {
+function formatRelativeTime(dateStr: string, t: any, locale: string): string {
   try {
     const date = new Date(dateStr);
     const now = new Date();
@@ -89,10 +93,11 @@ function formatRelativeTime(dateStr: string, isEn: boolean): string {
     const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-    if (diffHours < 1) return isEn ? 'just now' : 'az önce';
-    if (diffHours < 24) return isEn ? `about ${diffHours} hours ago` : `yaklaşık ${diffHours} saat önce`;
-    if (diffDays < 7) return isEn ? `${diffDays} days ago` : `${diffDays} gün önce`;
-    return date.toLocaleDateString(isEn ? 'en-US' : 'tr-TR', {
+    if (diffHours < 1) return t('common.relativeTime.justNow');
+    if (diffHours < 24) return t('common.relativeTime.hoursAgo', { hours: diffHours });
+    if (diffDays < 7) return t('common.relativeTime.daysAgo', { days: diffDays });
+    
+    return date.toLocaleDateString(locale === 'en' ? 'en-US' : 'tr-TR', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -119,10 +124,14 @@ export default async function NewsPage({
     ? categories.find((c) => c.slug === category)
     : undefined;
 
-  const [posts, sidebarPosts] = await Promise.all([
+  const [posts, sidebarPosts, profile] = await Promise.all([
     fetchNews(locale, activeCategory?.id),
     fetchSidebarNews(locale, 4),
+    fetchSetting('company_profile', locale),
   ]);
+
+  const companyProfile = (profile?.value as any) ?? {};
+  const companyName = companyProfile.company_name || 'Vista İnşaat';
 
   const fallbackPosts = getFallbackBlogPosts(locale);
   const visiblePosts = posts.length > 0 ? posts : fallbackPosts;
@@ -188,13 +197,13 @@ export default async function NewsPage({
         <Breadcrumbs items={
           activeCategory
             ? [
-                { label: 'Vista İnşaat', href: localizedPath(locale, '/') },
-                { label: isEn ? 'Architecture News' : 'Mimarlık Haberleri', href: localizedPath(locale, '/haberler') },
+                { label: companyName, href: localizedPath(locale, '/') },
+                { label: t('blog.title'), href: localizedPath(locale, '/haberler') },
                 { label: activeCategory.name },
               ]
             : [
-                { label: 'Vista İnşaat', href: localizedPath(locale, '/') },
-                { label: isEn ? 'Architecture News' : 'Mimarlık Haberleri' },
+                { label: companyName, href: localizedPath(locale, '/') },
+                { label: t('blog.title') },
               ]
         } />
 
@@ -202,7 +211,7 @@ export default async function NewsPage({
         <h1 className="nw-page-title">
           {activeCategory
             ? activeCategory.name
-            : isEn ? 'Architecture News' : 'Mimarlık Haberleri'}
+            : t('blog.title')}
         </h1>
 
         {/* Category filter chips */}
@@ -212,7 +221,7 @@ export default async function NewsPage({
               href={localizedPath(locale, '/haberler')}
               className={`nw-chip${!activeCategory ? ' nw-chip-active' : ''}`}
             >
-              {isEn ? 'All' : 'Tümü'}
+              {t('blog.all')}
             </Link>
             {categories.map((cat) => (
               <Link
@@ -235,9 +244,7 @@ export default async function NewsPage({
               reason="news-list-empty"
             />
             <p style={{ fontSize: 13, color: 'var(--color-text-muted)', marginBottom: 16 }}>
-              {isEn
-                ? 'Sample editorial topics are shown below until live news content becomes available.'
-                : 'Canlı haber içeriği gelene kadar aşağıda örnek editoryal başlıklar gösterilmektedir.'}
+              {t('blog.emptyStateNote')}
             </p>
           </>
         )}
@@ -257,7 +264,7 @@ export default async function NewsPage({
                 )}
                 <div className="nw-featured-title">{featured.title}</div>
                 {featured.created_at && (
-                  <span className="nw-featured-time">{formatRelativeTime(featured.created_at, isEn)}</span>
+                  <span className="nw-featured-time">{formatRelativeTime(featured.created_at, t, locale)}</span>
                 )}
                 {(featured.image_url || featured.imageSrc) && (
                   <div className="nw-featured-img">
@@ -321,7 +328,7 @@ export default async function NewsPage({
                     <p className="nw-article-excerpt">{post.description}</p>
                   )}
                   {post.created_at && (
-                    <span className="nw-article-time">{formatRelativeTime(post.created_at, isEn)}</span>
+                    <span className="nw-article-time">{formatRelativeTime(post.created_at, t, locale)}</span>
                   )}
                 </div>
                 {(post.image_url || post.imageSrc) && (
@@ -351,7 +358,7 @@ export default async function NewsPage({
             {/* Architecture You'll Love */}
             {sidebarPosts.length > 0 && (
               <div className="nw-sidebar-card">
-                <h3>{isEn ? "Architecture You'll Love" : 'Beğeneceğiniz Haberler'}</h3>
+                <h3>{t('blog.loveTitle')}</h3>
                 {sidebarPosts.map((sp: any) => (
                   <Link
                     key={sp.id ?? sp.title}
@@ -378,7 +385,7 @@ export default async function NewsPage({
             {/* Category list sidebar */}
             {categories.length > 0 && (
               <div className="nw-sidebar-card">
-                <h3>{isEn ? 'Categories' : 'Kategoriler'}</h3>
+                <h3>{t('blog.categories')}</h3>
                 {categories.map((cat) => (
                   <Link
                     key={cat.id}

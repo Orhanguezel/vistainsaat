@@ -1,8 +1,6 @@
 // =============================================================
-// FILE: src/components/admin/site-settings/structured/SeoStructuredForm.tsx
-// guezelwebdesign – Site Settings (SEO) Structured Form (NO MODAL)
-// - Used by /admin/site-settings/[id].tsx via renderStructured
-// - Uses AdminImageUploadField for OG image upload helper
+// FILE: seo-structured-form.tsx
+// SEO Structured Form — supports both simple and advanced modes
 // =============================================================
 
 'use client';
@@ -24,33 +22,91 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Switch } from '@/components/ui/switch';
 
-/* ----------------------------- types ----------------------------- */
+/* ── helpers ── */
 
-export type SeoStructured = {
-  site_name?: string;
-  title_default?: string;
-  title_template?: string;
-  description?: string;
+function coerceSettingValue(input: any): any {
+  if (input === null || input === undefined) return input;
+  if (typeof input === 'object') return input;
+  if (typeof input === 'string') {
+    const s = input.trim();
+    if (!s) return input;
+    try { return JSON.parse(s); } catch { return input; }
+  }
+  return input;
+}
 
-  open_graph?: {
-    type?: 'website' | 'article' | 'product';
-    images?: string[];
-  };
+/* ── Simple SEO (vistainsaat__seo style) ── */
 
-  twitter?: {
-    card?: 'summary' | 'summary_large_image' | 'app' | 'player';
-    site?: string;
-    creator?: string;
-  };
-
-  robots?: {
-    noindex?: boolean;
-    index?: boolean;
-    follow?: boolean;
-  };
+type SimpleSeo = {
+  site_title: string;
+  site_description: string;
+  keywords: string;
+  og_image: string;
+  og_type: string;
 };
+
+function isSimpleSeo(obj: any): boolean {
+  if (!obj || typeof obj !== 'object') return false;
+  return 'site_title' in obj || 'site_description' in obj || 'keywords' in obj;
+}
+
+function normalizeSimpleSeo(obj: any): SimpleSeo {
+  const o = obj && typeof obj === 'object' ? obj : {};
+  return {
+    site_title: String(o.site_title ?? ''),
+    site_description: String(o.site_description ?? ''),
+    keywords: String(o.keywords ?? ''),
+    og_image: String(o.og_image ?? ''),
+    og_type: String(o.og_type ?? 'website'),
+  };
+}
+
+/* ── Advanced SEO (global seo style) ── */
+
+type AdvancedSeo = {
+  site_name: string;
+  title_default: string;
+  title_template: string;
+  description: string;
+  og_type: string;
+  og_image: string;
+  twitter_card: string;
+  noindex: boolean;
+};
+
+function normalizeAdvanced(obj: any): AdvancedSeo {
+  const o = obj && typeof obj === 'object' ? obj : {};
+  const ogImages = Array.isArray(o?.open_graph?.images) ? o.open_graph.images : [];
+  return {
+    site_name: String(o.site_name ?? ''),
+    title_default: String(o.title_default ?? ''),
+    title_template: String(o.title_template ?? ''),
+    description: String(o.description ?? ''),
+    og_type: String(o?.open_graph?.type ?? 'website'),
+    og_image: ogImages[0] || '',
+    twitter_card: String(o?.twitter?.card ?? 'summary_large_image'),
+    noindex: Boolean(o?.robots?.noindex),
+  };
+}
+
+function advancedToObj(v: AdvancedSeo): any {
+  return {
+    site_name: v.site_name,
+    title_default: v.title_default,
+    title_template: v.title_template,
+    description: v.description,
+    open_graph: {
+      type: v.og_type,
+      images: v.og_image ? [v.og_image] : [],
+    },
+    twitter: { card: v.twitter_card, site: '', creator: '' },
+    robots: { noindex: v.noindex, index: !v.noindex, follow: true },
+  };
+}
+
+/* ── props ── */
 
 export type SeoStructuredFormProps = {
   settingKey: string;
@@ -60,65 +116,7 @@ export type SeoStructuredFormProps = {
   disabled?: boolean;
 };
 
-/* ----------------------------- helpers ----------------------------- */
-
-function coerceSettingValue(input: any): any {
-  if (input === null || input === undefined) return input;
-  if (typeof input === 'object') return input;
-
-  if (typeof input === 'string') {
-    const s = input.trim();
-    if (!s) return input;
-
-    const looksJson =
-      (s.startsWith('{') && s.endsWith('}')) || (s.startsWith('[') && s.endsWith(']'));
-
-    if (!looksJson) return input;
-
-    try {
-      return JSON.parse(s);
-    } catch {
-      return input;
-    }
-  }
-
-  return input;
-}
-
-function normalizeSeo(obj: any): SeoStructured {
-  const o = obj && typeof obj === 'object' ? obj : {};
-  const images = Array.isArray(o?.open_graph?.images) ? o.open_graph.images : [];
-
-  return {
-    site_name: String(o.site_name ?? ''),
-    title_default: String(o.title_default ?? ''),
-    title_template: String(o.title_template ?? ''),
-    description: String(o.description ?? ''),
-
-    open_graph: {
-      type: (o?.open_graph?.type ?? 'website') as any,
-      images: images.map((x: any) => String(x ?? '')).filter(Boolean),
-    },
-
-    twitter: {
-      card: (o?.twitter?.card ?? 'summary_large_image') as any,
-      site: String(o?.twitter?.site ?? ''),
-      creator: String(o?.twitter?.creator ?? ''),
-    },
-
-    robots: {
-      noindex: Boolean(o?.robots?.noindex),
-      index: o?.robots?.index !== false, // default true
-      follow: o?.robots?.follow !== false, // default true
-    },
-  };
-}
-
-function uniqStrings(arr: string[]) {
-  return Array.from(new Set(arr.map((x) => String(x || '').trim()).filter(Boolean)));
-}
-
-/* ----------------------------- component ----------------------------- */
+/* ── component ── */
 
 export const SeoStructuredForm: React.FC<SeoStructuredFormProps> = ({
   settingKey,
@@ -130,126 +128,101 @@ export const SeoStructuredForm: React.FC<SeoStructuredFormProps> = ({
   const adminLocale = usePreferencesStore((s) => s.adminLocale);
   const t = useAdminTranslations(adminLocale || undefined);
 
-  const v = useMemo(() => normalizeSeo(coerceSettingValue(value)), [value]);
+  const raw = useMemo(() => coerceSettingValue(value) ?? {}, [value]);
+  const simple = isSimpleSeo(raw);
 
-  const set = (patch: Partial<SeoStructured>) => {
-    setValue({
-      ...v,
-      ...patch,
-    });
-  };
+  if (simple) {
+    return (
+      <SimpleSeoForm
+        value={normalizeSimpleSeo(raw)}
+        onChange={(next) => setValue(next)}
+        disabled={disabled}
+        settingKey={settingKey}
+        locale={locale}
+      />
+    );
+  }
 
-  const ogImagesText = (v.open_graph?.images || []).join('\n');
+  return (
+    <AdvancedSeoForm
+      value={normalizeAdvanced(raw)}
+      onChange={(next) => setValue(advancedToObj(next))}
+      disabled={disabled}
+      settingKey={settingKey}
+      locale={locale}
+    />
+  );
+};
 
-  const setOpenGraph = (patch: Partial<NonNullable<SeoStructured['open_graph']>>) => {
-    set({
-      open_graph: {
-        ...(v.open_graph || {}),
-        ...patch,
-      },
-    });
-  };
+SeoStructuredForm.displayName = 'SeoStructuredForm';
 
-  const setTwitter = (patch: Partial<NonNullable<SeoStructured['twitter']>>) => {
-    set({
-      twitter: {
-        ...(v.twitter || {}),
-        ...patch,
-      },
-    });
-  };
+/* ── Simple SEO Form (vistainsaat__seo) ── */
 
-  const setRobots = (patch: Partial<NonNullable<SeoStructured['robots']>>) => {
-    set({
-      robots: {
-        ...(v.robots || {}),
-        ...patch,
-      },
-    });
-  };
+function SimpleSeoForm({
+  value: v,
+  onChange,
+  disabled,
+  settingKey,
+  locale,
+}: {
+  value: SimpleSeo;
+  onChange: (next: SimpleSeo) => void;
+  disabled?: boolean;
+  settingKey: string;
+  locale: string;
+}) {
+  const set = (patch: Partial<SimpleSeo>) => onChange({ ...v, ...patch });
 
   return (
     <div className="space-y-4">
       <Alert variant="default" className="py-2">
-        <AlertDescription className="space-y-1 text-sm">
-          <p>
-            {t('admin.siteSettings.structured.title')}
-          </p>
-          <p>
-            {t('admin.siteSettings.structured.robotsNote', { field: 'noindex' })}
-          </p>
+        <AlertDescription className="text-sm">
+          Arama motoru optimizasyonu ayarları. Bu bilgiler Google ve sosyal medya paylaşımlarında görünür.
         </AlertDescription>
       </Alert>
 
-      {/* Optional helper upload */}
-      <div>
-        <AdminImageUploadField
-          label={t('admin.siteSettings.structured.ogImageUpload')}
-          folder="seo"
-          bucket="public"
-          metadata={{
-            module_key: 'seo',
-            locale: String(locale),
-            key: String(settingKey),
-          }}
-          value={(v.open_graph?.images && v.open_graph.images[0]) || ''}
-          onChange={(url) => {
-            const merged = uniqStrings([url, ...(v.open_graph?.images || [])]);
-            setOpenGraph({ images: merged });
-          }}
-          disabled={disabled}
-        />
-      </div>
-
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-12">
-        <div className="space-y-2 md:col-span-4">
-          <Label htmlFor="seo-site-name" className="text-sm">{t('admin.siteSettings.structured.siteName')}</Label>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="space-y-2 md:col-span-2">
+          <Label htmlFor="seo-title" className="text-sm">Site Başlığı</Label>
           <Input
-            id="seo-site-name"
-            value={v.site_name || ''}
-            onChange={(e) => set({ site_name: e.target.value })}
+            id="seo-title"
+            value={v.site_title}
+            onChange={(e) => set({ site_title: e.target.value })}
             disabled={disabled}
+            placeholder="Vista İnşaat | Güvenilir İnşaat Hizmetleri"
           />
         </div>
 
-        <div className="space-y-2 md:col-span-4">
-          <Label htmlFor="seo-title-default" className="text-sm">{t('admin.siteSettings.structured.titleDefault')}</Label>
-          <Input
-            id="seo-title-default"
-            value={v.title_default || ''}
-            onChange={(e) => set({ title_default: e.target.value })}
-            disabled={disabled}
-          />
-        </div>
-
-        <div className="space-y-2 md:col-span-4">
-          <Label htmlFor="seo-title-template" className="text-sm">{t('admin.siteSettings.structured.titleTemplate')}</Label>
-          <Input
-            id="seo-title-template"
-            value={v.title_template || ''}
-            onChange={(e) => set({ title_template: e.target.value })}
-            placeholder={t('admin.siteSettings.structured.titleTemplatePlaceholder')}
-            disabled={disabled}
-          />
-        </div>
-
-        <div className="space-y-2 md:col-span-12">
-          <Label htmlFor="seo-description" className="text-sm">{t('admin.siteSettings.structured.description')}</Label>
+        <div className="space-y-2 md:col-span-2">
+          <Label htmlFor="seo-desc" className="text-sm">Site Açıklaması</Label>
           <Textarea
-            id="seo-description"
+            id="seo-desc"
             rows={3}
-            value={v.description || ''}
-            onChange={(e) => set({ description: e.target.value })}
+            value={v.site_description}
+            onChange={(e) => set({ site_description: e.target.value })}
             disabled={disabled}
             className="text-sm"
+            placeholder="Konut, ticari ve karma kullanım projelerinde kaliteli inşaat çözümleri."
           />
         </div>
 
-        <div className="space-y-2 md:col-span-4">
-          <Label htmlFor="seo-og-type" className="text-sm">{t('admin.siteSettings.structured.ogType')}</Label>
+        <div className="space-y-2 md:col-span-2">
+          <Label htmlFor="seo-keywords" className="text-sm">Anahtar Kelimeler</Label>
+          <Input
+            id="seo-keywords"
+            value={v.keywords}
+            onChange={(e) => set({ keywords: e.target.value })}
+            disabled={disabled}
+            placeholder="inşaat, mimarlık, proje yönetimi, anahtar teslim"
+          />
+          <p className="text-xs text-muted-foreground">Virgülle ayırın</p>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="seo-og-type" className="text-sm">OG Type</Label>
           <Select
-            value={v.open_graph?.type || 'website'}
-            onValueChange={(value) => setOpenGraph({ type: value as any })}
+            value={v.og_type || 'website'}
+            onValueChange={(val) => set({ og_type: val })}
             disabled={disabled}
           >
             <SelectTrigger id="seo-og-type" className="h-8">
@@ -258,37 +231,129 @@ export const SeoStructuredForm: React.FC<SeoStructuredFormProps> = ({
             <SelectContent>
               <SelectItem value="website">website</SelectItem>
               <SelectItem value="article">article</SelectItem>
-              <SelectItem value="product">product</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
-        <div className="space-y-2 md:col-span-8">
-          <Label htmlFor="seo-og-images" className="text-sm">{t('admin.siteSettings.structured.ogImages')}</Label>
-          <Textarea
-            id="seo-og-images"
-            rows={5}
-            value={ogImagesText}
-            onChange={(e) => {
-              const images = uniqStrings(
-                e.target.value
-                  .split('\n')
-                  .map((x) => x.trim())
-                  .filter(Boolean),
-              );
-              setOpenGraph({ images });
-            }}
-            placeholder={t('admin.siteSettings.structured.ogImagesPlaceholder')}
+        <div className="space-y-2">
+          <Label htmlFor="seo-og-image" className="text-sm">OG Image URL</Label>
+          <Input
+            id="seo-og-image"
+            value={v.og_image}
+            onChange={(e) => set({ og_image: e.target.value })}
             disabled={disabled}
-            className="font-mono text-sm"
+            placeholder="/logo/png/vista_logo_512.png"
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── Advanced SEO Form (global seo/site_seo) ── */
+
+function AdvancedSeoForm({
+  value: v,
+  onChange,
+  disabled,
+  settingKey,
+  locale,
+}: {
+  value: AdvancedSeo;
+  onChange: (next: AdvancedSeo) => void;
+  disabled?: boolean;
+  settingKey: string;
+  locale: string;
+}) {
+  const set = (patch: Partial<AdvancedSeo>) => onChange({ ...v, ...patch });
+
+  return (
+    <div className="space-y-4">
+      <Alert variant="default" className="py-2">
+        <AlertDescription className="text-sm">
+          SEO ve sosyal medya meta tag ayarları. Open Graph ve Twitter Card bilgileri.
+        </AlertDescription>
+      </Alert>
+
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="space-y-2">
+          <Label htmlFor="seo-site-name" className="text-sm">Site Adı</Label>
+          <Input
+            id="seo-site-name"
+            value={v.site_name}
+            onChange={(e) => set({ site_name: e.target.value })}
+            disabled={disabled}
           />
         </div>
 
-        <div className="space-y-2 md:col-span-4">
-          <Label htmlFor="seo-twitter-card" className="text-sm">{t('admin.siteSettings.structured.twitterCard')}</Label>
+        <div className="space-y-2">
+          <Label htmlFor="seo-title-default" className="text-sm">Varsayılan Başlık</Label>
+          <Input
+            id="seo-title-default"
+            value={v.title_default}
+            onChange={(e) => set({ title_default: e.target.value })}
+            disabled={disabled}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="seo-title-template" className="text-sm">Başlık Şablonu</Label>
+          <Input
+            id="seo-title-template"
+            value={v.title_template}
+            onChange={(e) => set({ title_template: e.target.value })}
+            disabled={disabled}
+            placeholder="%s – Vista İnşaat"
+          />
+          <p className="text-xs text-muted-foreground">%s sayfa başlığı ile değiştirilir</p>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="seo-og-type" className="text-sm">OG Type</Label>
           <Select
-            value={v.twitter?.card || 'summary_large_image'}
-            onValueChange={(value) => setTwitter({ card: value as any })}
+            value={v.og_type || 'website'}
+            onValueChange={(val) => set({ og_type: val })}
+            disabled={disabled}
+          >
+            <SelectTrigger id="seo-og-type" className="h-8">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="website">website</SelectItem>
+              <SelectItem value="article">article</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="space-y-2 md:col-span-2">
+          <Label htmlFor="seo-description" className="text-sm">Açıklama</Label>
+          <Textarea
+            id="seo-description"
+            rows={3}
+            value={v.description}
+            onChange={(e) => set({ description: e.target.value })}
+            disabled={disabled}
+            className="text-sm"
+          />
+        </div>
+
+        <div className="space-y-2 md:col-span-2">
+          <AdminImageUploadField
+            label="OG Image"
+            folder="seo"
+            bucket="public"
+            metadata={{ module_key: 'seo', locale, key: settingKey }}
+            value={v.og_image}
+            onChange={(url) => set({ og_image: url })}
+            disabled={disabled}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="seo-twitter-card" className="text-sm">Twitter Card</Label>
+          <Select
+            value={v.twitter_card || 'summary_large_image'}
+            onValueChange={(val) => set({ twitter_card: val })}
             disabled={disabled}
           >
             <SelectTrigger id="seo-twitter-card" className="h-8">
@@ -297,88 +362,20 @@ export const SeoStructuredForm: React.FC<SeoStructuredFormProps> = ({
             <SelectContent>
               <SelectItem value="summary_large_image">summary_large_image</SelectItem>
               <SelectItem value="summary">summary</SelectItem>
-              <SelectItem value="app">app</SelectItem>
-              <SelectItem value="player">player</SelectItem>
             </SelectContent>
           </Select>
-          <p className="text-xs text-muted-foreground">
-            {t('admin.siteSettings.structured.twitterCardRecommended', { card: 'summary_large_image' })}
-          </p>
         </div>
 
-        <div className="space-y-2 md:col-span-4">
-          <Label htmlFor="seo-twitter-site" className="text-sm">{t('admin.siteSettings.structured.twitterSite')}</Label>
-          <Input
-            id="seo-twitter-site"
-            value={v.twitter?.site || ''}
-            onChange={(e) => setTwitter({ site: e.target.value })}
-            placeholder={t('admin.siteSettings.structured.twitterSitePlaceholder')}
+        <div className="flex items-center gap-3 pt-6">
+          <Switch
+            id="seo-noindex"
+            checked={v.noindex}
+            onCheckedChange={(checked) => set({ noindex: checked })}
             disabled={disabled}
           />
-        </div>
-
-        <div className="space-y-2 md:col-span-4">
-          <Label htmlFor="seo-twitter-creator" className="text-sm">{t('admin.siteSettings.structured.twitterCreator')}</Label>
-          <Input
-            id="seo-twitter-creator"
-            value={v.twitter?.creator || ''}
-            onChange={(e) => setTwitter({ creator: e.target.value })}
-            placeholder={t('admin.siteSettings.structured.twitterCreatorPlaceholder')}
-            disabled={disabled}
-          />
-        </div>
-
-        <div className="space-y-2 md:col-span-12">
-          <Label className="text-sm">{t('admin.siteSettings.structured.robots')}</Label>
-          <div className="flex flex-wrap gap-4">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="seo-robots-noindex"
-                checked={Boolean(v.robots?.noindex)}
-                onCheckedChange={(checked) => setRobots({ noindex: !!checked })}
-                disabled={disabled}
-              />
-              <Label htmlFor="seo-robots-noindex" className="text-xs">
-                {t('admin.siteSettings.structured.noindex')}
-              </Label>
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="seo-robots-index"
-                checked={v.robots?.index !== false}
-                onCheckedChange={(checked) => setRobots({ index: !!checked })}
-                disabled={disabled}
-              />
-              <Label htmlFor="seo-robots-index" className="text-xs">
-                {t('admin.siteSettings.structured.index')}
-              </Label>
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="seo-robots-follow"
-                checked={v.robots?.follow !== false}
-                onCheckedChange={(checked) => setRobots({ follow: !!checked })}
-                disabled={disabled}
-              />
-              <Label htmlFor="seo-robots-follow" className="text-xs">
-                {t('admin.siteSettings.structured.follow')}
-              </Label>
-            </div>
-          </div>
-
-          <p className="text-xs text-muted-foreground">
-            {t('admin.siteSettings.structured.robotsRecommendation', {
-              noindex: 'noindex=false',
-              index: 'index=true',
-              follow: 'follow=true',
-            })}
-          </p>
+          <Label htmlFor="seo-noindex" className="text-sm">noindex (arama motorlarından gizle)</Label>
         </div>
       </div>
     </div>
   );
-};
-
-SeoStructuredForm.displayName = 'SeoStructuredForm';
+}

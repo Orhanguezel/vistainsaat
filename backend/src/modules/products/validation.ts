@@ -45,7 +45,10 @@ export const productCreateSchema = z.object({
   slug: z.string().min(1).max(255),
   description: emptyToNull(z.string().optional().nullable()),
   alt: emptyToNull(z.string().max(255).optional().nullable()),
-  tags: z.array(z.string()).optional().default([]),
+  tags: z.union([
+    z.array(z.string()),
+    z.string().transform((s) => s ? s.split(',').map((t) => t.trim()).filter(Boolean) : []),
+  ]).optional().default([]),
 
   // Teknik özellikler: serbest key/value
   specifications: z.record(z.string(), z.string()).optional(),
@@ -53,8 +56,11 @@ export const productCreateSchema = z.object({
   // Base alanlar
   price: z.coerce.number().nonnegative(),
   category_id: z.string().uuid(),
-  image_url: emptyToNull(z.string().url().optional().nullable()),
-  images: z.array(z.string().url()).optional().default([]),
+  image_url: emptyToNull(z.string().refine(
+    (v) => !v || v.startsWith('/') || v.startsWith('http://') || v.startsWith('https://') || v.startsWith('data:'),
+    { message: 'Geçersiz URL' },
+  ).optional().nullable()),
+  images: z.array(z.string()).optional().default([]),
 
   storage_asset_id: emptyToNull(assetId.optional().nullable()),
   storage_image_ids: z.array(assetId).optional().default([]),

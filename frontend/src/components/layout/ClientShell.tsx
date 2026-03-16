@@ -24,14 +24,14 @@ const GoogleTagManager = dynamic(
     ),
   { ssr: false },
 );
-const WhatsAppButton = dynamic(
+const WhatsAppButton = dynamic<{ number?: string }>(
   () =>
     import('@/components/widgets/WhatsAppButton').then(
       (m) => m.WhatsAppButton,
     ),
   { ssr: false },
 );
-const SplashScreen = dynamic(
+const SplashScreen = dynamic<{ companyName?: string; tagline?: string }>(
   () =>
     import('@/components/layout/SplashScreen').then(
       (m) => m.SplashScreen,
@@ -39,15 +39,23 @@ const SplashScreen = dynamic(
   { ssr: false },
 );
 
-export function ClientShell() {
+export function ClientShell({ 
+  companyName, 
+  tagline,
+  whatsappNumber
+}: { 
+  companyName?: string; 
+  tagline?: string;
+  whatsappNumber?: string;
+}) {
   return (
     <>
-      <SplashScreen />
+      <SplashScreen companyName={companyName} tagline={tagline} />
       <ScrollToTop />
       <WebVitals />
       <GoogleAnalytics />
       <GoogleTagManager />
-      <WhatsAppButton />
+      <WhatsAppButton number={whatsappNumber} />
     </>
   );
 }

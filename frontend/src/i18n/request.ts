@@ -5,13 +5,13 @@ import { getLocaleMessages, hasLocale } from './locales';
 export default getRequestConfig(async ({ requestLocale }) => {
   const requestedLocale = (await requestLocale)?.toLowerCase() ?? '';
   const { activeLocales, defaultLocale } = await getLocaleSettings();
-  const supportedLocales = activeLocales.filter(hasLocale);
-  const fallbackLocale = hasLocale(defaultLocale) ? defaultLocale : supportedLocales[0] || 'tr';
+  const supportedCodes = activeLocales.map((l) => typeof l === 'string' ? l : l.code).filter(hasLocale);
+  const fallbackLocale = hasLocale(defaultLocale) ? defaultLocale : supportedCodes[0] || 'tr';
 
   const locale =
     requestedLocale &&
     hasLocale(requestedLocale) &&
-    supportedLocales.includes(requestedLocale)
+    supportedCodes.includes(requestedLocale)
       ? requestedLocale
       : fallbackLocale;
 

@@ -50,7 +50,7 @@ const PROFILE_PREFIXES: Record<NonNullable<Flags['profile']>, string[]> = {
     '297',  // vistainsaat_products_schema
     '299', '300', '301', '302', '303', '304', '305', '306', '307', '308',
     '309',  // vistainsaat_news_categories + auth_role_patch
-    '310', '311',  // vistainsaat_admin_settings
+    '310', '311', '312', '313', '314', '315', '316', '317', // admin_settings + seo_pages + general + logo_storage + hero_video + offer_settings + smtp_sync
   ],
 };
 

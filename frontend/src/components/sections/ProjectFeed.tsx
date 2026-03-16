@@ -5,6 +5,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Bookmark } from 'lucide-react';
 import { absoluteAssetUrl } from '@/lib/utils';
+import { SaveProjectButton } from '@/components/projects/SaveProjectButton';
+import { useTranslations } from 'next-intl';
 
 interface ProjectItem {
   id: string;
@@ -12,6 +14,7 @@ interface ProjectItem {
   slug: string;
   description?: string;
   image_url?: string;
+  count?: number;
   images?: string[];
   category?: { name: string; slug: string };
   specifications?: Record<string, string>;
@@ -35,23 +38,16 @@ function localePath(locale: string, path: string): string {
   return `/${locale}${path}`;
 }
 
-function timeAgo(dateStr: string, locale: string): string {
+function timeAgo(dateStr: string, t: any): string {
   const now = Date.now();
   const then = new Date(dateStr).getTime();
   const diff = now - then;
   const hours = Math.floor(diff / (1000 * 60 * 60));
   const days = Math.floor(hours / 24);
 
-  if (locale === 'tr') {
-    if (hours < 1) return 'az önce';
-    if (hours < 24) return `yaklaşık ${hours} saat önce`;
-    if (days === 1) return 'dün';
-    return `${days} gün önce`;
-  }
-  if (hours < 1) return 'just now';
-  if (hours < 24) return `about ${hours} hours ago`;
-  if (days === 1) return 'yesterday';
-  return `${days} days ago`;
+  if (hours < 1) return t('common.relativeTime.justNow');
+  if (hours < 24) return t('common.relativeTime.hoursAgo', { hours });
+  return t('common.relativeTime.daysAgo', { days });
 }
 
 export function ProjectFeed({
@@ -63,8 +59,11 @@ export function ProjectFeed({
   subtitle,
   sidebarProjects,
   sidebarTitle,
-  readMoreLabel = 'Devamını Oku',
+  readMoreLabel,
 }: ProjectFeedProps) {
+  const t = useTranslations();
+  const finalReadMore = readMoreLabel || t('common.readMore');
+  const finalSidebarTitle = sidebarTitle || t('projects.loveTitle');
   const [projects, setProjects] = useState<ProjectItem[]>(initialProjects);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -152,7 +151,7 @@ export function ProjectFeed({
                 </Link>
                 {project.created_at && (
                   <p className="mt-1 text-xs text-(--color-text-muted)">
-                    {timeAgo(project.created_at, locale)}
+                    {timeAgo(project.created_at, t)}
                   </p>
                 )}
 
@@ -186,25 +185,25 @@ export function ProjectFeed({
                 <div className="mt-2 flex flex-wrap gap-x-6 gap-y-1 text-sm text-(--color-text-secondary)">
                   {architects && (
                     <div className="flex items-center gap-1.5">
-                      <span className="text-xs text-(--color-text-muted)">{locale === 'tr' ? 'Mimarlar:' : 'Architects:'}</span>
+                      <span className="text-xs text-(--color-text-muted)">{t('projects.filters.architects')}:</span>
                       <span className="font-medium text-(--color-brand)">{architects}</span>
                     </div>
                   )}
                   {area && (
                     <div className="flex items-center gap-1.5">
-                      <span className="text-xs text-(--color-text-muted)">{locale === 'tr' ? 'Alan:' : 'Area:'}</span>
+                      <span className="text-xs text-(--color-text-muted)">{t('projects.filters.area')}:</span>
                       <span className="font-medium">{area}</span>
                     </div>
                   )}
                   {year && (
                     <div className="flex items-center gap-1.5">
-                      <span className="text-xs text-(--color-text-muted)">{locale === 'tr' ? 'Yıl:' : 'Year:'}</span>
+                      <span className="text-xs text-(--color-text-muted)">{t('projects.filters.year')}:</span>
                       <span className="font-medium text-(--color-brand)">{year}</span>
                     </div>
                   )}
                   {manufacturers && (
                     <div className="flex items-center gap-1.5">
-                      <span className="text-xs text-(--color-text-muted)">{locale === 'tr' ? 'Üreticiler:' : 'Manufacturers:'}</span>
+                      <span className="text-xs text-(--color-text-muted)">{t('projects.manufacturers')}:</span>
                       <span className="font-medium">{manufacturers}</span>
                     </div>
                   )}
@@ -212,18 +211,15 @@ export function ProjectFeed({
 
                 {/* Actions: Save + Read more */}
                 <div className="mt-3 flex items-center justify-between">
-                  <button
-                    type="button"
-                    className="inline-flex items-center gap-1.5 rounded-sm bg-(--color-brand) px-3 py-1.5 text-xs font-semibold text-white transition-opacity hover:opacity-90"
-                  >
-                    <Bookmark className="size-3.5" />
-                    {locale === 'tr' ? 'Bu Projeyi Kaydet' : 'Save this project'}
-                  </button>
+                  <SaveProjectButton 
+                    projectId={project.id} 
+                    label={t('projects.saveProject')} 
+                  />
                   <Link
                     href={projectHref}
                     className="text-xs font-medium text-(--color-brand) hover:underline"
                   >
-                    {readMoreLabel} »
+                    {finalReadMore} »
                   </Link>
                 </div>
               </article>
@@ -249,7 +245,7 @@ export function ProjectFeed({
                   className="mb-4 text-lg font-bold text-(--color-text-primary)"
                   style={{ fontFamily: 'var(--font-heading)' }}
                 >
-                  {sidebarTitle || (locale === 'tr' ? 'Beğeneceğiniz Projeler' : 'Projects You\'ll Love')}
+                  {finalSidebarTitle}
                 </h3>
                 <div className="space-y-5">
                   {sidebarProjects.map((p) => {
@@ -288,18 +284,16 @@ export function ProjectFeed({
                 className="text-sm font-bold text-(--color-text-primary)"
                 style={{ fontFamily: 'var(--font-heading)' }}
               >
-                {locale === 'tr' ? 'Projeniz İçin Teklif Alın' : 'Get a Quote for Your Project'}
+                {t('projects.getQuoteTitle')}
               </p>
               <p className="mt-1 text-xs text-(--color-text-secondary)">
-                {locale === 'tr'
-                  ? 'Ücretsiz keşif ve teklif için hemen iletişime geçin.'
-                  : 'Contact us for a free site survey and quote.'}
+                {t('projects.getQuoteDesc')}
               </p>
               <Link
                 href={localePath(locale, '/teklif')}
                 className="mt-3 inline-block bg-(--color-brand) px-4 py-2 text-xs font-semibold text-white transition-opacity hover:opacity-90"
               >
-                {locale === 'tr' ? 'Teklif Al' : 'Get Quote'}
+                {t('nav.offer')}
               </Link>
             </div>
           </div>

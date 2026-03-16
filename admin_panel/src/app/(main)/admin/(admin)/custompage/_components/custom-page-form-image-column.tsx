@@ -40,42 +40,42 @@ export const CustomPageFormImageColumn: React.FC<CustomPageFormImageColumnProps>
   const t = useAdminT();
 
   return (
-    <div className="space-y-4">
-      <AdminImageUploadField
-        label={t('admin.customPage.form.featuredImage')}
-        helperText={
-          <>{t('admin.customPage.form.coverHelperText')}</>
-        }
-        bucket="public"
-        folder="custom_pages/cover"
-        metadata={{ ...(metadata || {}), section: 'cover' }}
-        value={featuredImageValue}
-        onChange={(url) => onFeaturedImageChange(url)}
-        disabled={disabled}
-        openLibraryHref="/admin/storage"
-        onOpenLibraryClick={() => router.push('/admin/storage')}
-      />
-
-      {onGalleryUrlsChange ? (
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+      <div className="rounded-md border p-2 space-y-2">
+        <h3 className="text-xs font-medium">Kapak Görseli</h3>
         <AdminImageUploadField
-          label={t('admin.customPage.form.gallery')}
-          helperText={
-            <>{t('admin.customPage.form.galleryHelperText')}</>
-          }
+          label=""
           bucket="public"
-          folder="custom_pages/gallery"
-          metadata={{ ...(metadata || {}), section: 'gallery' }}
-          multiple
-          values={galleryUrls ?? []}
-          onChangeMultiple={onGalleryUrlsChange}
-          onSelectAsCover={(url) =>
-            onSelectAsCover ? onSelectAsCover(url) : onFeaturedImageChange(url)
-          }
-          coverValue={featuredImageValue}
+          folder="custom_pages/cover"
+          metadata={{ ...(metadata || {}), section: 'cover' }}
+          value={featuredImageValue}
+          onChange={(url) => onFeaturedImageChange(url)}
           disabled={disabled}
           openLibraryHref="/admin/storage"
-          onOpenLibraryClick={() => router.push('/admin/storage')}
+          previewAspect="16x9"
+          previewObjectFit="cover"
         />
+      </div>
+
+      {onGalleryUrlsChange ? (
+        <div className="rounded-md border p-2 space-y-2">
+          <h3 className="text-xs font-medium">Galeri</h3>
+          <AdminImageUploadField
+            label=""
+            bucket="public"
+            folder="custom_pages/gallery"
+            metadata={{ ...(metadata || {}), section: 'gallery' }}
+            multiple
+            values={galleryUrls ?? []}
+            onChangeMultiple={onGalleryUrlsChange}
+            onSelectAsCover={(url) =>
+              onSelectAsCover ? onSelectAsCover(url) : onFeaturedImageChange(url)
+            }
+            coverValue={featuredImageValue}
+            disabled={disabled}
+            openLibraryHref="/admin/storage"
+          />
+        </div>
       ) : null}
     </div>
   );

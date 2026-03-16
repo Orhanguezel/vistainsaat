@@ -1,6 +1,6 @@
 // =============================================================
 // FILE: src/modules/offer/controller.ts  (PUBLIC)
-// Ensotek – Offer Module Public Controller
+// Vista İnşaat – Offer Module Public Controller
 //   - POST /offers : yeni teklif talebi oluşturur
 // =============================================================
 
@@ -36,7 +36,7 @@ export const createOfferPublic: RouteHandler = async (req, reply) => {
       phone: typeof b.phone === 'string' ? b.phone.trim() : b.phone ?? null,
       subject: typeof b.subject === 'string' ? b.subject.trim() : b.subject ?? null,
       message: typeof b.message === 'string' ? b.message.trim() : b.message ?? null,
-      source: b.source ?? 'ensotek',
+      source: b.source ?? 'vistainsaat',
       locale: b.locale ?? (req as any).locale ?? null,
       country_code,
       product_id: b.product_id ?? null,

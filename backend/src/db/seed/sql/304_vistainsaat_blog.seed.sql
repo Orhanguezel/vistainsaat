@@ -31,10 +31,10 @@ INSERT INTO `custom_pages`
   `sub_category_id`
 )
 VALUES
-  ('bb010001-5001-4001-9001-bbbbbbbb0001', 'vistainsaat_blog', 1, 1, 10, 10, '/media/blog-placeholder.svg', NULL, '/media/blog-placeholder.svg', NULL, '[]', '[]', NULL, NULL),
-  ('bb010002-5002-4002-9002-bbbbbbbb0002', 'vistainsaat_blog', 1, 1, 20, 20, '/media/blog-placeholder.svg', NULL, '/media/blog-placeholder.svg', NULL, '[]', '[]', NULL, NULL),
-  ('bb010003-5003-4003-9003-bbbbbbbb0003', 'vistainsaat_blog', 1, 0, 30, 30, '/media/blog-placeholder.svg', NULL, '/media/blog-placeholder.svg', NULL, '[]', '[]', NULL, NULL),
-  ('bb010004-5004-4004-9004-bbbbbbbb0004', 'vistainsaat_blog', 1, 0, 40, 40, '/media/blog-placeholder.svg', NULL, '/media/blog-placeholder.svg', NULL, '[]', '[]', NULL, NULL)
+  ('bb010001-5001-4001-9001-bbbbbbbb0001', 'vistainsaat_blog', 1, 1, 10, 10, '/uploads/projects/vista-insaat-proje-39.jpeg', NULL, '/uploads/projects/vista-insaat-proje-39.jpeg', NULL, '[]', '[]', NULL, NULL),
+  ('bb010002-5002-4002-9002-bbbbbbbb0002', 'vistainsaat_blog', 1, 1, 20, 20, '/uploads/projects/vista-insaat-proje-29.jpeg', NULL, '/uploads/projects/vista-insaat-proje-29.jpeg', NULL, '[]', '[]', NULL, NULL),
+  ('bb010003-5003-4003-9003-bbbbbbbb0003', 'vistainsaat_blog', 1, 0, 30, 30, '/uploads/projects/vista-insaat-proje-36.jpeg', NULL, '/uploads/projects/vista-insaat-proje-36.jpeg', NULL, '[]', '[]', NULL, NULL),
+  ('bb010004-5004-4004-9004-bbbbbbbb0004', 'vistainsaat_blog', 1, 0, 40, 40, '/uploads/projects/vista-insaat-proje-30.jpeg', NULL, '/uploads/projects/vista-insaat-proje-30.jpeg', NULL, '[]', '[]', NULL, NULL)
 ON DUPLICATE KEY UPDATE
   `module_key`   = VALUES(`module_key`),
   `is_published` = VALUES(`is_published`),

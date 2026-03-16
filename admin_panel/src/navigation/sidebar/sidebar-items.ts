@@ -105,9 +105,11 @@ export type AdminNavItemKey =
   | 'vista_blog_comments'
   | 'vista_corporate'
   | 'vista_legal'
-  | 'vista_settings';
+  | 'vista_settings'
+  | 'newsletter'
+  | 'email_templates';
 
-export type AdminNavGroupKey = 'general' | 'content' | 'vista_insaat' | 'marketing' | 'communication' | 'system';
+export type AdminNavGroupKey = 'general' | 'content' | 'vista_insaat' | 'vista_content' | 'marketing' | 'communication' | 'system';
 
 export type AdminNavConfigItem = {
   key: AdminNavItemKey;
@@ -135,11 +137,17 @@ export const adminNavConfig: AdminNavConfigGroup[] = [
       { key: 'vista_categories', url: '/admin/categories?module=vistainsaat', icon: Folders },
       { key: 'vista_gallery', url: '/admin/gallery', icon: Images },
       { key: 'vista_offers', url: '/admin/offer?module=vistainsaat', icon: DollarSign },
+      { key: 'contacts', url: '/admin/contacts', icon: Contact2 },
+    ],
+  },
+  {
+    id: 4,
+    key: 'vista_content',
+    items: [
       { key: 'vista_blog', url: '/admin/custompage?module=vistainsaat_blog', icon: Newspaper },
       { key: 'vista_blog_comments', url: '/admin/comments', icon: MessageSquare },
       { key: 'vista_corporate', url: '/admin/custompage?module=vistainsaat_about', icon: FileText },
       { key: 'vista_legal', url: '/admin/custompage?module=vistainsaat_legal', icon: FileSearch },
-      { key: 'contacts', url: '/admin/contacts', icon: Contact2 },
     ],
   },
   {
@@ -147,10 +155,18 @@ export const adminNavConfig: AdminNavConfigGroup[] = [
     key: 'system',
     items: [
       { key: 'users', url: '/admin/users', icon: Users },
+      { key: 'email_templates', url: '/admin/email-templates', icon: Mail },
       { key: 'notifications', url: '/admin/notifications', icon: Bell },
       { key: 'storage', url: '/admin/storage', icon: HardDrive },
       { key: 'audit', url: '/admin/audit', icon: FileSearch },
       { key: 'vista_settings', url: '/admin/site-settings', icon: Settings },
+    ],
+  },
+  {
+    id: 5,
+    key: 'marketing',
+    items: [
+      { key: 'newsletter', url: '/admin/newsletter', icon: Mail },
     ],
   },
 ];
@@ -180,7 +196,7 @@ const FALLBACK_TITLES: Record<AdminNavItemKey, string> = {
   reviews: 'Reviews',
   mail: 'Mail',
   users: 'Users',
-  email_templates: 'Email Templates',
+  email_templates: 'E-posta Şablonları',
   notifications: 'Notifications',
   support: 'Support Tickets',
   storage: 'Storage',
@@ -201,6 +217,7 @@ const FALLBACK_TITLES: Record<AdminNavItemKey, string> = {
   vista_corporate: 'Kurumsal Sayfalar',
   vista_legal: 'Yasal Sayfalar',
   vista_settings: 'Site Ayarları',
+  newsletter: 'Bülten Aboneleri',
 };
 
 export function buildAdminSidebarItems(

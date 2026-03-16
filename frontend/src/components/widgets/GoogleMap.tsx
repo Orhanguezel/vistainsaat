@@ -1,21 +1,29 @@
 'use client';
 
-export function GoogleMap({ className }: { className?: string }) {
-  const embedUrl = process.env.NEXT_PUBLIC_GOOGLE_MAPS_EMBED_URL;
+export function GoogleMap({
+  className,
+  embedUrl,
+  title
+}: {
+  className?: string;
+  embedUrl?: string;
+  title?: string;
+}) {
+  const finalEmbedUrl = embedUrl || process.env.NEXT_PUBLIC_GOOGLE_MAPS_EMBED_URL;
 
-  if (!embedUrl) return null;
+  if (!finalEmbedUrl) return null;
 
   return (
     <div className={className}>
       <iframe
-        src={embedUrl}
+        src={finalEmbedUrl}
         width="100%"
         height="100%"
         style={{ border: 0, minHeight: 300 }}
         allowFullScreen
         loading="lazy"
         referrerPolicy="no-referrer-when-downgrade"
-        title="Vista İnşaat Konum"
+        title={title || 'Harita'}
       />
     </div>
   );

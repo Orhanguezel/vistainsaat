@@ -74,10 +74,10 @@ VALUES (
   'vistainsaat__logo',
   '*',
   JSON_OBJECT(
-    'logo_url',         '',
+    'logo_url',         '/uploads/logo/logo-light.svg',
     'logo_alt',         'Vista İnşaat',
-    'favicon_url',      '',
-    'logo_dark_url',    ''
+    'favicon_url',      '/uploads/logo/favicon-32.png',
+    'logo_dark_url',    '/uploads/logo/logo-dark.svg'
   ),
   NOW(3), NOW(3)
 )
@@ -85,7 +85,6 @@ ON DUPLICATE KEY UPDATE `value` = VALUES(`value`), `updated_at` = VALUES(`update
 
 -- =============================================================
 -- SITE LOGO — global (locale='*')
--- Standard site_settings media keys under vistainsaat__ prefix
 -- =============================================================
 INSERT INTO `site_settings` (`id`, `key`, `locale`, `value`, `created_at`, `updated_at`)
 VALUES (
@@ -93,11 +92,11 @@ VALUES (
   'vistainsaat__site_logo',
   '*',
   JSON_OBJECT(
-    'logo_url',              '',
+    'logo_url',              '/uploads/logo/logo-light.svg',
     'logo_alt',              'Vista İnşaat',
-    'logo_dark_url',         '',
-    'favicon_url',           '',
-    'apple_touch_icon_url',  ''
+    'logo_dark_url',         '/uploads/logo/logo-dark.svg',
+    'favicon_url',           '/uploads/logo/favicon-32.png',
+    'apple_touch_icon_url',  '/uploads/logo/apple-touch-icon.png'
   ),
   NOW(3), NOW(3)
 )
@@ -112,7 +111,7 @@ VALUES (
   'vistainsaat__site_favicon',
   '*',
   JSON_OBJECT(
-    'url', '',
+    'url', '/uploads/logo/favicon-32.png',
     'alt', 'Vista İnşaat Favicon'
   ),
   NOW(3), NOW(3)
@@ -128,7 +127,7 @@ VALUES (
   'vistainsaat__site_apple_touch_icon',
   '*',
   JSON_OBJECT(
-    'url', '',
+    'url', '/uploads/logo/apple-touch-icon.png',
     'alt', 'Vista İnşaat Apple Touch Icon'
   ),
   NOW(3), NOW(3)
@@ -144,8 +143,8 @@ VALUES (
   'vistainsaat__site_og_default_image',
   '*',
   JSON_OBJECT(
-    'url', '',
-    'alt', 'Vista İnşaat OG Default Image'
+    'url', '/uploads/logo/og.png',
+    'alt', 'Vista İnşaat'
   ),
   NOW(3), NOW(3)
 )
@@ -161,17 +160,17 @@ VALUES (
   'tr',
   JSON_OBJECT(
     'company_name',     'Vista İnşaat',
-    'address',          '',
-    'city',             '',
+    'address',          'Güzeloba Mah. Çağlayan Cad. No:42/A',
+    'city',             'Antalya',
     'country',          'Türkiye',
-    'phone',            '',
-    'phone_2',          '',
+    'phone',            '+90 242 310 00 00',
+    'phone_2',          '+90 532 310 00 00',
     'email',            'info@vistainsaat.com',
-    'email_2',          '',
-    'working_hours',    'Pazartesi - Cuma: 08:00 - 17:00',
-    'maps_embed_url',   '',
-    'maps_lat',         '',
-    'maps_lng',         ''
+    'email_2',          'proje@vistainsaat.com',
+    'working_hours',    'Pazartesi - Cumartesi: 08:00 - 18:00',
+    'maps_embed_url',   'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3191.5!2d30.7133!3d36.8969!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzbCsDUzJzQ4LjgiTiAzMMKwNDInNDcuOSJF!5e0!3m2!1str!2str!4v1',
+    'maps_lat',         '36.8969',
+    'maps_lng',         '30.7133'
   ),
   NOW(3), NOW(3)
 )
@@ -186,18 +185,18 @@ VALUES (
   'vistainsaat__contact_info',
   'en',
   JSON_OBJECT(
-    'company_name',     'Vista İnşaat',
-    'address',          '',
-    'city',             '',
+    'company_name',     'Vista Construction',
+    'address',          'Güzeloba Mah. Çağlayan Cad. No:42/A',
+    'city',             'Antalya',
     'country',          'Turkey',
-    'phone',            '',
-    'phone_2',          '',
+    'phone',            '+90 242 310 00 00',
+    'phone_2',          '+90 532 310 00 00',
     'email',            'info@vistainsaat.com',
-    'email_2',          '',
-    'working_hours',    'Monday - Friday: 08:00 - 17:00',
-    'maps_embed_url',   '',
-    'maps_lat',         '',
-    'maps_lng',         ''
+    'email_2',          'projects@vistainsaat.com',
+    'working_hours',    'Monday - Saturday: 08:00 - 18:00',
+    'maps_embed_url',   'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3191.5!2d30.7133!3d36.8969!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzbCsDUzJzQ4LjgiTiAzMMKwNDInNDcuOSJF!5e0!3m2!1sen!2str!4v1',
+    'maps_lat',         '36.8969',
+    'maps_lng',         '30.7133'
   ),
   NOW(3), NOW(3)
 )

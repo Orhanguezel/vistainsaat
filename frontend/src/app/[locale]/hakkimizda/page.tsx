@@ -8,6 +8,7 @@ import { normalizeRichContent } from '@/lib/rich-content';
 import { JsonLd, buildPageMetadata, jsonld, localizedPath, localizedUrl, organizationJsonLd } from '@/seo';
 import { OptimizedImage } from '@/components/ui/OptimizedImage';
 import { buildMediaAlt } from '@/lib/media-seo';
+import { fetchSetting } from '@/i18n/server';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs';
 
 async function fetchAboutPage(locale: string) {
@@ -37,20 +38,24 @@ async function fetchServices(locale: string) {
   }
 }
 
+import { fetchSeoPage } from '@/seo/server';
+
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: 'about' });
+  const seo = await fetchSeoPage(locale, 'hakkimizda');
+  const t = await getTranslations({ locale });
+
   return buildPageMetadata({
     locale,
     pathname: '/hakkimizda',
-    title: locale.startsWith('en')
-      ? 'About Us — Vista Construction'
-      : `${t('title')} — Vista İnşaat`,
-    description: t('description'),
+    title: seo?.title || `${t('about.title')} - ${t('seo.defaultTitle')}`,
+    description: seo?.description || t('about.description'),
+    ogImage: seo?.og_image || undefined,
+    noIndex: seo?.no_index,
   });
 }
 
@@ -63,18 +68,22 @@ export default async function AboutPage({
   const t = await getTranslations({ locale });
   const isEn = locale.startsWith('en');
 
-  const [page, services] = await Promise.all([
+  const [page, services, profile] = await Promise.all([
     fetchAboutPage(locale),
     fetchServices(locale),
+    fetchSetting('company_profile', locale),
   ]);
+
+  const companyProfile = (profile?.value as any) ?? {};
+  const companyName = companyProfile.company_name || 'Vista İnşaat';
 
   const content = normalizeRichContent(page?.content);
   const org = organizationJsonLd(locale);
   const imageSrc = absoluteAssetUrl(page?.image_url || page?.featured_image) || '/uploads/projects/vista-insaat-proje-01.jpeg';
 
   const breadcrumbs = [
-    { label: 'Vista İnşaat', href: localizedPath(locale, '/') },
-    { label: isEn ? 'About Us' : 'Hakkımızda' },
+    { label: companyName, href: localizedPath(locale, '/') },
+    { label: t('about.title') },
   ];
 
   return (
@@ -141,7 +150,7 @@ export default async function AboutPage({
                 alt={buildMediaAlt({
                   locale,
                   kind: 'project',
-                  title: isEn ? 'Vista Construction — About Us' : 'Vista İnşaat — Hakkımızda',
+                  title: `${companyName} — ${t('about.title')}`,
                   description: t('about.description'),
                 })}
                 fill
@@ -191,15 +200,15 @@ export default async function AboutPage({
             <div className="ab-stats">
               <div className="ab-stat">
                 <div className="ab-stat-value">15+</div>
-                <div className="ab-stat-label">{isEn ? 'Years of Experience' : 'Yıllık Deneyim'}</div>
+                <div className="ab-stat-label">{t('about.sections.stats.experience')}</div>
               </div>
               <div className="ab-stat">
                 <div className="ab-stat-value">100+</div>
-                <div className="ab-stat-label">{isEn ? 'Completed Projects' : 'Tamamlanan Proje'}</div>
+                <div className="ab-stat-label">{t('about.sections.stats.projects')}</div>
               </div>
               <div className="ab-stat">
                 <div className="ab-stat-value">50+</div>
-                <div className="ab-stat-label">{isEn ? 'Expert Team' : 'Uzman Kadro'}</div>
+                <div className="ab-stat-label">{t('about.sections.stats.team')}</div>
               </div>
             </div>
 
@@ -247,7 +256,7 @@ export default async function AboutPage({
             {/* Services list */}
             {services.length > 0 && (
               <div className="ab-sidebar-card">
-                <h3>{isEn ? 'Our Activity Areas' : 'Faaliyet Alanlarımız'}</h3>
+                <h3>{t('home.services.title')}</h3>
                 {services.map((s: any) => (
                   <Link
                     key={s.id ?? s.title}
@@ -301,7 +310,7 @@ export default async function AboutPage({
                 border: '1px solid var(--color-border)',
               }}
             >
-              {isEn ? '← Contact Us' : '← İletişim'}
+              ← {t('nav.contact')}
             </Link>
           </aside>
         </div>

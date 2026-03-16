@@ -116,10 +116,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   for (const locale of locales) {
     const [products, services, galleries, blogPosts, legalPages] = await Promise.all([
-      fetchItems(`/projects?module_key=vistainsaat&locale=${encodeURIComponent(locale)}`),
+      fetchItems(`/products?item_type=vistainsaat&locale=${encodeURIComponent(locale)}`),
       fetchItems(`/services?module_key=vistainsaat&locale=${encodeURIComponent(locale)}`),
       fetchItems(`/galleries?module_key=vistainsaat&locale=${encodeURIComponent(locale)}`),
-      fetchItems(`/custom_pages?module_key=vistainsaat_blog&locale=${encodeURIComponent(locale)}`),
+      fetchItems(`/custom_pages?module_key=news&locale=${encodeURIComponent(locale)}`),
       fetchLegalItemsForLocale(locale),
     ]);
 

@@ -42,6 +42,7 @@ import {
 import { ProductFaqsTab } from './product-faqs-tab';
 import { ProductReviewsTab } from './product-reviews-tab';
 import type { ProductItemType } from '@/integrations/shared/product_admin.types';
+import { useAIContentAssist, type LocaleContent } from '@/app/(main)/admin/_components/common/useAIContentAssist';
 
 // ─── Props ───────────────────────────────────────────────────
 
@@ -406,6 +407,65 @@ export default function ProductDetailClient({ id, itemType }: Props) {
   const handleImageChange = (url: string) =>
     setFormData((prev) => ({ ...prev, image_url: url }));
 
+  // ── AI Content Assist ──
+  const { assist: aiAssist, loading: aiLoading } = useAIContentAssist();
+  const [aiResults, setAiResults] = React.useState<LocaleContent[] | null>(null);
+
+  const handleAIAssist = async () => {
+    const targetLocales = localesForSelect.map((l: any) => String(l.value)).filter(Boolean);
+    if (!targetLocales.length) targetLocales.push(activeLocale || 'tr');
+
+    const specsText = Object.entries(formData.specifications)
+      .map(([k, v]) => `${k}: ${v}`)
+      .join(', ');
+
+    const result = await aiAssist({
+      title: formData.title,
+      summary: formData.description ? formData.description.replace(/<[^>]+>/g, ' ').slice(0, 300) : '',
+      content: formData.description,
+      tags: formData.tags + (specsText ? ` | Özellikler: ${specsText}` : ''),
+      locale: activeLocale || 'tr',
+      target_locales: targetLocales,
+      module_key: isProject ? 'vistainsaat_project' : 'product',
+      action: 'full',
+    });
+
+    if (!result) return;
+    setAiResults(result);
+
+    const current = result.find((r) => r.locale === activeLocale) || result[0];
+    if (current) {
+      setFormData((prev) => ({
+        ...prev,
+        title: current.title || prev.title,
+        slug: current.slug || prev.slug,
+        description: current.content || prev.description,
+        meta_title: current.meta_title || prev.meta_title,
+        meta_description: current.meta_description || prev.meta_description,
+        tags: current.tags || prev.tags,
+        image_alt: current.title || prev.image_alt,
+      }));
+    }
+  };
+
+  const applyAILocale = (locale: string) => {
+    if (!aiResults) return;
+    const match = aiResults.find((r) => r.locale === locale);
+    if (!match) return;
+    setFormData((prev) => ({
+      ...prev,
+      locale,
+      title: match.title || '',
+      slug: match.slug || prev.slug,
+      description: match.content || '',
+      meta_title: match.meta_title || '',
+      meta_description: match.meta_description || '',
+      tags: match.tags || '',
+      image_alt: match.title || '',
+    }));
+    setActiveLocale(locale);
+  };
+
   const handleSubmit = async (e?: React.FormEvent) => {
     e?.preventDefault();
 
@@ -514,6 +574,16 @@ export default function ProductDetailClient({ id, itemType }: Props) {
                   </Badge>
                 </>
               )}
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="border-purple-300 bg-purple-50 text-purple-700 hover:bg-purple-100"
+                disabled={isLoading || aiLoading}
+                onClick={handleAIAssist}
+              >
+                {aiLoading ? '⏳ AI...' : '✨ AI'}
+              </Button>
               <AdminLocaleSelect
                 options={localesForSelect}
                 value={activeLocale}
@@ -1034,6 +1104,46 @@ export default function ProductDetailClient({ id, itemType }: Props) {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* AI Sonuçları — Diğer Diller */}
+      {aiResults && aiResults.length > 1 && (
+        <Card className="border-purple-200 bg-purple-50/50">
+          <CardHeader className="pb-2">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm text-purple-700">✨ AI — Diğer Diller</CardTitle>
+              <Button variant="ghost" size="sm" className="h-6 text-[10px]" onClick={() => setAiResults(null)}>
+                Kapat
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+              {aiResults
+                .filter((r) => r.locale !== activeLocale)
+                .map((r) => (
+                  <div key={r.locale} className="rounded-md border bg-background p-2 space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono text-xs font-bold uppercase">{r.locale}</span>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-5 px-2 text-[10px] text-purple-700"
+                        onClick={() => applyAILocale(r.locale)}
+                      >
+                        Bu dile geç
+                      </Button>
+                    </div>
+                    <p className="text-xs font-medium truncate">{r.title}</p>
+                    <p className="text-[10px] text-muted-foreground line-clamp-2">{r.summary}</p>
+                  </div>
+                ))}
+            </div>
+            <p className="mt-2 text-[10px] text-muted-foreground">
+              Her dile geçip ayrı ayrı kaydedin.
+            </p>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

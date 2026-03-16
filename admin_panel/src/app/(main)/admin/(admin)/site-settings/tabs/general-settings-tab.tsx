@@ -21,6 +21,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 /* ----------------------------- config ----------------------------- */
 
 const GENERAL_KEYS = [
+  'app_locales',
+  'hero',
+  'seo_pages',
   'contact_info',
   'socials',
   'businessHours',
@@ -32,6 +35,9 @@ type GeneralKey = (typeof GENERAL_KEYS)[number];
 
 const KEY_LABELS: Record<string, Record<GeneralKey, string>> = {
   tr: {
+    app_locales: 'Dil Ayarları',
+    hero: 'Anasayfa Hero',
+    seo_pages: 'Sayfa SEO Ayarları',
     contact_info: 'İletişim Bilgileri',
     socials: 'Sosyal Medya',
     businessHours: 'Çalışma Saatleri',
@@ -39,6 +45,9 @@ const KEY_LABELS: Record<string, Record<GeneralKey, string>> = {
     ui_header: 'Menü Başlıkları',
   },
   en: {
+    app_locales: 'Language Settings',
+    hero: 'Homepage Hero',
+    seo_pages: 'Page SEO Settings',
     contact_info: 'Contact Info',
     socials: 'Social Media',
     businessHours: 'Business Hours',
@@ -46,6 +55,9 @@ const KEY_LABELS: Record<string, Record<GeneralKey, string>> = {
     ui_header: 'Menu Labels',
   },
   de: {
+    app_locales: 'Spracheinstellungen',
+    hero: 'Homepage Hero',
+    seo_pages: 'Seiten-SEO-Einstellungen',
     contact_info: 'Kontaktinformationen',
     socials: 'Soziale Medien',
     businessHours: 'Öffnungszeiten',
@@ -56,21 +68,30 @@ const KEY_LABELS: Record<string, Record<GeneralKey, string>> = {
 
 const KEY_DESCRIPTIONS: Record<string, Record<GeneralKey, string>> = {
   tr: {
-    contact_info: 'Telefon, e-posta, adres, WhatsApp',
+    app_locales: 'Desteklenen diller ve varsayılan dil',
+    hero: 'Hero videoları, başlık ve buton ayarları',
+    seo_pages: 'Her sayfanın başlık, açıklama ve OG görseli',
+    contact_info: 'Telefon, e-posta, adres, harita',
     socials: 'Instagram, Facebook, LinkedIn, YouTube, X',
     businessHours: 'Haftalık açılış-kapanış saatleri',
     company_profile: 'Firma adı, slogan, hakkında metni',
     ui_header: 'Navigasyon menüsü ve buton etiketleri',
   },
   en: {
-    contact_info: 'Phone, email, address, WhatsApp',
+    app_locales: 'Supported languages and default language',
+    hero: 'Hero videos, headline and button settings',
+    seo_pages: 'Title, description and OG image per page',
+    contact_info: 'Phone, email, address, map',
     socials: 'Instagram, Facebook, LinkedIn, YouTube, X',
     businessHours: 'Weekly opening & closing hours',
     company_profile: 'Company name, slogan, about text',
     ui_header: 'Navigation menu and button labels',
   },
   de: {
-    contact_info: 'Telefon, E-Mail, Adresse, WhatsApp',
+    app_locales: 'Unterstützte Sprachen und Standardsprache',
+    hero: 'Hero-Videos, Überschrift und Button-Einstellungen',
+    seo_pages: 'Titel, Beschreibung und OG-Bild pro Seite',
+    contact_info: 'Telefon, E-Mail, Adresse, Karte',
     socials: 'Instagram, Facebook, LinkedIn, YouTube, X',
     businessHours: 'Wöchentliche Öffnungs- und Schließzeiten',
     company_profile: 'Firmenname, Slogan, Über-uns-Text',
@@ -79,7 +100,13 @@ const KEY_DESCRIPTIONS: Record<string, Record<GeneralKey, string>> = {
 };
 
 const DEFAULTS_BY_KEY: Record<GeneralKey, SettingValue> = {
-  contact_info: { phone: '', email: '', address: '', whatsapp: '' },
+  app_locales: [
+    { code: 'tr', label: 'Türkçe', is_default: true, is_active: true },
+    { code: 'en', label: 'English', is_default: false, is_active: true },
+  ],
+  hero: { video_desktop: '', video_mobile: '', headline_tr: '', headline_en: '' },
+  seo_pages: {},
+  contact_info: { phone: '', email: '', address: '', company_name: '' },
   socials: { instagram: '', facebook: '', linkedin: '', youtube: '', x: '' },
   businessHours: [
     { day: 'mon', open: '09:00', close: '18:00', closed: false },
@@ -110,18 +137,17 @@ function summariseValue(v: SettingValue | undefined): string {
   if (typeof v === 'string') return v;
   if (typeof v === 'number' || typeof v === 'boolean') return String(v);
   if (Array.isArray(v)) {
-    // businessHours → "7 gün"
     return `${v.length} kayıt`;
   }
   if (typeof v === 'object') {
     const entries = Object.entries(v as Record<string, unknown>);
     const filled = entries.filter(([, val]) => val !== '' && val !== null && val !== undefined);
     if (filled.length === 0) return '';
-    // show first 2 values
-    return filled
-      .slice(0, 2)
-      .map(([, val]) => String(val))
-      .join(', ') + (filled.length > 2 ? ` +${filled.length - 2}` : '');
+    const strs = filled.slice(0, 2).map(([key, val]) => {
+      if (val && typeof val === 'object') return key;
+      return String(val);
+    });
+    return strs.join(', ') + (filled.length > 2 ? ` +${filled.length - 2}` : '');
   }
   return '';
 }

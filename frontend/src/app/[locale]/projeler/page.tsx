@@ -1,5 +1,6 @@
 import 'server-only';
 
+import { Suspense } from 'react';
 import { getTranslations } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { API_BASE_URL, absoluteAssetUrl } from '@/lib/utils';
@@ -8,6 +9,7 @@ import { getFallbackProjects } from '@/lib/content-fallbacks';
 import { buildMediaAlt } from '@/lib/media-seo';
 import { SeoIssueBeacon } from '@/components/monitoring/SeoIssueBeacon';
 import { ProjectsView } from '@/components/projects/ProjectsView';
+import { fetchSetting } from '@/i18n/server';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs';
 import type { ProjectViewItem } from '@/components/projects/ProjectsView';
 
@@ -32,20 +34,24 @@ async function fetchProjects(locale: string) {
   }
 }
 
+import { fetchSeoPage } from '@/seo/server';
+
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: 'projects' });
+  const seo = await fetchSeoPage(locale, 'projeler');
+  const t = await getTranslations({ locale });
+
   return buildPageMetadata({
     locale,
     pathname: '/projeler',
-    title: locale.startsWith('en')
-      ? `${t('title')} - Construction Portfolio`
-      : `${t('title')} - İnşaat Portföyü`,
-    description: t('description'),
+    title: seo?.title || `${t('projects.title')} - ${t('seo.defaultTitle')}`,
+    description: seo?.description || t('projects.description'),
+    ogImage: seo?.og_image || undefined,
+    noIndex: seo?.no_index,
   });
 }
 
@@ -88,7 +94,14 @@ export default async function ProjectsPage({
   const t = await getTranslations({ locale });
   const isEn = locale.startsWith('en');
 
-  const projects = await fetchProjects(locale);
+  const [projects, profile] = await Promise.all([
+    fetchProjects(locale),
+    fetchSetting('company_profile', locale),
+  ]);
+
+  const companyProfile = (profile?.value as any) ?? {};
+  const companyName = companyProfile.company_name || 'Vista İnşaat';
+
   const fallbackProjects = getFallbackProjects(locale);
   const visibleProjects = projects.length > 0 ? projects : fallbackProjects;
   const totalCount = visibleProjects.length;
@@ -98,8 +111,8 @@ export default async function ProjectsPage({
     <div style={{ background: 'var(--color-bg)' }}>
       <div style={{ maxWidth: 1280, margin: '0 auto', padding: '24px 16px 48px' }}>
         <Breadcrumbs items={[
-          { label: 'Vista İnşaat', href: localizedPath(locale, '/') },
-          { label: isEn ? 'Projects' : 'Projeler' },
+          { label: companyName, href: localizedPath(locale, '/') },
+          { label: t('projects.title') },
         ]} />
         <JsonLd
           data={jsonld.graph([
@@ -134,7 +147,7 @@ export default async function ProjectsPage({
             {t('projects.title')}
           </h1>
           <span style={{ fontSize: 15, color: 'var(--color-text-muted)', fontWeight: 400 }}>
-            | {totalCount} {isEn ? 'results' : 'sonuç'}
+            | {totalCount} {t('projects.results')}
           </span>
         </div>
 
@@ -151,36 +164,14 @@ export default async function ProjectsPage({
           {t('projects.description')}
         </p>
 
-        {/* ── Empty state (fallback notice) ── */}
-        {projects.length === 0 && (
-          <>
-            <SeoIssueBeacon
-              type="soft-404"
-              pathname={localizedPath(locale, '/projeler')}
-              reason="projects-list-empty"
-            />
-            <p
-              style={{
-                marginTop: 12,
-                fontSize: 13,
-                color: 'var(--color-text-muted)',
-              }}
-            >
-              {isEn
-                ? 'Sample project titles are shown below until the live project feed becomes available.'
-                : 'Canlı proje akışı gelene kadar aşağıda örnek proje başlıkları gösterilmektedir.'}
-            </p>
-          </>
-        )}
-
         {/* ── Tabs + Filters + View toggle + Content ── */}
         <div style={{ marginTop: 16 }}>
-          <ProjectsView
+          <Suspense fallback={null}><ProjectsView
             projects={viewItems}
             locale={locale}
             labels={{
-              projects: isEn ? 'Projects' : 'Projeler',
-              images: isEn ? 'Images' : 'Görseller',
+              projects: t('projects.title'),
+              images: t('projects.images'),
             }}
             filterLabels={{
               category: t('projects.filters.type'),
@@ -195,7 +186,7 @@ export default async function ProjectsPage({
               all: t('projects.filters.all'),
               search: t('projects.filters.search'),
             }}
-          />
+          /></Suspense>
         </div>
       </div>
     </div>

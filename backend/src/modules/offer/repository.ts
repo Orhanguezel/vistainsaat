@@ -1,6 +1,6 @@
 // =============================================================
 // FILE: src/modules/offer/repository.ts
-// Ensotek – Offer Module Repository
+// Vista İnşaat – Offer Module Repository
 // =============================================================
 
 import { db } from '@/db/client';
@@ -196,7 +196,7 @@ export async function getOfferById(id: string): Promise<OfferListItem | null> {
 
 export async function generateOfferNo(now: Date = new Date()): Promise<string> {
   const year = now.getFullYear();
-  const prefix = 'ENS';
+  const prefix = 'VIS';
 
   const nextSeq = await db.transaction(async (trx) => {
     const existing = await trx
@@ -252,7 +252,7 @@ export async function createOffer(
     id,
     offer_no,
     status: values.status ?? ('new' as any),
-    source: values.source ?? 'ensotek',
+    source: values.source ?? 'vistainsaat',
     locale: values.locale ?? null,
     country_code: normalizedCountry,
 

@@ -346,11 +346,11 @@ export function truncateText(s: string, n: number): string {
 /** UI tarafında güvenli trim'li string */
 export const uiText = (v: unknown): string => trimStr(v);
 
-/** UUID v4-like validation (case-insensitive, 8-4-4-4-12) */
+/** UUID-like validation (case-insensitive, 8-4-4-4-12, alphanumeric) */
 export const isUuidLike = (v: unknown): boolean => {
   const s = typeof v === 'string' ? v.trim() : String(v ?? '').trim();
   if (!s) return false;
-  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s);
+  return /^[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}$/i.test(s);
 };
 
 /** unknown -> JSON parse (object/array), yoksa null */

@@ -13,7 +13,7 @@ const ThemeToggle = dynamic(
   () => import('@/components/theme/ThemeToggle').then((m) => m.ThemeToggle),
   { ssr: false, loading: () => <span className="inline-block h-7 w-7" /> },
 );
-const LanguageSwitcher = dynamic(
+const LanguageSwitcher = dynamic<{ locale: string; activeLocales?: { code: string; label: string }[] }>(
   () => import('./LanguageSwitcher').then((m) => m.LanguageSwitcher),
   { ssr: false, loading: () => <span className="inline-block h-7 w-10" /> },
 );
@@ -36,64 +36,61 @@ function normalizeItems(raw: Record<string, unknown>[]): MenuItem[] {
 }
 
 /* ── Mega menu column data ── */
-function getMegaColumns(locale: string, isEn: boolean) {
+function getMegaColumns(
+  locale: string,
+  companyName: string,
+  t: any,
+  categories: any[] = [],
+  services: any[] = [],
+  news: any[] = []
+) {
   const l = (path: string) => localizedPath(locale, path);
   return [
     {
-      title: 'Vista İnşaat',
+      title: companyName,
       links: [
-        { label: isEn ? 'Projects' : 'Projeler', url: l('/projeler'), bold: true },
-        { label: isEn ? 'Activities' : 'Faaliyetler', url: l('/hizmetler'), bold: true },
-        { label: isEn ? 'News' : 'Haberler', url: l('/haberler'), bold: true },
-        { label: isEn ? 'Gallery' : 'Galeri', url: l('/galeri'), bold: true },
-        { label: isEn ? 'About Us' : 'Hakkımızda', url: l('/hakkimizda'), bold: true },
-        { label: isEn ? 'Contact' : 'İletişim', url: l('/iletisim'), bold: true },
-        { label: isEn ? 'Get a Quote' : 'Teklif Al', url: l('/teklif'), bold: true },
+        { label: t('projects'), url: l('/projeler'), bold: true },
+        { label: t('services'), url: l('/hizmetler'), bold: true },
+        { label: t('blog'), url: l('/haberler'), bold: true },
+        { label: t('gallery'), url: l('/galeri'), bold: true },
+        { label: t('about'), url: l('/hakkimizda'), bold: true },
+        { label: t('contact'), url: l('/iletisim'), bold: true },
+        { label: t('offer'), url: l('/teklif'), bold: true },
       ],
     },
     {
-      title: isEn ? 'Projects' : 'Projeler',
-      links: [
-        { label: isEn ? 'Residential' : 'Konut Projeleri', url: l('/projeler') },
-        { label: isEn ? 'Commercial' : 'Ticari Projeler', url: l('/projeler') },
-        { label: isEn ? 'Mixed Use' : 'Karma Kullanım', url: l('/projeler') },
-        { label: isEn ? 'Restoration' : 'Restorasyon', url: l('/projeler') },
-        { label: isEn ? 'Infrastructure' : 'Altyapı', url: l('/projeler') },
-        { label: isEn ? 'Hospitality' : 'Otel & Turizm', url: l('/projeler') },
-        { label: isEn ? 'Public Buildings' : 'Kamu Yapıları', url: l('/projeler') },
-      ],
+      title: t('projects'),
+      links: categories.length > 0 
+        ? categories.map(c => ({ label: c.title, url: l(`/projeler?category=${c.slug}`) }))
+        : [
+            { label: t('residential'), url: l('/projeler') },
+            { label: t('commercial'), url: l('/projeler') },
+            { label: t('mixed'), url: l('/projeler') },
+            { label: t('restoration'), url: l('/projeler') },
+          ],
     },
     {
-      title: isEn ? 'Activities' : 'Faaliyetler',
-      links: [
-        { label: isEn ? 'Construction' : 'İnşaat & Taahhüt', url: l('/hizmetler') },
-        { label: isEn ? 'Project Management' : 'Proje Yönetimi', url: l('/hizmetler') },
-        { label: isEn ? 'Architectural Design' : 'Mimari Tasarım', url: l('/hizmetler') },
-        { label: isEn ? 'Interior Design' : 'İç Mimarlık', url: l('/hizmetler') },
-        { label: isEn ? 'Landscape' : 'Peyzaj Mimarlığı', url: l('/hizmetler') },
-        { label: isEn ? 'Consulting' : 'Danışmanlık', url: l('/hizmetler') },
-      ],
+      title: t('services'),
+      links: services.length > 0
+        ? services.map(s => ({ label: s.title, url: l(`/hizmetler/${s.slug}`) }))
+        : [
+            { label: t('construction'), url: l('/hizmetler') },
+            { label: t('project_management'), url: l('/hizmetler') },
+            { label: t('architectural_design'), url: l('/hizmetler') },
+            { label: t('interior_design'), url: l('/hizmetler') },
+          ],
     },
     {
-      title: isEn ? 'Professionals' : 'Profesyoneller',
-      links: [
-        { label: isEn ? 'Architects' : 'Mimarlar', url: l('/hakkimizda') },
-        { label: isEn ? 'Engineers' : 'Mühendisler', url: l('/hakkimizda') },
-        { label: isEn ? 'Interior Designers' : 'İç Mimarlar', url: l('/hakkimizda') },
-        { label: isEn ? 'Landscape Architects' : 'Peyzaj Mimarları', url: l('/hakkimizda') },
-        { label: isEn ? 'Project Managers' : 'Proje Yöneticileri', url: l('/hakkimizda') },
-        { label: isEn ? 'Construction Companies' : 'İnşaat Firmaları', url: l('/hakkimizda') },
-      ],
+      title: t('blog'),
+      links: news.map(n => ({ label: n.title, url: l(`/haberler/${n.slug}`) })),
     },
     {
-      title: isEn ? 'Corporate' : 'Kurumsal',
+      title: t('corporate'),
       links: [
-        { label: isEn ? 'Our Vision' : 'Vizyonumuz', url: l('/hakkimizda') },
-        { label: isEn ? 'Our Values' : 'Değerlerimiz', url: l('/hakkimizda') },
-        { label: isEn ? 'Our Team' : 'Ekibimiz', url: l('/hakkimizda') },
-        { label: isEn ? 'Career' : 'Kariyer', url: l('/iletisim') },
-        { label: isEn ? 'Privacy Policy' : 'Gizlilik Politikası', url: l('/legal/privacy') },
-        { label: isEn ? 'Terms of Use' : 'Kullanım Koşulları', url: l('/legal/terms') },
+        { label: t('about'), url: l('/hakkimizda') },
+        { label: t('vision'), url: l('/hakkimizda') },
+        { label: t('team'), url: l('/hakkimizda') },
+        { label: t('career'), url: l('/iletisim') },
       ],
     },
   ];
@@ -103,12 +100,23 @@ export function Header({
   menuItems,
   logoUrl,
   locale,
+  activeLocales,
+  companyProfile,
+  categories = [],
+  services = [],
+  news = [],
 }: {
   menuItems: Record<string, unknown>[];
   logoUrl: string;
   locale: string;
+  activeLocales?: { code: string; label: string }[];
+  companyProfile?: Record<string, string>;
+  categories?: Record<string, unknown>[];
+  services?: Record<string, unknown>[];
+  news?: Record<string, unknown>[];
 }) {
   const t = useTranslations('nav');
+  const fT = useTranslations('footer');
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const expandedRef = useRef<HTMLDivElement>(null);
@@ -148,7 +156,8 @@ export function Header({
     return () => window.removeEventListener('scroll', onScroll);
   }, [onScroll, compactOnly]);
 
-  const megaColumns = getMegaColumns(locale, isEn);
+  const companyName = companyProfile?.company_name || 'Vista İnşaat';
+  const megaColumns = getMegaColumns(locale, companyName, t, categories, services, news);
 
   return (
     <div>
@@ -167,13 +176,13 @@ export function Header({
             <div className="flex items-center gap-3" style={{ paddingTop: 4 }}>
               <ThemeToggle />
               <span style={{ width: 1, height: 16, background: 'var(--color-border)' }} aria-hidden="true" />
-              <LanguageSwitcher locale={locale} />
+              <LanguageSwitcher locale={locale} activeLocales={activeLocales} />
             </div>
 
             <Link href={localizedPath(locale, '/')} className="flex flex-col items-center" style={{ gap: 8 }}>
               <Image
                 src="/logo-dark.svg"
-                alt="Vista İnşaat"
+                alt={companyName}
                 width={80}
                 height={80}
                 style={{ height: 80, width: 'auto' }}
@@ -228,17 +237,17 @@ export function Header({
           <style>{`@media(min-width:1024px){.hdr-mobile-row{display:none !important}}`}</style>
           <div className="hdr-mobile-row flex h-14 items-center justify-between px-4">
             <Link href={localizedPath(locale, '/')} className="flex items-center gap-2">
-              <Image src="/logo-dark.svg" alt="Vista İnşaat" width={32} height={32}
+              <Image src="/logo-dark.svg" alt={companyName} width={32} height={32}
                 style={{ height: 32, width: 'auto' }} priority />
               <span style={{
                 fontFamily: 'var(--font-heading)', color: 'var(--color-text-primary)',
                 fontSize: 14, fontWeight: 700, letterSpacing: '0.1em',
                 textTransform: 'uppercase' as const, whiteSpace: 'nowrap' as const,
-              }}>Vista İnşaat</span>
+              }}>{companyName}</span>
             </Link>
             <div className="flex items-center gap-2">
               <ThemeToggle />
-              <LanguageSwitcher locale={locale} />
+              <LanguageSwitcher locale={locale} activeLocales={activeLocales} />
               <button type="button" className="rounded-md p-2" onClick={() => setMenuOpen(!menuOpen)} aria-label="Menü">
                 {menuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
               </button>
@@ -281,7 +290,7 @@ export function Header({
           <div className="mx-auto" style={{ maxWidth: 640 }}>
             <div className="flex items-center gap-3" style={{ border: '1px solid var(--color-border)', background: 'var(--color-bg-secondary)', borderRadius: 2, padding: '10px 16px' }}>
               <Search style={{ width: 18, height: 18, flexShrink: 0, color: 'var(--color-text-muted)' }} />
-              <input type="search" placeholder={isEn ? 'Search Vista Construction' : "Vista İnşaat'ta Ara"}
+              <input type="search" placeholder={isEn ? `Search ${companyName}` : `${companyName}'ta Ara`}
                 className="w-full bg-transparent outline-none" style={{ color: 'var(--color-text-primary)', fontSize: 14 }} />
             </div>
           </div>
@@ -307,12 +316,12 @@ export function Header({
           style={{ display: 'none', gridTemplateColumns: 'auto auto 1fr auto', gap: 16 }}
         >
           <Link href={localizedPath(locale, '/')} className="flex items-center gap-2">
-            <Image src="/logo-dark.svg" alt="Vista İnşaat" width={26} height={26} style={{ height: 26, width: 'auto' }} />
+            <Image src="/logo-dark.svg" alt={companyName} width={26} height={26} style={{ height: 26, width: 'auto' }} />
             <span style={{
               fontFamily: 'var(--font-heading)', color: 'var(--color-text-primary)',
               fontSize: 12, fontWeight: 700, letterSpacing: '0.1em',
               textTransform: 'uppercase' as const, whiteSpace: 'nowrap' as const,
-            }}>Vista İnşaat</span>
+            }}>{companyName}</span>
           </Link>
 
           <div className="flex items-center gap-2" style={{ border: '1px solid var(--color-border)', background: 'var(--color-bg-secondary)', borderRadius: 2, padding: '6px 12px', minWidth: 200, maxWidth: 320 }}>
@@ -348,16 +357,16 @@ export function Header({
         <style>{`@media(min-width:1024px){.hdr-compact-mobile{display:none !important}}`}</style>
         <div className="hdr-compact-mobile flex h-12 items-center justify-between px-4">
           <Link href={localizedPath(locale, '/')} className="flex items-center gap-2">
-            <Image src="/logo-dark.svg" alt="Vista İnşaat" width={24} height={24} style={{ height: 24, width: 'auto' }} />
+            <Image src="/logo-dark.svg" alt={companyName} width={24} height={24} style={{ height: 24, width: 'auto' }} />
             <span style={{
               fontFamily: 'var(--font-heading)', color: 'var(--color-text-primary)',
               fontSize: 12, fontWeight: 700, letterSpacing: '0.1em',
               textTransform: 'uppercase' as const, whiteSpace: 'nowrap' as const,
-            }}>Vista İnşaat</span>
+            }}>{companyName}</span>
           </Link>
           <div className="flex items-center gap-2">
             <ThemeToggle />
-            <LanguageSwitcher locale={locale} />
+            <LanguageSwitcher locale={locale} activeLocales={activeLocales} />
             <button type="button" className="rounded-md p-1.5" onClick={() => setMenuOpen(!menuOpen)} aria-label="Menü">
               {menuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
             </button>
@@ -388,7 +397,7 @@ export function Header({
             <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3">
               <div className="flex items-center gap-5">
                 <ThemeToggle />
-                <LanguageSwitcher locale={locale} />
+                <LanguageSwitcher locale={locale} activeLocales={activeLocales} />
               </div>
               <div className="flex items-center gap-4">
                 <Link
@@ -472,25 +481,25 @@ export function Header({
               <div className="flex flex-wrap items-center gap-5">
                 <Link href={localizedPath(locale, '/hakkimizda')} onClick={() => setMenuOpen(false)}
                   style={{ fontSize: 13, color: 'var(--color-text-secondary)', textDecoration: 'underline' }}>
-                  {isEn ? 'About' : 'Hakkımızda'}
+                  {t('about')}
                 </Link>
                 <Link href={localizedPath(locale, '/iletisim')} onClick={() => setMenuOpen(false)}
                   style={{ fontSize: 13, color: 'var(--color-text-secondary)', textDecoration: 'underline' }}>
-                  {isEn ? 'Contact' : 'İletişim'}
+                  {t('contact')}
                 </Link>
                 <Link href={localizedPath(locale, '/legal/privacy')} onClick={() => setMenuOpen(false)}
                   style={{ fontSize: 13, color: 'var(--color-text-secondary)', textDecoration: 'underline' }}>
-                  {isEn ? 'Privacy Policy' : 'Gizlilik Politikası'}
+                  {fT('privacy')}
                 </Link>
                 <Link href={localizedPath(locale, '/legal/terms')} onClick={() => setMenuOpen(false)}
                   style={{ fontSize: 13, color: 'var(--color-text-secondary)', textDecoration: 'underline' }}>
-                  {isEn ? 'Terms of Use' : 'Kullanım Koşulları'}
+                  {fT('terms')}
                 </Link>
               </div>
               <div className="flex items-center gap-3">
-                <Image src="/logo-dark.svg" alt="Vista İnşaat" width={20} height={20} style={{ height: 20, width: 'auto', opacity: 0.5 }} />
+                <Image src="/logo-dark.svg" alt={companyName} width={20} height={20} style={{ height: 20, width: 'auto', opacity: 0.5 }} />
                 <span style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>
-                  © {new Date().getFullYear()} Vista İnşaat. {isEn ? 'All rights reserved.' : 'Tüm hakları saklıdır.'}
+                  © {new Date().getFullYear()} {companyName}. {fT('rights')}
                 </span>
               </div>
             </div>

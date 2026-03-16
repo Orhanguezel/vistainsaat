@@ -9,6 +9,7 @@ import { OptimizedImage } from '@/components/ui/OptimizedImage';
 import { buildMediaAlt } from '@/lib/media-seo';
 import { SeoIssueBeacon } from '@/components/monitoring/SeoIssueBeacon';
 import { getFallbackGalleries } from '@/lib/content-fallbacks';
+import { fetchSetting } from '@/i18n/server';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs';
 
 const GALLERY_PLACEHOLDER_SRC = '/media/gallery-placeholder.svg';
@@ -27,20 +28,24 @@ async function fetchGalleries(locale: string) {
   }
 }
 
+import { fetchSeoPage } from '@/seo/server';
+
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: 'gallery' });
+  const seo = await fetchSeoPage(locale, 'galeri');
+  const t = await getTranslations({ locale });
+
   return buildPageMetadata({
     locale,
     pathname: '/galeri',
-    title: locale.startsWith('en')
-      ? `${t('title')} - Construction Project Gallery`
-      : `${t('title')} - İnşaat Proje Görselleri ve Galeri`,
-    description: t('description'),
+    title: seo?.title || `${t('gallery.title')} - ${t('seo.defaultTitle')}`,
+    description: seo?.description || t('gallery.description'),
+    ogImage: seo?.og_image || undefined,
+    noIndex: seo?.no_index,
   });
 }
 
@@ -52,7 +57,14 @@ export default async function GalleryPage({
   const { locale } = await params;
   const t = await getTranslations({ locale });
   const isEn = locale.startsWith('en');
-  const galleries = await fetchGalleries(locale);
+  const [galleries, profile] = await Promise.all([
+    fetchGalleries(locale),
+    fetchSetting('company_profile', locale),
+  ]);
+
+  const companyProfile = (profile?.value as any) ?? {};
+  const companyName = companyProfile.company_name || 'Vista İnşaat';
+
   const visibleGalleries = galleries.length > 0 ? galleries : getFallbackGalleries(locale);
   const featured = visibleGalleries[0];
   const rest = visibleGalleries.slice(1);
@@ -106,7 +118,7 @@ export default async function GalleryPage({
 
         {/* Breadcrumb */}
         <Breadcrumbs items={[
-          { label: 'Vista İnşaat', href: localizedPath(locale, '/') },
+          { label: companyName, href: localizedPath(locale, '/') },
           { label: t('gallery.title') },
         ]} />
 
@@ -123,9 +135,7 @@ export default async function GalleryPage({
               reason="gallery-list-empty"
             />
             <p style={{ fontSize: 13, color: 'var(--color-text-muted)', marginBottom: 16 }}>
-              {isEn
-                ? 'Sample gallery topics are shown below until live project visuals become available.'
-                : 'Canlı proje görselleri gelene kadar aşağıda örnek galeri başlıkları gösterilmektedir.'}
+              {t('gallery.emptyStateNote')}
             </p>
           </>
         )}
@@ -163,7 +173,7 @@ export default async function GalleryPage({
                 <div className="gl-featured-meta">
                   {featured.description && <span>{featured.description}</span>}
                   {featured.image_count > 0 && (
-                    <span>{featured.image_count} {isEn ? 'photos' : 'fotoğraf'}</span>
+                    <span>{featured.image_count} {t('gallery.photos')}</span>
                   )}
                 </div>
               </div>
@@ -210,8 +220,8 @@ export default async function GalleryPage({
                   <h3 className="gl-card-title">{g.title}</h3>
                   <p className="gl-card-count">
                     {g.image_count > 0
-                      ? `${g.image_count} ${isEn ? 'photos' : 'fotoğraf'}`
-                      : (isEn ? 'Gallery' : 'Galeri')}
+                      ? `${g.image_count} ${t('gallery.photos')}`
+                      : t('gallery.title')}
                   </p>
                 </div>
               </Link>

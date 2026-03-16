@@ -6,6 +6,11 @@ type SettingRow = { value: JsonLike } | null;
 
 export async function fetchActiveLocales(): Promise<string[]> {
   const { activeLocales } = await getLocaleSettings();
+  return activeLocales.map(l => l.code);
+}
+
+export async function fetchActiveLocaleConfigs(): Promise<{ code: string; label: string }[]> {
+  const { activeLocales } = await getLocaleSettings();
   return activeLocales;
 }
 
@@ -22,7 +27,7 @@ export async function fetchSetting(
   try {
     const url = `${API_BASE_URL}/site_settings/${encodeURIComponent(key)}?locale=${encodeURIComponent(locale)}&prefix=vistainsaat__`;
     const res = await fetch(url, {
-      next: { revalidate: options?.revalidate ?? 3600 },
+      next: { revalidate: options?.revalidate ?? 60 },
     });
     if (!res.ok) return null;
     const data = await res.json();
@@ -66,6 +71,48 @@ export async function fetchFooterSections(locale: string): Promise<Record<string
   try {
     const res = await fetch(
       `${API_BASE_URL}/footer-sections?locale=${encodeURIComponent(locale)}&is_active=1&site_id=vistainsaat`,
+      { next: { revalidate: 300 } },
+    );
+    if (!res.ok) return [];
+    const data = await res.json();
+    return Array.isArray(data) ? data : (data as any)?.items ?? [];
+  } catch {
+    return [];
+  }
+}
+
+export async function fetchCategories(locale: string, moduleKey: string = 'vistainsaat'): Promise<Record<string, unknown>[]> {
+  try {
+    const res = await fetch(
+      `${API_BASE_URL}/categories?locale=${encodeURIComponent(locale)}&module_key=${encodeURIComponent(moduleKey)}&is_active=1`,
+      { next: { revalidate: 300 } },
+    );
+    if (!res.ok) return [];
+    const data = await res.json();
+    return Array.isArray(data) ? data : (data as any)?.items ?? [];
+  } catch {
+    return [];
+  }
+}
+
+export async function fetchServices(locale: string): Promise<Record<string, unknown>[]> {
+  try {
+    const res = await fetch(
+      `${API_BASE_URL}/services?locale=${encodeURIComponent(locale)}&module_key=vistainsaat&is_active=1`,
+      { next: { revalidate: 300 } },
+    );
+    if (!res.ok) return [];
+    const data = await res.json();
+    return Array.isArray(data) ? data : (data as any)?.items ?? [];
+  } catch {
+    return [];
+  }
+}
+
+export async function fetchNews(locale: string, limit: number = 5): Promise<Record<string, unknown>[]> {
+  try {
+    const res = await fetch(
+      `${API_BASE_URL}/custom_pages?module_key=news&locale=${encodeURIComponent(locale)}&is_active=1&limit=${limit}`,
       { next: { revalidate: 300 } },
     );
     if (!res.ok) return [];

@@ -4,6 +4,7 @@ import * as React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 import { ArrowLeft, Save, RefreshCcw } from 'lucide-react';
+import { useAIContentAssist, type LocaleContent } from '@/app/(main)/admin/_components/common/useAIContentAssist';
 
 import { useAdminLocales } from '@/app/(main)/admin/_components/common/useAdminLocales';
 import { resolveAdminApiLocale } from '@/i18n/adminLocale';
@@ -44,7 +45,7 @@ import {
 
 function isUuidLike(v?: string) {
   if (!v) return false;
-  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v);
+  return /^[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}$/i.test(v);
 }
 
 const normalizeLocale = (v: unknown): string =>
@@ -128,7 +129,7 @@ const emptyForm = (locale: string): FormValues => ({
 
 const dtoToForm = (dto: GalleryDto): FormValues => ({
   id: String((dto as any).id ?? ''),
-  locale: normalizeLocale((dto as any).locale_resolved ?? (dto as any).locale ?? 'de'),
+  locale: normalizeLocale((dto as any).locale_resolved ?? (dto as any).locale ?? 'tr'),
   is_active: isTruthyBoolLike((dto as any).is_active),
   is_featured: isTruthyBoolLike((dto as any).is_featured),
   display_order: String((dto as any).display_order ?? 0),
@@ -162,7 +163,7 @@ export default function AdminGalleryDetailClient({ id }: { id: string }) {
   } = useAdminLocales();
 
   const apiLocaleFromDb = React.useMemo(() => {
-    return resolveAdminApiLocale(localeOptions as any, defaultLocaleFromDb, 'de');
+    return resolveAdminApiLocale(localeOptions as any, defaultLocaleFromDb, 'tr');
   }, [localeOptions, defaultLocaleFromDb]);
 
   const localeSet = React.useMemo(() => {
@@ -184,7 +185,7 @@ export default function AdminGalleryDetailClient({ id }: { id: string }) {
     setActiveLocale((prev) => {
       const p = localeShortClient(prev);
       const u = localeShortClient(urlLocale);
-      const def = localeShortClientOr(apiLocaleFromDb, 'de');
+      const def = localeShortClientOr(apiLocaleFromDb, 'tr');
 
       const canUse = (l: string) => !!l && (localeSet.size === 0 || localeSet.has(l));
 
@@ -200,7 +201,7 @@ export default function AdminGalleryDetailClient({ id }: { id: string }) {
   const queryLocale = React.useMemo(() => {
     const l = localeShortClient(activeLocale);
     if (l && (localeSet.size === 0 || localeSet.has(l))) return l;
-    return localeShortClientOr(apiLocaleFromDb, 'de');
+    return localeShortClientOr(apiLocaleFromDb, 'tr');
   }, [activeLocale, localeSet, apiLocaleFromDb]);
 
   React.useEffect(() => {
@@ -265,7 +266,7 @@ export default function AdminGalleryDetailClient({ id }: { id: string }) {
   const handleLocaleChange = (nextLocaleRaw: string) => {
     const next = normalizeLocale(nextLocaleRaw);
     const list = (localeOptions ?? []).map((x: any) => localeShortClient(x.value));
-    const resolved = next && list.includes(next) ? next : localeShortClientOr(queryLocale, 'de');
+    const resolved = next && list.includes(next) ? next : localeShortClientOr(queryLocale, 'tr');
 
     if (!resolved) {
       toast.error(t('admin.gallery.form.localeRequired'));
@@ -279,6 +280,57 @@ export default function AdminGalleryDetailClient({ id }: { id: string }) {
   function onCancel() {
     router.push(`/admin/gallery?locale=${encodeURIComponent(queryLocale || 'tr')}`);
   }
+
+  // ── AI Content Assist ──
+  const { assist: aiAssist, loading: aiLoading } = useAIContentAssist();
+  const [aiResults, setAiResults] = React.useState<LocaleContent[] | null>(null);
+
+  const handleAIAssist = async () => {
+    const targetLocales = (localeOptions ?? []).map((l: any) => String(l.value)).filter(Boolean);
+    if (!targetLocales.length) targetLocales.push(queryLocale || 'tr');
+
+    const result = await aiAssist({
+      title: values.title,
+      summary: values.description,
+      locale: queryLocale || 'tr',
+      target_locales: targetLocales,
+      module_key: 'gallery',
+      action: 'full',
+    });
+
+    if (!result) return;
+    setAiResults(result);
+
+    const current = result.find((r) => r.locale === queryLocale) || result[0];
+    if (current) {
+      setValues((prev) => ({
+        ...prev,
+        title: current.title || prev.title,
+        slug: current.slug || prev.slug,
+        description: current.summary || prev.description,
+        meta_title: current.meta_title || prev.meta_title,
+        meta_description: current.meta_description || prev.meta_description,
+        cover_image_alt: current.title || prev.cover_image_alt,
+      }));
+    }
+  };
+
+  const applyAILocale = (locale: string) => {
+    if (!aiResults) return;
+    const match = aiResults.find((r) => r.locale === locale);
+    if (!match) return;
+    setValues((prev) => ({
+      ...prev,
+      locale,
+      title: match.title || '',
+      slug: match.slug || prev.slug,
+      description: match.summary || '',
+      meta_title: match.meta_title || '',
+      meta_description: match.meta_description || '',
+      cover_image_alt: match.title || '',
+    }));
+    setActiveLocale(locale);
+  };
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -433,345 +485,229 @@ export default function AdminGalleryDetailClient({ id }: { id: string }) {
     : (gallery as any)?.title || t('admin.gallery.formHeader.editTitle');
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        <div className="space-y-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <Button variant="outline" onClick={() => router.back()} disabled={busy}>
-              <ArrowLeft className="mr-2 size-4" />
-              {t('admin.gallery.formHeader.backButton')}
-            </Button>
-            <h1 className="text-lg font-semibold">{pageTitle}</h1>
-          </div>
-          <p className="text-sm text-muted-foreground">
-            {t('admin.gallery.formHeader.description')}
-          </p>
-          <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-            <span>{t('admin.gallery.formHeader.activeLocale')}</span>
-            <Badge variant="secondary">{queryLocale || '-'}</Badge>
-            {isCreateMode ? <Badge>CREATE</Badge> : <Badge variant="secondary">EDIT</Badge>}
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Button variant="outline" onClick={onCancel} disabled={busy}>
-            {t('admin.gallery.formHeader.cancelButton')}
+    <div className="space-y-4">
+      {/* Header */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3">
+          <Button variant="ghost" size="icon" onClick={() => router.back()} disabled={busy}>
+            <ArrowLeft className="h-4 w-4" />
           </Button>
-          <Button form="gallery-form" type="submit" disabled={busy}>
-            <Save className="mr-2 size-4" />
-            {t('admin.gallery.formHeader.saveButton')}
+          <h1 className="text-lg font-semibold truncate">{pageTitle}</h1>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="border-purple-300 bg-purple-50 text-purple-700 hover:bg-purple-100"
+            disabled={busy || aiLoading}
+            onClick={handleAIAssist}
+          >
+            {aiLoading ? '⏳ AI...' : '✨ AI'}
+          </Button>
+          <Select
+            value={normalizeLocale(values.locale) || ''}
+            onValueChange={handleLocaleChange}
+            disabled={localeDisabled}
+          >
+            <SelectTrigger className="w-32">
+              <SelectValue placeholder="Dil" />
+            </SelectTrigger>
+            <SelectContent>
+              {(localeOptions ?? []).map((opt: any) => (
+                <SelectItem key={opt.value} value={String(opt.value)}>
+                  {String(opt.label ?? opt.value)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Button form="gallery-form" type="submit" size="sm" disabled={busy}>
+            <Save className="mr-2 h-3.5 w-3.5" />
+            Kaydet
           </Button>
         </div>
       </div>
 
       <form id="gallery-form" onSubmit={onSubmit} className="space-y-4">
-        <Card>
-          <CardHeader className="gap-2">
-            <CardTitle className="text-base">
-              {isCreateMode
-                ? t('admin.gallery.form.createTitle')
-                : t('admin.gallery.form.editTitle')}
-            </CardTitle>
-            <CardDescription>{t('admin.gallery.form.description')}</CardDescription>
-          </CardHeader>
+        <Tabs defaultValue="content">
+          <TabsList>
+            <TabsTrigger value="content">İçerik</TabsTrigger>
+            {!isCreateMode && <TabsTrigger value="images">Görseller</TabsTrigger>}
+            <TabsTrigger value="seo">SEO</TabsTrigger>
+            <TabsTrigger value="json">JSON</TabsTrigger>
+          </TabsList>
 
-          <CardContent className="space-y-4">
-            <Tabs defaultValue="form">
-              <TabsList>
-                <TabsTrigger value="form">{t('admin.gallery.form.formTab')}</TabsTrigger>
-                <TabsTrigger value="json">{t('admin.gallery.form.jsonTab')}</TabsTrigger>
-                {!isCreateMode && (
-                  <TabsTrigger value="images">{t('admin.gallery.form.imagesTab')}</TabsTrigger>
-                )}
-              </TabsList>
-
-              <TabsContent value="json" className="mt-4">
-                <AdminJsonEditor
-                  value={values}
-                  disabled={disabled}
-                  onChange={(next) => setValues(next as FormValues)}
-                  label={t('admin.gallery.form.jsonLabel')}
-                  helperText={t('admin.gallery.form.jsonHelperText')}
-                />
-              </TabsContent>
-
-              <TabsContent value="form" className="mt-4">
-                <div className="grid gap-6 lg:grid-cols-12">
-                  {/* LEFT */}
-                  <div className="space-y-4 lg:col-span-8">
-                    {/* Locale + flags */}
-                    <div className="grid gap-4 md:grid-cols-3">
-                      <div className="space-y-2">
-                        <Label>{t('admin.gallery.form.localeLabel')}</Label>
-                        <Select
-                          value={normalizeLocale(values.locale) || ''}
-                          onValueChange={handleLocaleChange}
-                          disabled={localeDisabled}
-                        >
-                          <SelectTrigger>
-                            <SelectValue
-                              placeholder={t('admin.gallery.form.localePlaceholder')}
-                            />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {(localeOptions ?? []).map((opt: any) => (
-                              <SelectItem
-                                key={`${opt.value}:${opt.label}`}
-                                value={String(opt.value)}
-                              >
-                                {String(opt.label ?? opt.value)}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div className="flex items-end gap-4 md:col-span-2">
-                        <div className="flex items-center gap-2">
-                          <Checkbox
-                            id="gal_is_active"
-                            checked={!!values.is_active}
-                            onCheckedChange={(v) =>
-                              setValues((prev) => ({ ...prev, is_active: v === true }))
-                            }
-                            disabled={disabled}
-                          />
-                          <Label htmlFor="gal_is_active">
-                            {t('admin.gallery.form.activeLabel')}
-                          </Label>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                          <Checkbox
-                            id="gal_is_featured"
-                            checked={!!values.is_featured}
-                            onCheckedChange={(v) =>
-                              setValues((prev) => ({ ...prev, is_featured: v === true }))
-                            }
-                            disabled={disabled}
-                          />
-                          <Label htmlFor="gal_is_featured">
-                            {t('admin.gallery.form.featuredLabel')}
-                          </Label>
-                        </div>
-                      </div>
-                    </div>
-
-                    <Separator />
-
-                    {/* title + slug */}
-                    <div className="grid gap-4 md:grid-cols-2">
-                      <div className="space-y-2">
-                        <Label>{t('admin.gallery.form.titleLabel')}</Label>
-                        <Input
-                          value={values.title}
-                          onChange={(e) => {
-                            const titleVal = e.target.value;
-                            setValues((prev) => {
-                              const next = { ...prev, title: titleVal };
-                              if (!slugTouched) next.slug = slugify(titleVal);
-                              return next;
-                            });
-                          }}
-                          disabled={disabled}
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label>{t('admin.gallery.form.slugLabel')}</Label>
-                        <Input
-                          value={values.slug}
-                          onFocus={() => setSlugTouched(true)}
-                          onChange={(e) => {
-                            setSlugTouched(true);
-                            setValues((prev) => ({ ...prev, slug: e.target.value }));
-                          }}
-                          disabled={disabled}
-                        />
-                      </div>
-                    </div>
-
-                    {/* module_key + source */}
-                    <div className="grid gap-4 md:grid-cols-3">
-                      <div className="space-y-2">
-                        <Label>{t('admin.gallery.form.moduleKeyLabel')}</Label>
-                        <Input
-                          value={values.module_key}
-                          onChange={(e) =>
-                            setValues((prev) => ({ ...prev, module_key: e.target.value }))
-                          }
-                          disabled={disabled}
-                          placeholder="vistainsaat"
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label>{t('admin.gallery.form.sourceTypeLabel')}</Label>
-                        <Input
-                          value={values.source_type}
-                          onChange={(e) =>
-                            setValues((prev) => ({ ...prev, source_type: e.target.value }))
-                          }
-                          disabled={disabled}
-                          placeholder="product, category..."
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label>{t('admin.gallery.form.sourceIdLabel')}</Label>
-                        <Input
-                          value={values.source_id}
-                          onChange={(e) =>
-                            setValues((prev) => ({ ...prev, source_id: e.target.value }))
-                          }
-                          disabled={disabled}
-                        />
-                      </div>
-                    </div>
-
-                    {/* description */}
-                    <div className="space-y-2">
-                      <Label>{t('admin.gallery.form.descriptionLabel')}</Label>
-                      <Textarea
-                        rows={3}
-                        value={values.description}
-                        onChange={(e) =>
-                          setValues((prev) => ({ ...prev, description: e.target.value }))
-                        }
-                        disabled={disabled}
-                      />
-                    </div>
-
-                    {/* SEO */}
-                    <Separator />
-                    <div className="grid gap-4 md:grid-cols-2">
-                      <div className="space-y-2">
-                        <Label>{t('admin.gallery.form.metaTitleLabel')}</Label>
-                        <Input
-                          value={values.meta_title}
-                          onChange={(e) =>
-                            setValues((p) => ({ ...p, meta_title: e.target.value }))
-                          }
-                          disabled={disabled}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>{t('admin.gallery.form.imageAltLabel')}</Label>
-                        <Input
-                          value={values.cover_image_alt}
-                          onChange={(e) =>
-                            setValues((p) => ({ ...p, cover_image_alt: e.target.value }))
-                          }
-                          disabled={disabled}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label>{t('admin.gallery.form.metaDescriptionLabel')}</Label>
-                      <Textarea
-                        rows={2}
-                        value={values.meta_description}
-                        onChange={(e) =>
-                          setValues((p) => ({ ...p, meta_description: e.target.value }))
-                        }
-                        disabled={disabled}
-                      />
-                    </div>
+          {/* İçerik Tab */}
+          <TabsContent value="content" className="mt-3">
+            <Card>
+              <CardContent className="pt-6 space-y-4">
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <Checkbox
+                      id="gal_active"
+                      checked={!!values.is_active}
+                      onCheckedChange={(v) => setValues((p) => ({ ...p, is_active: v === true }))}
+                      disabled={disabled}
+                    />
+                    <Label htmlFor="gal_active" className="text-xs">Aktif</Label>
                   </div>
+                  <div className="flex items-center gap-2">
+                    <Checkbox
+                      id="gal_featured"
+                      checked={!!values.is_featured}
+                      onCheckedChange={(v) => setValues((p) => ({ ...p, is_featured: v === true }))}
+                      disabled={disabled}
+                    />
+                    <Label htmlFor="gal_featured" className="text-xs">Öne Çıkan</Label>
+                  </div>
+                </div>
 
-                  {/* RIGHT */}
-                  <div className="space-y-4 lg:col-span-4">
-                    <div className="space-y-2">
-                      <Label>{t('admin.gallery.form.displayOrderLabel')}</Label>
-                      <Input
-                        type="number"
-                        min={0}
-                        value={values.display_order}
-                        onChange={(e) =>
-                          setValues((p) => ({ ...p, display_order: e.target.value }))
-                        }
-                        disabled={disabled}
-                      />
-                    </div>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="space-y-1.5">
+                    <Label className="text-xs text-muted-foreground">Başlık *</Label>
+                    <Input
+                      value={values.title}
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        setValues((p) => ({ ...p, title: v, ...(slugTouched ? {} : { slug: slugify(v) }) }));
+                      }}
+                      disabled={disabled}
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs text-muted-foreground">Slug</Label>
+                    <Input
+                      value={values.slug}
+                      onFocus={() => setSlugTouched(true)}
+                      onChange={(e) => { setSlugTouched(true); setValues((p) => ({ ...p, slug: e.target.value })); }}
+                      disabled={disabled}
+                    />
+                  </div>
+                </div>
 
+                <div className="space-y-1.5">
+                  <Label className="text-xs text-muted-foreground">Açıklama</Label>
+                  <Textarea
+                    rows={3}
+                    value={values.description}
+                    onChange={(e) => setValues((p) => ({ ...p, description: e.target.value }))}
+                    disabled={disabled}
+                  />
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-3">
+                  <div className="space-y-1.5">
+                    <Label className="text-xs text-muted-foreground">Modül</Label>
+                    <Input value={values.module_key} onChange={(e) => setValues((p) => ({ ...p, module_key: e.target.value }))} disabled={disabled} placeholder="vistainsaat" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs text-muted-foreground">Sıra</Label>
+                    <Input type="number" min={0} value={values.display_order} onChange={(e) => setValues((p) => ({ ...p, display_order: e.target.value }))} disabled={disabled} />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs text-muted-foreground">Kapak Görseli</Label>
                     <AdminImageUploadField
-                      label={t('admin.gallery.formImage.coverLabel')}
-                      helperText={t('admin.gallery.formImage.coverHelperText')}
+                      label=""
                       bucket="public"
                       folder="gallery"
                       metadata={imageMetadata}
                       value={norm(values.cover_image)}
-                      onChange={(url) =>
-                        setValues((prev) => ({ ...prev, cover_image: norm(url) }))
-                      }
+                      onChange={(url) => setValues((p) => ({ ...p, cover_image: norm(url) }))}
                       disabled={disabled}
                       openLibraryHref="/admin/storage"
-                      onOpenLibraryClick={() => router.push('/admin/storage')}
+                      previewAspect="16x9"
+                      previewObjectFit="cover"
                     />
-
-                    <Separator />
-
-                    <div className="space-y-3">
-                      <div className="text-sm font-medium">
-                        {t('admin.gallery.form.multiLocaleTitle')}
-                      </div>
-
-                      <div className="flex items-start gap-2">
-                        <Checkbox
-                          id="gal_replicate_all"
-                          checked={!!values.replicate_all_locales}
-                          onCheckedChange={(v) =>
-                            setValues((p) => ({ ...p, replicate_all_locales: v === true }))
-                          }
-                          disabled={disabled}
-                        />
-                        <div className="space-y-1">
-                          <Label htmlFor="gal_replicate_all" className="leading-none">
-                            {t('admin.gallery.form.replicateAllLocales')}
-                          </Label>
-                          <p className="text-xs text-muted-foreground">
-                            <code>replicate_all_locales</code>
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-start gap-2">
-                        <Checkbox
-                          id="gal_apply_all"
-                          checked={!!values.apply_all_locales}
-                          onCheckedChange={(v) =>
-                            setValues((p) => ({ ...p, apply_all_locales: v === true }))
-                          }
-                          disabled={disabled}
-                        />
-                        <div className="space-y-1">
-                          <Label htmlFor="gal_apply_all" className="leading-none">
-                            {t('admin.gallery.form.applyAllLocales')}
-                          </Label>
-                          <p className="text-xs text-muted-foreground">
-                            <code>apply_all_locales</code>
-                          </p>
-                        </div>
-                      </div>
-                    </div>
                   </div>
                 </div>
-              </TabsContent>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-              {!isCreateMode && (
-                <TabsContent value="images" className="mt-4">
-                  <GalleryImagesTab
-                    galleryId={String((gallery as any)?.id ?? id)}
-                    locale={queryLocale || 'tr'}
-                    disabled={disabled}
-                  />
-                </TabsContent>
-              )}
-            </Tabs>
+          {/* Görseller Tab */}
+          {!isCreateMode && (
+            <TabsContent value="images" className="mt-3">
+              <GalleryImagesTab
+                galleryId={String((gallery as any)?.id ?? id)}
+                locale={queryLocale || 'tr'}
+                disabled={disabled}
+              />
+            </TabsContent>
+          )}
+
+          {/* SEO Tab */}
+          <TabsContent value="seo" className="mt-3">
+            <Card>
+              <CardContent className="pt-6 space-y-4">
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="space-y-1.5">
+                    <Label className="text-xs text-muted-foreground">Meta Başlık</Label>
+                    <Input value={values.meta_title} onChange={(e) => setValues((p) => ({ ...p, meta_title: e.target.value }))} disabled={disabled} />
+                    <p className="text-[10px] text-muted-foreground">{values.meta_title.length}/60</p>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs text-muted-foreground">Kapak Alt Metni</Label>
+                    <Input value={values.cover_image_alt} onChange={(e) => setValues((p) => ({ ...p, cover_image_alt: e.target.value }))} disabled={disabled} placeholder={values.slug ? `${values.slug}-1` : ''} />
+                  </div>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs text-muted-foreground">Meta Açıklama</Label>
+                  <Textarea rows={2} value={values.meta_description} onChange={(e) => setValues((p) => ({ ...p, meta_description: e.target.value }))} disabled={disabled} />
+                  <p className="text-[10px] text-muted-foreground">{values.meta_description.length}/155</p>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs text-muted-foreground">Google Önizleme</Label>
+                  <div className="rounded-md border bg-background p-3">
+                    <p className="text-xs text-muted-foreground">www.vistainsaat.com</p>
+                    <p className="text-sm font-medium text-[#1a0dab] truncate">{values.meta_title || values.title || 'Galeri'} | Vista İnşaat</p>
+                    <p className="text-xs text-muted-foreground line-clamp-2">{values.meta_description || values.description || ''}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* JSON Tab */}
+          <TabsContent value="json" className="mt-3">
+            <Card>
+              <CardContent className="pt-6">
+                <AdminJsonEditor
+                  value={values}
+                  disabled={disabled}
+                  onChange={(next) => setValues(next as FormValues)}
+                  height={500}
+                />
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </form>
+
+      {/* AI Sonuçları */}
+      {aiResults && aiResults.length > 1 && (
+        <Card className="border-purple-200 bg-purple-50/50">
+          <CardHeader className="pb-2">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm text-purple-700">✨ AI — Diğer Diller</CardTitle>
+              <Button variant="ghost" size="sm" className="h-6 text-[10px]" onClick={() => setAiResults(null)}>Kapat</Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+              {aiResults.filter((r) => r.locale !== queryLocale).map((r) => (
+                <div key={r.locale} className="rounded-md border bg-background p-2 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-xs font-bold uppercase">{r.locale}</span>
+                    <Button variant="outline" size="sm" className="h-5 px-2 text-[10px] text-purple-700" onClick={() => applyAILocale(r.locale)}>Bu dile geç</Button>
+                  </div>
+                  <p className="text-xs font-medium truncate">{r.title}</p>
+                  <p className="text-[10px] text-muted-foreground line-clamp-2">{r.summary}</p>
+                </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
-      </form>
+      )}
     </div>
   );
 }

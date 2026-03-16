@@ -14,6 +14,7 @@ import { cn } from '@/lib/utils';
 import { AccountSwitcher } from './_components/sidebar/account-switcher';
 import { AdminFooter } from './_components/sidebar/admin-footer';
 import { LayoutControls } from './_components/sidebar/layout-controls';
+import { NotificationBell } from './_components/sidebar/notification-bell';
 import { ThemeSwitcher } from './_components/sidebar/theme-switcher';
 
 import AdminAuthGate from './_components/admin-auth-gate';
@@ -65,6 +66,7 @@ export default function Layout({ children }: Readonly<{ children: ReactNode }>) 
                 </div>
 
                 <div className="flex items-center gap-2">
+                  <NotificationBell />
                   <LayoutControls />
                   <ThemeSwitcher />
                   {/* AccountSwitcher me bilgisini AdminAuthGate hydrate edecek; burada placeholder */}

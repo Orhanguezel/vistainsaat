@@ -90,7 +90,7 @@ export async function generateMetadata({
         ? `Explore ${project.title}: project scope, location, area and architectural details by Vista Construction.`
         : `${project.title} projesi hakkında teknik kapsam, konum, alan ve mimari detayları inceleyin.`),
     ogImage: project.image_url,
-    includeLocaleAlternates: false,
+    includeLocaleAlternates: true,
   });
 }
 

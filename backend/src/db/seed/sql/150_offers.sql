@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS `offers` (
   `offer_no`          VARCHAR(100)   NULL,
 
   `status`            VARCHAR(32)    NOT NULL DEFAULT 'new',
+  `source`            VARCHAR(64)    NOT NULL DEFAULT 'ensotek',
 
   `locale`            VARCHAR(10)    NULL,
   `country_code`      VARCHAR(80)    NULL,
@@ -69,6 +70,7 @@ CREATE TABLE IF NOT EXISTS `offers` (
   KEY `offers_offer_no_idx`       (`offer_no`),
   KEY `offers_locale_idx`         (`locale`),
   KEY `offers_country_idx`        (`country_code`),
+  KEY `offers_source_idx`         (`source`),
 
   CONSTRAINT `fk_offers_product`
     FOREIGN KEY (`product_id`) REFERENCES `products` (`id`)

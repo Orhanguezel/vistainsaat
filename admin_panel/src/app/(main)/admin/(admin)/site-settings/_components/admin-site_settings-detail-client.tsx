@@ -77,6 +77,25 @@ import {
   type BusinessHoursFormState,
 } from '../tabs/structured/business-hours-structured-form';
 
+import {
+  AppLocalesStructuredForm,
+  appLocalesObjToForm,
+  appLocalesFormToObj,
+  type LocaleItem,
+} from '../tabs/structured/app-locales-structured-form';
+
+import {
+  SeoPagesStructuredForm,
+  seoPagesObjToForm,
+  seoPagesFormToObj,
+} from '../tabs/structured/seo-pages-structured-form';
+
+import {
+  HeroStructuredForm,
+  heroObjToForm,
+  heroFormToObj,
+} from '../tabs/structured/hero-structured-form';
+
 /* ----------------------------- helpers (same behavior as /pages) ----------------------------- */
 
 const toShortLocale = (v: unknown): string =>
@@ -95,6 +114,9 @@ function isSeoKey(key: string) {
 }
 
 const GENERAL_KEYS = [
+  'app_locales',
+  'hero',
+  'seo_pages',
   'contact_info',
   'socials',
   'businessHours',
@@ -187,6 +209,63 @@ const SeoStructuredRenderer: React.FC<StructuredRenderProps> = (p) => (
     disabled={p.disabled}
   />
 );
+
+const HeroStructuredRenderer: React.FC<StructuredRenderProps> = ({
+  value,
+  setValue,
+  disabled,
+}) => {
+  const data = React.useMemo(() => {
+    const v = coerceSettingValue(value);
+    return heroObjToForm(v && typeof v === 'object' ? v : {});
+  }, [value]);
+
+  return (
+    <HeroStructuredForm
+      value={data}
+      onChange={(next) => setValue(heroFormToObj(next))}
+      disabled={!!disabled}
+    />
+  );
+};
+
+const SeoPagesStructuredRenderer: React.FC<StructuredRenderProps> = ({
+  value,
+  setValue,
+  disabled,
+}) => {
+  const data = React.useMemo(() => {
+    const v = coerceSettingValue(value);
+    return seoPagesObjToForm(v && typeof v === 'object' ? v : {});
+  }, [value]);
+
+  return (
+    <SeoPagesStructuredForm
+      value={data}
+      onChange={(next) => setValue(seoPagesFormToObj(next))}
+      disabled={!!disabled}
+    />
+  );
+};
+
+const AppLocalesStructuredRenderer: React.FC<StructuredRenderProps> = ({
+  value,
+  setValue,
+  disabled,
+}) => {
+  const items = React.useMemo(() => {
+    const v = coerceSettingValue(value);
+    return appLocalesObjToForm(Array.isArray(v) ? v : []);
+  }, [value]);
+
+  return (
+    <AppLocalesStructuredForm
+      value={items}
+      onChange={(next) => setValue(appLocalesFormToObj(next))}
+      disabled={!!disabled}
+    />
+  );
+};
 
 const ContactStructuredRenderer: React.FC<StructuredRenderProps> = ({
   value,
@@ -559,6 +638,9 @@ export default function SiteSettingsDetailClient({ id }: { id: string }) {
     }
 
     if (isGeneralKey(settingKey)) {
+      if (settingKey === 'app_locales') return AppLocalesStructuredRenderer;
+      if (settingKey === 'hero') return HeroStructuredRenderer;
+      if (settingKey === 'seo_pages') return SeoPagesStructuredRenderer;
       if (settingKey === 'contact_info') return ContactStructuredRenderer;
       if (settingKey === 'socials') return SocialsStructuredRenderer;
       if (settingKey === 'company_profile') return CompanyStructuredRenderer;
@@ -607,91 +689,70 @@ export default function SiteSettingsDetailClient({ id }: { id: string }) {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-start justify-between gap-3">
-        <div className="space-y-1">
-          <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-            <span>{t('admin.siteSettings.title')}</span>
-            <Badge variant={brand ? 'default' : 'secondary'}>
-              {brand ? `${brand.toUpperCase()} Scope` : 'Global Scope'}
-            </Badge>
-            {settingPrefix ? (
-              <Badge variant="outline">
-                Scope: <code className="ml-1">{settingPrefix}</code>
-              </Badge>
-            ) : null}
-          </div>
-          <h1 className="text-lg font-semibold">
-            {t('admin.siteSettings.detail.editTitle')}: <code>{settingKey}</code>
+    <div className="space-y-4">
+      {/* Header — responsive */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0 space-y-1">
+          <h1 className="text-lg font-semibold truncate">
+            {settingKey}
           </h1>
-          <p className="text-sm text-muted-foreground">
-            {brand
-              ? `${brand} site settings duzenleniyor. Bu ekrandaki degisiklikler yalnizca ${settingPrefix} namespace'ini etkiler.`
-              : 'Bu ekrandaki degisiklikler ortak global site settings kayitlarini etkiler.'}
-          </p>
         </div>
 
-        <div className="flex flex-wrap items-end gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Button asChild variant="outline" size="sm">
             <Link prefetch={false} href={backHref}>
               {t('admin.siteSettings.detail.backToList')}
             </Link>
           </Button>
 
-          <div className="space-y-2">
-            <Label>{t('admin.siteSettings.detail.localeLabel')}</Label>
-            <Select
-              value={selectedLocale || ''}
-              onValueChange={(v) => setSelectedLocale(v === '*' ? '*' : toShortLocale(v))}
-              disabled={busy || !localeOptions.length}
-            >
-              <SelectTrigger className="w-60">
-                <SelectValue placeholder={t('admin.siteSettings.filters.selectLanguage')} />
-              </SelectTrigger>
-              <SelectContent>
-                {localeOptions.map((o) => (
-                  <SelectItem key={o.value} value={o.value}>
-                    {o.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          <Select
+            value={selectedLocale || ''}
+            onValueChange={(v) => setSelectedLocale(v === '*' ? '*' : toShortLocale(v))}
+            disabled={busy || !localeOptions.length}
+          >
+            <SelectTrigger className="w-32 sm:w-40">
+              <SelectValue placeholder="Dil seçin" />
+            </SelectTrigger>
+            <SelectContent>
+              {localeOptions.map((o) => (
+                <SelectItem key={o.value} value={o.value}>
+                  {o.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
           <Button
             type="button"
             variant="ghost"
-            size="sm"
+            size="icon"
             onClick={() => refetch()}
             disabled={busy}
-            title={t('admin.common.refresh')}
+            title="Yenile"
+            className="h-8 w-8"
           >
             <RefreshCcw className="size-4" />
           </Button>
 
-          {selectedLocale ? <Badge variant="secondary">{selectedLocale}</Badge> : null}
-          {busy ? <Badge variant="outline">{t('admin.siteSettings.messages.loading')}</Badge> : null}
+          {busy ? <Badge variant="outline">Yükleniyor</Badge> : null}
         </div>
       </div>
 
       {!selectedLocale ? (
         <div className="rounded-md border p-4 text-sm text-muted-foreground">
-          {t('admin.siteSettings.detail.loadingLocale')}
+          Dil yükleniyor...
         </div>
       ) : (
         <div className="space-y-3">
           {isFallback ? (
             <div className="rounded-md border bg-muted/30 p-3 text-sm text-muted-foreground">
-              {t('admin.siteSettings.detail.fallbackNotice', {
-                selectedLocale,
-                effectiveLocale,
-              })}
+              Bu dil için henüz özel kayıt yok. Mevcut veri başka bir dilden gösteriliyor. Kaydettiğinizde bu dile özel kayıt oluşur.
             </div>
           ) : null}
 
           {!row && !busy ? (
             <div className="rounded-md border p-3 text-sm text-muted-foreground">
-              {t('admin.siteSettings.detail.noRecordNotice', { key: settingKey, locale: selectedLocale })}
+              Henüz kayıt yok. Formu doldurup kaydedin.
             </div>
           ) : null}
 
@@ -723,9 +784,6 @@ export default function SiteSettingsDetailClient({ id }: { id: string }) {
         </div>
       )}
 
-      <div className="text-xs text-muted-foreground">
-        {t('admin.siteSettings.detail.note')}
-      </div>
     </div>
   );
 }

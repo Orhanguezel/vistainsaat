@@ -7,6 +7,7 @@ import { API_BASE_URL, absoluteAssetUrl } from '@/lib/utils';
 import { JsonLd, buildPageMetadata, jsonld, localizedPath, localizedUrl } from '@/seo';
 import { OptimizedImage } from '@/components/ui/OptimizedImage';
 import { buildMediaAlt } from '@/lib/media-seo';
+import { fetchSetting } from '@/i18n/server';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs';
 import { SeoIssueBeacon } from '@/components/monitoring/SeoIssueBeacon';
 
@@ -33,18 +34,24 @@ const FALLBACK_SERVICES = [
   { id: '6', title: 'İç Mimari ve Dekorasyon', description: 'Yaşam alanlarında estetik ve işlevsel iç mekan tasarımı.', slug: 'ic-mimari-dekorasyon' },
 ];
 
+import { fetchSeoPage } from '@/seo/server';
+
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: 'services' });
+  const seo = await fetchSeoPage(locale, 'hizmetler');
+  const t = await getTranslations({ locale });
+
   return buildPageMetadata({
     locale,
     pathname: '/hizmetler',
-    title: locale.startsWith('en') ? 'Our Activity Areas - Vista Construction' : `${t('title')} — Vista İnşaat`,
-    description: t('description'),
+    title: seo?.title || `${t('services.title')} - ${t('seo.defaultTitle')}`,
+    description: seo?.description || t('services.description'),
+    ogImage: seo?.og_image || undefined,
+    noIndex: seo?.no_index,
   });
 }
 
@@ -57,7 +64,14 @@ export default async function ServicesPage({
   const t = await getTranslations({ locale });
   const isEn = locale.startsWith('en');
 
-  const services = await fetchServices(locale);
+  const [services, profile] = await Promise.all([
+    fetchServices(locale),
+    fetchSetting('company_profile', locale),
+  ]);
+
+  const companyProfile = (profile?.value as any) ?? {};
+  const companyName = companyProfile.company_name || 'Vista İnşaat';
+
   const visibleServices = services.length > 0 ? services : FALLBACK_SERVICES;
   const featured = visibleServices[0];
   const rest = visibleServices.slice(1);
@@ -109,8 +123,8 @@ export default async function ServicesPage({
         />
 
         <Breadcrumbs items={[
-          { label: 'Vista İnşaat', href: localizedPath(locale, '/') },
-          { label: isEn ? 'Activities' : 'Faaliyetler' },
+          { label: companyName, href: localizedPath(locale, '/') },
+          { label: t('services.title') },
         ]} />
 
         <h1 className="sv-page-title">{t('services.title')}</h1>
@@ -124,9 +138,7 @@ export default async function ServicesPage({
               reason="services-list-empty"
             />
             <p style={{ fontSize: 13, color: 'var(--color-text-muted)', marginBottom: 16 }}>
-              {isEn
-                ? 'Sample service descriptions are shown below until live content becomes available.'
-                : 'Canlı içerik gelene kadar aşağıda örnek faaliyet açıklamaları gösterilmektedir.'}
+              {t('services.emptyStateNote')}
             </p>
           </>
         )}
@@ -173,7 +185,7 @@ export default async function ServicesPage({
                     <p className="sv-article-excerpt">{s.description}</p>
                   )}
                   <span className="sv-article-link">
-                    {isEn ? 'LEARN MORE' : 'DETAYLAR'}
+                    {t('services.learnMore')}
                     <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
                       <path d="M6 3l5 5-5 5" />
                     </svg>
@@ -198,7 +210,7 @@ export default async function ServicesPage({
           <aside>
             {/* All services list */}
             <div className="sv-sidebar-card">
-              <h3>{isEn ? 'All Activities' : 'Tüm Faaliyetler'}</h3>
+              <h3>{t('services.viewAll')}</h3>
               {visibleServices.map((s: any) => (
                 <Link
                   key={s.id ?? s.title}

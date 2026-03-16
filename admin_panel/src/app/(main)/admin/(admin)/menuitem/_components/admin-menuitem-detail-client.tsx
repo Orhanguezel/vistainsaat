@@ -78,7 +78,7 @@ export default function AdminMenuItemDetailClient({ id }: { id: string }) {
   );
 
   const apiLocale = React.useMemo(() => {
-    return resolveAdminApiLocale(localeOptions as any, defaultLocaleFromDb, 'de');
+    return resolveAdminApiLocale(localeOptions as any, defaultLocaleFromDb  , 'tr');
   }, [localeOptions, defaultLocaleFromDb]);
 
   // ✅ FIX: Extract items from response

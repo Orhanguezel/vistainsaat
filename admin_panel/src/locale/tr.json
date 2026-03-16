@@ -342,6 +342,7 @@
       "save": "Kaydet",
       "saving": "Kaydediliyor...",
       "cancel": "İptal",
+      "delete": "Sil",
       "deleteConfirm": "\"{item}\" silinsin mi?",
       "deleted": "\"{item}\" silindi.",
       "edit": "Düzenle",
@@ -392,7 +393,10 @@
       "total": "Toplam",
       "operationFailed": "İşlem başarısız. Lütfen tekrar deneyin.",
       "active": "Aktif",
-      "inactive": "Pasif"
+      "inactive": "Pasif",
+      "orderLabel": "Sıralama Yönü",
+      "orderAsc": "Eskiden Yeniye (A-Z)",
+      "orderDesc": "Yeniden Eskiye (Z-A)"
     },
     "slider": {
       "header": {
@@ -814,7 +818,8 @@
         "marketing": "Pazarlama",
         "communication": "İletişim & CRM",
         "system": "Sistem & Ayarlar",
-        "vista_insaat": "Vista İnşaat"
+        "vista_insaat": "Vista İnşaat",
+        "vista_content": "İçerik Yönetimi"
       }
     },
     "dashboard": {
@@ -1158,7 +1163,11 @@
         "sent": "Gönderildi",
         "accepted": "Kabul Edildi",
         "rejected": "Reddedildi",
-        "cancelled": "İptal"
+        "cancelled": "İptal",
+        "site_survey": "Keşif Bekleniyor",
+        "contract_signed": "Sözleşme İmzalandı",
+        "construction_started": "İnşaat Başladı",
+        "construction_completed": "İnşaat Tamamlandı"
       },
       "detail": {
         "createTitle": "Yeni Teklif Oluştur",
@@ -1233,7 +1242,13 @@
         "existingTower": "Mevcut Kule Bilgisi",
         "referralSource": "Bizi Nereden Tanıyor",
         "notes": "Ek Notlar (form_data)",
-        "productNameLegacy": "Ürün Adı (legacy)"
+        "productNameLegacy": "Ürün Adı (legacy)",
+        "projectType": "Proje Tipi",
+        "estimatedArea": "Tahmini Alan (m²)",
+        "preferredDeadline": "Teslim Tarihi",
+        "constructionType": "İnşaat Tipi",
+        "constructionStartDate": "İnşaat Başlangıç Tarihi",
+        "constructionEndDate": "İnşaat Bitiş Tarihi"
       },
       "actions": {
         "refresh": "Yenile",
@@ -1422,6 +1437,111 @@
         "loadError": "İletişim mesajları yüklenemedi."
       },
       "confirmDelete": "Bu iletişim mesajını silmek üzeresin.\n\nİsim: {name}\nE-posta: {email}\nKonu: {subject}\nID: {id}\n\nDevam etmek istiyor musun?"
+    },
+    "newsletter": {
+      "header": {
+        "title": "Bülten Aboneleri",
+        "subtitle": "E-bülten kayıtlarını ve abonelik durumlarını yönet."
+      },
+      "filters": {
+        "title": "Filtreler",
+        "description": "E-posta, doğrulama ve abonelik durumuna göre filtrele.",
+        "searchPlaceholder": "E-posta adresi ile ara...",
+        "verifiedLabel": "Doğrulama",
+        "verifiedAll": "Tümü",
+        "verifiedYes": "Doğrulanmış",
+        "verifiedNo": "Doğrulanmamış",
+        "subscribedLabel": "Abonelik",
+        "subscribedAll": "Tümü",
+        "subscribedYes": "Abone",
+        "subscribedNo": "Ayrılmış",
+        "orderByLabel": "Sıralama",
+        "orderByCreated": "Kayıt Tarihi",
+        "orderByUpdated": "Güncelleme",
+        "orderByEmail": "E-posta"
+      },
+      "list": {
+        "title": "Liste",
+        "description": "Bülten abonelerini görüntüle ve yönet.",
+        "loading": "Aboneler yükleniyor...",
+        "empty": "Abone bulunamadı."
+      },
+      "columns": {
+        "email": "E-posta",
+        "verified": "Doğrulama",
+        "subscribed": "Durum",
+        "createdAt": "Kayıt Tarihi"
+      },
+      "status": {
+        "verified": "Doğrulanmış",
+        "unverified": "Doğrulanmamış",
+        "active": "Abone",
+        "unsubscribed": "Ayrıldı"
+      },
+      "editDialog": {
+        "title": "Abone Düzenle",
+        "description": "Abonelik durumunu ve verilerini güncelle.",
+        "verifiedLabel": "E-posta Doğrulanmış",
+        "subscribedLabel": "Abone (Aktif)",
+        "metaLabel": "Ek Veriler (JSON)"
+      },
+      "messages": {
+        "saved": "Kaydedildi.",
+        "saveError": "Değişiklikler kaydedilemedi.",
+        "deleted": "Silindi.",
+        "deleteError": "Abone silinemedi.",
+        "loadError": "Bülten aboneleri yüklenemedi."
+      },
+      "confirmDelete": "Bu aboneyi silmek üzeresin.\n\nE-posta: {email}\nID: {id}\n\nDevam etmek istiyor musun?"
+    },
+    "email_templates": {
+      "header": {
+        "title": "E-posta Şablonları",
+        "subtitle": "Sistem tarafından gönderilen e-posta içeriklerini yönet."
+      },
+      "list": {
+        "title": "Şablon Listesi",
+        "description": "Kayıtlı e-posta şablonlarını görüntüle ve düzenle.",
+        "loading": "Şablonlar yükleniyor...",
+        "empty": "E-posta şablonu bulunamadı."
+      },
+      "filters": {
+        "searchPlaceholder": "Anahtar kelime veya başlık ara..."
+      },
+      "columns": {
+        "key": "Şablon Anahtarı",
+        "name": "Şablon Adı",
+        "subject": "Konu",
+        "locale": "Dil",
+        "status": "Durum"
+      },
+      "detail": {
+        "title": "Şablon Düzenle",
+        "createTitle": "Yeni Şablon",
+        "description": "Şablon anahtarı, konu ve HTML içeriğini güncelle.",
+        "basicInfo": "Temel Bilgiler",
+        "content": "İçerik (HTML)",
+        "variables": "Değişkenler",
+        "detectedVariables": "Tespit Edilen Değişkenler",
+        "variablesHelp": "Şablonun düzgün çalışması için gerekli olan teknik anahtarlar.",
+        "detectedHelp": "Sistem tarafından içerik içerisinde bulunan {{anahtar}} formatındaki alanlar.",
+        "keys": {
+          "key": "Sistem Anahtarı",
+          "name": "Şablon Adı",
+          "subject": "E-posta Konusu",
+          "locale": "Dil / Locale",
+          "active": "Aktif mi?"
+        }
+      },
+      "messages": {
+        "saved": "Şablon kaydedildi.",
+        "saveError": "Şablon kaydedilirken hata oluştu.",
+        "deleted": "Şablon silindi.",
+        "deleteError": "Şablon silinemedi.",
+        "keyExists": "Bu anahtar/dil kombinasyonu zaten mevcut.",
+        "invalidJson": "Geçersiz değişken formatı (JSON dizisi bekliyor)."
+      },
+      "confirmDelete": "Bu e-posta şablonunu silmek üzeresin. Bu işlem geri alınamaz.\n\nAnahtar: {key}\nID: {id}\n\nDevam etmek istiyor musun?"
     },
     "reviews": {
       "header": {
@@ -1911,6 +2031,7 @@
       "actions": {
         "markAllRead": "Tümünü Okundu İşaretle",
         "refresh": "Yenile",
+        "viewAll": "Tümünü Gör",
         "create": "Yeni Bildirim",
         "back": "Geri",
         "delete": "Sil",
@@ -2337,8 +2458,8 @@
         "deleted": "\"{key}\" ({locale}) silindi.",
         "deleteError": "Silme sırasında hata oluştu.",
         "modes": {
-          "structured": "Structured",
-          "raw": "Raw"
+          "structured": "Form",
+          "raw": "JSON"
         },
         "structuredMissingTitle": "Structured renderer yok",
         "structuredMissingDesc": "Bu key için structured renderer tanımlı değil. Raw modunu kullanın.",

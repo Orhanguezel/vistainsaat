@@ -9,10 +9,12 @@ interface HeroVideoPlayerProps {
   poster?: string;
   badge?: string;
   title: string;
-  subtitle?: string;
+  description?: string;
+  ctaText?: string;
+  ctaUrl?: string;
 }
 
-export function HeroVideoPlayer({ src, mobileSrc, poster, badge, title, subtitle }: HeroVideoPlayerProps) {
+export function HeroVideoPlayer({ src, mobileSrc, poster, badge, title, description, ctaText, ctaUrl }: HeroVideoPlayerProps) {
   const bgVideoRef = useRef<HTMLVideoElement>(null);
   const fullVideoRef = useRef<HTMLVideoElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -88,8 +90,17 @@ export function HeroVideoPlayer({ src, mobileSrc, poster, badge, title, subtitle
           >
             {title}
           </h1>
-          {subtitle && (
-            <p className="mt-1 text-sm text-(--color-text-secondary)">{subtitle}</p>
+          {description && (
+            <p className="mt-1 text-sm text-(--color-text-secondary)">{description}</p>
+          )}
+          {ctaText && ctaUrl && (
+             <a 
+               href={ctaUrl}
+               className="mt-3 inline-flex items-center text-xs font-bold uppercase tracking-wider text-(--color-text-primary) hover:text-(--color-brand) transition-colors"
+               onClick={(e) => e.stopPropagation()}
+             >
+               {ctaText} →
+             </a>
           )}
         </div>
       </div>

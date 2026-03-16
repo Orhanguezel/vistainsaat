@@ -23,6 +23,7 @@ import type { LocaleOption } from './custom-page-header';
 import { CustomPageMainColumn } from './custom-page-main-column';
 import { CustomPageSidebarColumn } from './custom-page-sidebar-column';
 import { CustomPageFormImageColumn } from './custom-page-form-image-column';
+import { useAIContentAssist, type LocaleContent } from '@/app/(main)/admin/_components/common/useAIContentAssist';
 
 /* ------------------------------------------------------------- */
 /*  Types                                                        */
@@ -309,6 +310,64 @@ export const CustomPageForm: React.FC<CustomPageFormProps> = ({
     }
   };
 
+  // ── AI Content Assist ──
+  const { assist: aiAssist, loading: aiLoading } = useAIContentAssist();
+  const [aiResults, setAiResults] = React.useState<LocaleContent[] | null>(null);
+
+  const handleAIAssist = async () => {
+    const targetLocales = (locales ?? []).map((l: any) => String(l.value ?? '')).filter(Boolean);
+    if (!targetLocales.length) targetLocales.push(values.locale || 'tr');
+
+    const result = await aiAssist({
+      title: values.title,
+      summary: values.summary,
+      content: values.content,
+      tags: values.tags,
+      locale: values.locale || 'tr',
+      target_locales: targetLocales,
+      module_key: values.module_key,
+      action: 'full',
+    });
+
+    if (!result) return;
+    setAiResults(result);
+
+    // Mevcut dildeki sonucu forma uygula
+    const current = result.find((r) => r.locale === values.locale) || result[0];
+    if (current) {
+      setValues((prev) => ({
+        ...prev,
+        title: current.title || prev.title,
+        slug: current.slug || prev.slug,
+        summary: current.summary || prev.summary,
+        content: current.content || prev.content,
+        meta_title: current.meta_title || prev.meta_title,
+        meta_description: current.meta_description || prev.meta_description,
+        tags: current.tags || prev.tags,
+      }));
+    }
+  };
+
+  // AI sonucundan başka dile geçince o dilin verisini yükle
+  const applyAILocale = React.useCallback((locale: string) => {
+    if (!aiResults) return false;
+    const match = aiResults.find((r) => r.locale === locale);
+    if (!match) return false;
+
+    setValues((prev) => ({
+      ...prev,
+      locale,
+      title: match.title || '',
+      slug: match.slug || prev.slug,
+      summary: match.summary || '',
+      content: match.content || '',
+      meta_title: match.meta_title || '',
+      meta_description: match.meta_description || '',
+      tags: match.tags || '',
+    }));
+    return true;
+  }, [aiResults, setValues]);
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (disabled) return;
@@ -424,6 +483,15 @@ export const CustomPageForm: React.FC<CustomPageFormProps> = ({
               ) : null}
 
               <button
+                type="button"
+                className="rounded-md border border-purple-300 bg-purple-50 px-3 py-1 text-xs text-purple-700 hover:bg-purple-100 disabled:opacity-60"
+                disabled={disabled || aiLoading}
+                onClick={handleAIAssist}
+              >
+                {aiLoading ? '⏳ AI çalışıyor...' : '✨ AI ile İçerik Oluştur'}
+              </button>
+
+              <button
                 type="submit"
                 className="rounded-md bg-primary px-3 py-1 text-xs text-primary-foreground disabled:opacity-60"
                 disabled={disabled}
@@ -457,6 +525,7 @@ export const CustomPageForm: React.FC<CustomPageFormProps> = ({
             />
           ) : (
             <>
+              {/* Dil seçici */}
               <div className="mb-4">
                 <AdminLocaleSelect
                   value={values.locale}
@@ -470,60 +539,262 @@ export const CustomPageForm: React.FC<CustomPageFormProps> = ({
                   }
                   label={t('admin.customPage.form.localeLabel')}
                 />
-                <div className="mt-1 text-xs text-muted-foreground">
-                  {t('admin.customPage.form.localeHint')}
-                </div>
               </div>
 
-              <div className="grid gap-4 lg:grid-cols-12">
-                <div className="lg:col-span-8">
-                  <CustomPageMainColumn
-                    values={values}
-                    disabled={disabled}
-                    slugTouched={slugTouched}
-                    setSlugTouched={setSlugTouched}
-                    setValues={setValues}
-                    handleChange={handleChange}
-                    handleCheckboxChange={handleCheckboxChange}
-                  />
-                </div>
-
-                <div className="lg:col-span-4 space-y-4">
-                  <CustomPageFormImageColumn
-                    metadata={imageMetadata}
-                    disabled={disabled}
-                    featuredImageValue={values.featured_image}
-                    onFeaturedImageChange={(url) =>
-                      setValues((prev) => ({ ...prev, featured_image: url }))
-                    }
-                    galleryUrls={values.images}
-                    onGalleryUrlsChange={(urls) => setValues((prev) => ({ ...prev, images: urls }))}
-                    onSelectAsCover={(url) =>
-                      setValues((prev) => ({ ...prev, featured_image: url }))
-                    }
-                  />
-
-                  <CustomPageSidebarColumn
-                    values={values}
-                    disabled={disabled}
-                    imageMetadata={imageMetadata}
-                    contentImageSize={contentImageSize}
-                    setContentImageSize={setContentImageSize}
-                    contentImagePreview={contentImagePreview}
-                    handleAddContentImage={handleAddContentImage}
-                    manualImageUrl={manualImageUrl}
-                    manualImageAlt={manualImageAlt}
-                    setManualImageUrl={setManualImageUrl}
-                    setManualImageAlt={setManualImageAlt}
-                    handleAddManualImage={handleAddManualImage}
-                    setValues={setValues}
-                  />
-                </div>
-              </div>
+              {/* Tab yapısı */}
+              <FormTabs
+                values={values}
+                setValues={setValues}
+                disabled={disabled}
+                slugTouched={slugTouched}
+                setSlugTouched={setSlugTouched}
+                handleChange={handleChange}
+                handleCheckboxChange={handleCheckboxChange}
+                imageMetadata={imageMetadata}
+                contentImageSize={contentImageSize}
+                setContentImageSize={setContentImageSize}
+                contentImagePreview={contentImagePreview}
+                handleAddContentImage={handleAddContentImage}
+                manualImageUrl={manualImageUrl}
+                manualImageAlt={manualImageAlt}
+                setManualImageUrl={setManualImageUrl}
+                setManualImageAlt={setManualImageAlt}
+                handleAddManualImage={handleAddManualImage}
+              />
             </>
           )}
         </div>
       </div>
+      {/* AI Sonuçları — Diğer Diller */}
+      {aiResults && aiResults.length > 1 && (
+        <div className="rounded-lg border bg-purple-50/50 p-3">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-sm font-medium text-purple-700">✨ AI — Diğer Diller</span>
+            <button
+              type="button"
+              className="text-[10px] text-muted-foreground hover:underline"
+              onClick={() => setAiResults(null)}
+            >
+              Kapat
+            </button>
+          </div>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            {aiResults
+              .filter((r) => r.locale !== values.locale)
+              .map((r) => (
+                <div key={r.locale} className="rounded-md border bg-background p-2 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-xs font-bold uppercase">{r.locale}</span>
+                    <button
+                      type="button"
+                      className="rounded border px-2 py-0.5 text-[10px] text-purple-700 hover:bg-purple-100"
+                      onClick={() => {
+                        applyAILocale(r.locale);
+                        if (onLocaleChange) onLocaleChange(r.locale);
+                      }}
+                    >
+                      Bu dile geç & uygula
+                    </button>
+                  </div>
+                  <p className="text-xs font-medium truncate">{r.title}</p>
+                  <p className="text-[10px] text-muted-foreground line-clamp-2">{r.summary}</p>
+                </div>
+              ))}
+          </div>
+          <p className="mt-2 text-[10px] text-muted-foreground">
+            Her dile geçip ayrı ayrı kaydedin. AI içeriği otomatik kaydetmez.
+          </p>
+        </div>
+      )}
     </form>
   );
 };
+
+/* ── Form Tabs Component ── */
+
+function FormTabs({
+  values,
+  setValues,
+  disabled,
+  slugTouched,
+  setSlugTouched,
+  handleChange,
+  handleCheckboxChange,
+  imageMetadata,
+  contentImageSize,
+  setContentImageSize,
+  contentImagePreview,
+  handleAddContentImage,
+  manualImageUrl,
+  manualImageAlt,
+  setManualImageUrl,
+  setManualImageAlt,
+  handleAddManualImage,
+}: {
+  values: CustomPageFormValues;
+  setValues: React.Dispatch<React.SetStateAction<CustomPageFormValues>>;
+  disabled: boolean;
+  slugTouched: boolean;
+  setSlugTouched: React.Dispatch<React.SetStateAction<boolean>>;
+  handleChange: (field: keyof CustomPageFormValues) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  handleCheckboxChange: any;
+  imageMetadata: Record<string, any>;
+  contentImageSize: any;
+  setContentImageSize: any;
+  contentImagePreview: any;
+  handleAddContentImage: any;
+  manualImageUrl: string;
+  manualImageAlt: string;
+  setManualImageUrl: any;
+  setManualImageAlt: any;
+  handleAddManualImage: any;
+}) {
+  const [tab, setTab] = React.useState<'content' | 'images' | 'seo'>('content');
+
+  return (
+    <div className="space-y-3">
+      {/* Tab buttons */}
+      <div className="flex gap-1 border-b pb-2">
+        {([
+          { key: 'content' as const, label: 'İçerik' },
+          { key: 'images' as const, label: 'Görseller' },
+          { key: 'seo' as const, label: 'SEO' },
+        ]).map((t) => (
+          <button
+            key={t.key}
+            type="button"
+            className={[
+              'rounded-t-md px-4 py-1.5 text-xs font-medium transition-colors',
+              tab === t.key
+                ? 'border border-b-0 bg-background text-foreground'
+                : 'text-muted-foreground hover:text-foreground',
+            ].join(' ')}
+            onClick={() => setTab(t.key)}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {/* İçerik tab */}
+      {tab === 'content' && (
+        <CustomPageMainColumn
+          values={values}
+          disabled={disabled}
+          slugTouched={slugTouched}
+          setSlugTouched={setSlugTouched}
+          setValues={setValues}
+          handleChange={handleChange}
+          handleCheckboxChange={handleCheckboxChange}
+        />
+      )}
+
+      {/* Görseller tab */}
+      {tab === 'images' && (
+        <div className="space-y-4">
+          <CustomPageFormImageColumn
+            metadata={imageMetadata}
+            disabled={disabled}
+            featuredImageValue={values.featured_image}
+            onFeaturedImageChange={(url) =>
+              setValues((prev) => ({ ...prev, featured_image: url }))
+            }
+            galleryUrls={values.images}
+            onGalleryUrlsChange={(urls) => setValues((prev) => ({ ...prev, images: urls }))}
+            onSelectAsCover={(url) =>
+              setValues((prev) => ({ ...prev, featured_image: url }))
+            }
+          />
+
+          {/* İçerik içi görsel ekleme */}
+          <CustomPageSidebarColumn
+            values={values}
+            disabled={disabled}
+            imageMetadata={imageMetadata}
+            contentImageSize={contentImageSize}
+            setContentImageSize={setContentImageSize}
+            contentImagePreview={contentImagePreview}
+            handleAddContentImage={handleAddContentImage}
+            manualImageUrl={manualImageUrl}
+            manualImageAlt={manualImageAlt}
+            setManualImageUrl={setManualImageUrl}
+            setManualImageAlt={setManualImageAlt}
+            handleAddManualImage={handleAddManualImage}
+            setValues={setValues}
+          />
+        </div>
+      )}
+
+      {/* SEO tab */}
+      {tab === 'seo' && (
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="space-y-1.5">
+              <label className="text-xs text-muted-foreground">Meta Başlık</label>
+              <input
+                type="text"
+                className="h-8 w-full rounded-md border bg-background px-3 text-sm"
+                value={values.meta_title}
+                onChange={handleChange('meta_title')}
+                disabled={disabled}
+                placeholder="Sayfa başlığı (SEO)"
+              />
+              <p className="text-[10px] text-muted-foreground">{values.meta_title.length}/60</p>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs text-muted-foreground">Etiketler</label>
+              <input
+                type="text"
+                className="h-8 w-full rounded-md border bg-background px-3 text-sm"
+                value={values.tags}
+                onChange={handleChange('tags')}
+                disabled={disabled}
+                placeholder="etiket1, etiket2, etiket3"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-xs text-muted-foreground">Meta Açıklama</label>
+            <textarea
+              className="w-full rounded-md border bg-background px-3 py-2 text-sm"
+              rows={3}
+              value={values.meta_description}
+              onChange={handleChange('meta_description')}
+              disabled={disabled}
+              placeholder="Sayfa açıklaması (SEO, max 155 karakter)"
+            />
+            <p className="text-[10px] text-muted-foreground">{values.meta_description.length}/155</p>
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-xs text-muted-foreground">Kapak Görseli Alt Metni</label>
+            <input
+              type="text"
+              className="h-8 w-full rounded-md border bg-background px-3 text-sm"
+              value={values.featured_image_alt}
+              onChange={handleChange('featured_image_alt')}
+              disabled={disabled}
+              placeholder="Görsel açıklaması (erişilebilirlik)"
+            />
+          </div>
+
+          {/* Google önizleme */}
+          <div className="space-y-1.5">
+            <label className="text-xs text-muted-foreground">Google Arama Önizlemesi</label>
+            <div className="rounded-md border bg-background p-4">
+              <p className="text-xs text-muted-foreground">www.vistainsaat.com</p>
+              <p className="text-sm font-medium text-[#1a0dab] truncate">
+                {values.meta_title || values.title || 'Sayfa Başlığı'} | Vista İnşaat
+              </p>
+              <p className="text-xs text-muted-foreground line-clamp-2">
+                {values.meta_description || values.summary || 'Sayfa açıklaması'}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

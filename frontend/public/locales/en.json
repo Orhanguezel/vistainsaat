@@ -9,7 +9,19 @@
     "contact": "Contact",
     "offer": "Get Quote",
     "login": "Log in",
-    "register": "Sign up"
+    "register": "Sign up",
+    "residential": "Residential",
+    "commercial": "Commercial",
+    "mixed": "Mixed Use",
+    "restoration": "Restoration",
+    "construction": "Construction",
+    "project_management": "Project Management",
+    "architectural_design": "Architectural Design",
+    "interior_design": "Interior Design",
+    "corporate": "Corporate",
+    "vision": "Our Vision",
+    "team": "Our Team",
+    "career": "Career"
   },
   "footer": {
     "description": "Reliable construction and architecture solutions for residential, commercial and mixed-use projects.",
@@ -30,7 +42,12 @@
     "viewAll": "View All",
     "contactUs": "Contact Us",
     "backToTop": "Back to Top",
-    "requestOffer": "Get Quote",
+    "relativeTime": {
+      "justNow": "just now",
+      "hoursAgo": "about {hours} hours ago",
+      "daysAgo": "{days} days ago"
+    },
+    "requestOffer": "Request Offer",
     "offerCtaTitle": "Let Us Prepare a Free Site Visit and Quote for Your Project",
     "offerCtaDescription": "For your residential, commercial or mixed-use projects, let us align project scope, timeline and budget expectations together and prepare a tailored quote.",
     "freeOfObligation": "Free and non-binding",
@@ -55,6 +72,7 @@
       "cta": "Explore Our Projects",
       "ctaSecondary": "Get a Quote",
       "badge": "Vista Construction",
+      "newProjectBadge": "New Project",
       "workflowLabel": "Project Process",
       "workflowTitle": "Planning and execution tailored to your project",
       "workflowBadgeTitle": "Transparent",
@@ -140,14 +158,24 @@
     }
   },
   "projects": {
-    "title": "Our Projects",
-    "description": "Our completed and ongoing residential, commercial and mixed-use projects deliver quality, aesthetics and functionality together.",
+    "title": "Projects",
+    "description": "Explore our latest portfolio of residential, commercial and mixed-use projects.",
+    "viewProject": "View Project",
+    "allProjects": "All Projects",
+    "results": "results",
+    "images": "Images",
+    "emptyStateNote": "Sample project titles are shown below until the live project feed becomes available.",
     "categories": "Categories",
     "allCategories": "All Projects",
     "search": "Search Projects...",
     "noProjects": "No projects found in this category.",
     "specs": "Project Details",
     "requestOffer": "Get Information About This Project",
+    "manufacturers": "Manufacturers",
+    "saveProject": "Save Project",
+    "loveTitle": "Projects You'll Love",
+    "getQuoteTitle": "Get a Quote for Your Project",
+    "getQuoteDesc": "Contact us for a free site survey and quote.",
     "filters": {
       "type": "Project Type",
       "location": "Location",
@@ -184,6 +212,8 @@
     "description": "Comprehensive construction and architecture activities from architectural design to construction, from survey and restoration to project management.",
     "viewAll": "All Activities",
     "noServices": "No activities found.",
+    "learnMore": "LEARN MORE",
+    "emptyStateNote": "Sample service descriptions are shown below until live content becomes available.",
     "requestService": "Get a Quote for This Activity",
     "items": {
       "residential": "Residential Projects",
@@ -198,15 +228,19 @@
     "title": "Gallery",
     "description": "A photo gallery compiled from our completed projects, construction processes and architectural details.",
     "viewAll": "View All Images",
-    "noGalleries": "No galleries found."
+    "noGalleries": "No galleries found.",
+    "photos": "photos",
+    "emptyStateNote": "Sample gallery topics are shown below until live project visuals become available."
   },
   "blog": {
     "title": "News",
-    "description": "Construction industry news, architecture trends, project updates and sector insights.",
+    "description": "Architecture, construction technologies and latest developments from Vista Construction.",
+    "viewPost": "Read News",
+    "allPosts": "All News",
+    "all": "All",
+    "emptyStateNote": "Sample editorial topics are shown below until live news content becomes available.",
     "noPosts": "No posts found.",
-    "readMore": "Read More",
-    "publishedAt": "Published",
-    "categories": "Categories",
+    "loveTitle": "Architecture You'll Love",
     "engagement": {
       "title": "Comments",
       "subtitle": "Feedback on this article",
@@ -308,6 +342,11 @@
         "one": "Individual property investors and families",
         "two": "Commercial real estate developers and institutions",
         "three": "Public projects and urban transformation applications"
+      },
+      "stats": {
+        "experience": "Years of Experience",
+        "projects": "Completed Projects",
+        "team": "Expert Team"
       }
     }
   },
@@ -334,7 +373,11 @@
   "legal": {
     "title": "Legal",
     "privacy": "Privacy Policy",
-    "terms": "Terms of Use"
+    "privacyDesc": "Overview of how Vista İnşaat handles contact, quotation and technical project data.",
+    "privacyContent": "<p>Vista İnşaat uses submitted contact and quotation data only to evaluate requests, prepare offers and maintain project communication.</p><p>We do not request unnecessary personal data and we limit access to project files, drawings and technical documents to relevant operational teams.</p><p>For data updates or removal requests, you can contact us via the communication details provided on the contact page.</p>",
+    "terms": "Terms of Use",
+    "termsDesc": "General terms for using the Vista İnşaat website, technical content and quotation communication channels.",
+    "termsContent": "<p>Information published on this website is provided for general technical and commercial guidance. Final product scope, material selection and production conditions are clarified during project review.</p><p>Visuals, technical notes and descriptions on the site do not constitute a final binding offer on their own.</p><p>All quotation and delivery commitments become valid only after mutual confirmation within the commercial process.</p>"
   },
   "seo": {
     "defaultTitle": "Vista Construction | Reliable Construction and Architecture Services",

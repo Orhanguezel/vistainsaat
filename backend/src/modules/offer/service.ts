@@ -392,7 +392,7 @@ export async function generateAndAttachOfferPdf(
   offer: OfferRow,
 ): Promise<{ pdf_url: string | null; pdf_asset_id: string | null }> {
   const siteTitleRaw = await getSiteSettingValue('site_title', offer.locale ?? null);
-  const siteName = (typeof siteTitleRaw === 'string' && siteTitleRaw) || 'Ensotek';
+  const siteName = (typeof siteTitleRaw === 'string' && siteTitleRaw) || 'Vista İnşaat';
 
   const productId = offer.product_id ?? null;
 

@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useCallback, useState, useMemo, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { OptimizedImage } from '@/components/ui/OptimizedImage';
 
@@ -54,11 +55,27 @@ function uniqueValues(items: ProjectViewItem[], field: keyof ProjectViewItem): s
 
 export function ProjectsView({ projects, locale, labels, filterLabels }: Props) {
   const rootRef = useRef<HTMLDivElement>(null);
+  const searchParams = useSearchParams();
 
   /* ── Filters state ── */
-  const [filters, setFilters] = useState<Record<string, string>>({});
+  const [filters, setFilters] = useState<Record<string, string>>(() => {
+    const initial: Record<string, string> = {};
+    searchParams.forEach((val: string, key: string) => {
+      if (val) initial[key] = val;
+    });
+    return initial;
+  });
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Sync with URL when it changes manually
+  useEffect(() => {
+    const next: Record<string, string> = {};
+    searchParams.forEach((val: string, key: string) => {
+      if (val) next[key] = val;
+    });
+    setFilters(next);
+  }, [searchParams]);
 
   /* ── Compute available filter options from all projects ── */
   const filterDimensions = useMemo(() => [

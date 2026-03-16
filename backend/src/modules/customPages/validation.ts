@@ -24,8 +24,11 @@ const LOCALE_LIKE = z
   .min(1)
   .transform((s) => normalizeLocale(s) || s.toLowerCase());
 
-const UUID36 = z.string().length(36);
-const URL2000 = z.string().trim().max(2000).url('Geçersiz URL');
+const UUID36 = z.string().length(36).or(z.literal('').transform(() => null as unknown as string));
+const URL2000 = z.string().trim().max(2000).refine(
+  (v) => v.startsWith('/') || v.startsWith('http://') || v.startsWith('https://') || v.startsWith('data:'),
+  { message: 'Geçersiz URL veya dosya yolu' },
+);
 
 const SLUG = z
   .string()

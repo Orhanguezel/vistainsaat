@@ -277,11 +277,9 @@ export const SmtpSettingsTab: React.FC<SmtpSettingsTabProps> = ({ locale }) => {
 
         <Separator />
 
-        <div className="rounded-lg border border-dashed border-border/70 bg-muted/20 p-4 text-sm text-muted-foreground">
-          SMTP test aksiyonu bu panelde devre dışıdır. Yalnızca SMTP ayarlarını yönetiyoruz.
-        </div>
+        <SmtpTestSection busy={busy} />
 
-        <div className="mt-3 flex justify-end gap-2">
+        <div className="flex justify-end gap-2">
           <Button type="button" variant="default" disabled={busy} onClick={handleSave}>
             {isSaving ? t('admin.common.saving') : t('admin.common.save')}
           </Button>
@@ -290,3 +288,72 @@ export const SmtpSettingsTab: React.FC<SmtpSettingsTabProps> = ({ locale }) => {
     </Card>
   );
 };
+
+/* ── SMTP Test Section ── */
+
+function SmtpTestSection({ busy }: { busy: boolean }) {
+  const [testEmail, setTestEmail] = React.useState('');
+  const [testing, setTesting] = React.useState(false);
+  const [result, setResult] = React.useState<{ ok: boolean; message: string } | null>(null);
+
+  const handleTest = async () => {
+    if (!testEmail.trim()) {
+      toast.error('E-posta adresi girin');
+      return;
+    }
+    setTesting(true);
+    setResult(null);
+    try {
+      const res = await fetch('/api/admin/site_settings/smtp-test', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ to: testEmail.trim() }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setResult({ ok: true, message: data.message || 'Test başarılı' });
+        toast.success(data.message || 'Test e-postası gönderildi');
+      } else {
+        const msg = data?.error?.message || 'SMTP hatası';
+        setResult({ ok: false, message: msg });
+        toast.error(msg);
+      }
+    } catch (err: any) {
+      const msg = err.message || 'Bağlantı hatası';
+      setResult({ ok: false, message: msg });
+      toast.error(msg);
+    } finally {
+      setTesting(false);
+    }
+  };
+
+  return (
+    <div className="space-y-3">
+      <Label className="text-sm font-medium">SMTP Test</Label>
+      <div className="flex flex-col gap-2 sm:flex-row">
+        <Input
+          value={testEmail}
+          onChange={(e) => setTestEmail(e.target.value)}
+          placeholder="test@example.com"
+          disabled={busy || testing}
+          className="flex-1"
+          type="email"
+        />
+        <Button
+          type="button"
+          variant="outline"
+          onClick={handleTest}
+          disabled={busy || testing || !testEmail.trim()}
+        >
+          {testing ? 'Gönderiliyor...' : 'Test Gönder'}
+        </Button>
+      </div>
+      {result && (
+        <p className={`text-xs ${result.ok ? 'text-green-600' : 'text-destructive'}`}>
+          {result.message}
+        </p>
+      )}
+    </div>
+  );
+}

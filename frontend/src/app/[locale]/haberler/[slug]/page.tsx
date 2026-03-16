@@ -82,7 +82,7 @@ export async function generateMetadata({
         : `${post.title}. Vista İnşaat mimarlık haberleri ve inşaat sektörü içerikleri.`),
     ogImage: post.image_url,
     openGraphType: 'article',
-    includeLocaleAlternates: false,
+    includeLocaleAlternates: true,
   });
 }
 

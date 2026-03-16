@@ -220,9 +220,9 @@ export const AdminImageUploadField: React.FC<AdminImageUploadFieldProps> = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'upload' | 'library'>('upload');
 
-  // Fetch library assets (show all folders, not filtered)
+  // Fetch library assets (all buckets — no filter)
   const { data: assetsData, isLoading: isLoadingAssets } = useListAssetsAdminQuery(
-    { bucket, limit: 50, sort: 'created_at', order: 'desc' },
+    { limit: 100, sort: 'created_at', order: 'desc' },
     { skip: !isModalOpen || activeTab !== 'library' }
   );
 
@@ -390,16 +390,18 @@ export const AdminImageUploadField: React.FC<AdminImageUploadFieldProps> = ({
         <div className="overflow-hidden rounded-md border bg-background">
           <AspectRatio ratio={aspect}>
             {svg ? (
-              <object
-                data={previewUrl}
-                type="image/svg+xml"
-                className="h-full w-full"
-                aria-label="SVG preview"
-              >
-                <div className="flex h-full w-full items-center justify-center text-xs text-muted-foreground">
-                  SVG önizleme açılamadı.
-                </div>
-              </object>
+              <div className="relative h-full w-full">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={previewUrl}
+                  alt="SVG preview"
+                  className="h-full w-full object-contain p-2"
+                  onError={(e) => {
+                    const img = e.currentTarget as HTMLImageElement;
+                    img.style.display = 'none';
+                  }}
+                />
+              </div>
             ) : (
               <div className="relative h-full w-full">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -473,16 +475,14 @@ export const AdminImageUploadField: React.FC<AdminImageUploadFieldProps> = ({
                     <div className="overflow-hidden rounded-md border bg-background">
                       <AspectRatio ratio={16 / 9}>
                         {svg ? (
-                          <object
-                            data={previewUrl}
-                            type="image/svg+xml"
-                            className="h-full w-full"
-                            aria-label={`SVG image ${idx + 1}`}
-                          >
-                            <div className="flex h-full w-full items-center justify-center text-xs text-muted-foreground">
-                              SVG yüklenemedi.
-                            </div>
-                          </object>
+                          <div className="relative h-full w-full">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={previewUrl}
+                              alt={`SVG image ${idx + 1}`}
+                              className="h-full w-full object-contain p-1"
+                            />
+                          </div>
                         ) : (
                           <div className="relative h-full w-full">
                             {/* eslint-disable-next-line @next/next/no-img-element */}

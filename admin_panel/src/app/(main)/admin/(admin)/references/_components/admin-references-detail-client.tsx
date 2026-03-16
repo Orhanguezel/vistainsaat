@@ -44,7 +44,7 @@ import {
 
 function isUuidLike(v?: string) {
   if (!v) return false;
-  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v);
+  return /^[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}$/i.test(v);
 }
 
 const normalizeLocale = (v: unknown): string =>
@@ -126,7 +126,7 @@ const emptyForm = (locale: string): FormValues => ({
 
 const dtoToForm = (dto: ReferenceDto): FormValues => ({
   id: String((dto as any).id ?? ''),
-  locale: normalizeLocale((dto as any).locale_resolved ?? (dto as any).locale ?? 'de'),
+  locale: normalizeLocale((dto as any).locale_resolved ?? (dto as any).locale ?? 'tr'),
   is_published: isTruthyBoolLike((dto as any).is_published),
   is_featured: isTruthyBoolLike((dto as any).is_featured),
   display_order: String((dto as any).display_order ?? 0),
@@ -159,7 +159,7 @@ export default function AdminReferenceDetailClient({ id }: { id: string }) {
   } = useAdminLocales();
 
   const apiLocaleFromDb = React.useMemo(() => {
-    return resolveAdminApiLocale(localeOptions as any, defaultLocaleFromDb, 'de');
+    return resolveAdminApiLocale(localeOptions as any, defaultLocaleFromDb  , 'tr');
   }, [localeOptions, defaultLocaleFromDb]);
 
   const localeSet = React.useMemo(() => {
@@ -181,7 +181,7 @@ export default function AdminReferenceDetailClient({ id }: { id: string }) {
     setActiveLocale((prev) => {
       const p = localeShortClient(prev);
       const u = localeShortClient(urlLocale);
-      const def = localeShortClientOr(apiLocaleFromDb, 'de');
+      const def = localeShortClientOr(apiLocaleFromDb  , 'tr');
 
       const canUse = (l: string) => !!l && (localeSet.size === 0 || localeSet.has(l));
 
@@ -197,7 +197,7 @@ export default function AdminReferenceDetailClient({ id }: { id: string }) {
   const queryLocale = React.useMemo(() => {
     const l = localeShortClient(activeLocale);
     if (l && (localeSet.size === 0 || localeSet.has(l))) return l;
-    return localeShortClientOr(apiLocaleFromDb, 'de');
+    return localeShortClientOr(apiLocaleFromDb  , 'tr');
   }, [activeLocale, localeSet, apiLocaleFromDb]);
 
   React.useEffect(() => {
@@ -262,7 +262,7 @@ export default function AdminReferenceDetailClient({ id }: { id: string }) {
   const handleLocaleChange = (nextLocaleRaw: string) => {
     const next = normalizeLocale(nextLocaleRaw);
     const list = (localeOptions ?? []).map((x: any) => localeShortClient(x.value));
-    const resolved = next && list.includes(next) ? next : localeShortClientOr(queryLocale, 'de');
+    const resolved = next && list.includes(next) ? next : localeShortClientOr(queryLocale  , 'tr');
 
     if (!resolved) {
       toast.error(t('admin.references.form.localeRequired'));

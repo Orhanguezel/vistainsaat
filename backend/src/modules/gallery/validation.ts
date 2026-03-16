@@ -8,8 +8,8 @@ import { emptyToNull, boolLike } from '@/modules/_shared';
 export const galleryCreateSchema = z.object({
   id: z.string().uuid().optional(),
   module_key: z.string().min(1).max(64).default('general'),
-  source_id: emptyToNull(z.string().uuid().optional().nullable()),
-  source_type: z.enum(['product', 'blog', 'reference', 'standalone']).default('standalone'),
+  source_id: emptyToNull(z.string().optional().nullable()),
+  source_type: z.enum(['product', 'project', 'blog', 'reference', 'standalone']).default('standalone'),
 
   // i18n
   locale: z.string().min(2).max(8).optional(),
@@ -35,7 +35,7 @@ export const galleryImageCreateSchema = z.object({
   id: z.string().uuid().optional(),
   gallery_id: z.string().uuid(),
   storage_asset_id: emptyToNull(z.string().max(64).optional().nullable()),
-  image_url: emptyToNull(z.string().url().optional().nullable()),
+  image_url: emptyToNull(z.string().min(1).optional().nullable()),
   display_order: z.coerce.number().int().min(0).optional().default(0),
   is_cover: boolLike.optional(),
 
@@ -56,7 +56,7 @@ export const galleryBulkImagesSchema = z.object({
   images: z.array(
     z.object({
       storage_asset_id: z.string().max(64),
-      image_url: z.string().url(),
+      image_url: z.string().min(1),
       display_order: z.coerce.number().int().min(0).optional().default(0),
       is_cover: boolLike.optional(),
     }),

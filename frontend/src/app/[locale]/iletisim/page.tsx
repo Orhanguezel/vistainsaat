@@ -7,7 +7,7 @@ import { InfoListPanel } from '@/components/patterns/InfoListPanel';
 import { ContactFormClient } from '@/components/sections/ContactForm';
 import { GoogleMap } from '@/components/widgets/GoogleMap';
 import { fetchSetting } from '@/i18n/server';
-import { JsonLd, buildPageMetadata, jsonld, localizedPath, localizedUrl, organizationJsonLd } from '@/seo';
+import { JsonLd, buildPageMetadata, jsonld, localizedPath, localizedUrl, organizationJsonLd, readSettingValue } from '@/seo';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs';
 
 async function fetchContactInfo(locale: string) {
@@ -18,20 +18,26 @@ async function fetchContactInfo(locale: string) {
   }
 }
 
+import { fetchSeoPage } from '@/seo/server';
+
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  const seo = await fetchSeoPage(locale, 'iletisim');
   const t = await getTranslations({ locale, namespace: 'contact' });
+  const companyProfileSetting = await fetchSetting('company_profile', locale);
+  const companyProfile = readSettingValue(companyProfileSetting) as Record<string, string>;
+
   return buildPageMetadata({
     locale,
     pathname: '/iletisim',
-    title: locale.startsWith('en')
-      ? `${t('title')} — Vista Construction`
-      : `${t('title')} — Vista İnşaat`,
-    description: t('description'),
+    title: seo?.title || `${t('title')} — ${companyProfile?.company_name || (locale.startsWith('en') ? 'Vista Construction' : 'Vista İnşaat')}`,
+    description: seo?.description || t('description'),
+    ogImage: seo?.og_image || undefined,
+    noIndex: seo?.no_index,
   });
 }
 
@@ -42,26 +48,27 @@ export default async function ContactPage({
 }) {
   const { locale } = await params;
   const t = await getTranslations({ locale });
-  const contactSetting = await fetchContactInfo(locale);
+  const [contactSetting, companyProfileSetting] = await Promise.all([
+     fetchContactInfo(locale),
+     fetchSetting('company_profile', locale)
+  ]);
 
-  const info = contactSetting?.value
-    ? typeof contactSetting.value === 'string'
-      ? JSON.parse(contactSetting.value)
-      : contactSetting.value
-    : {};
+  const info = readSettingValue(contactSetting) as Record<string, string>;
+  const companyProfile = readSettingValue(companyProfileSetting) as Record<string, string>;
 
-  const companyName = info.company_name || 'Vista İnşaat';
+  const companyName = info.company_name || companyProfile?.company_name || 'Vista İnşaat';
   const address = info.address || '';
   const phone = info.phone || '';
   const email = info.email || 'info@vistainsaat.com';
-  const hours = info.hours || 'Pazartesi - Cuma, 09:00 - 18:00';
+  const hours = info.hours || info.working_hours || 'Pazartesi - Cuma, 09:00 - 18:00';
+  const embedUrl = info.maps_embed_url;
   const responseItems = Object.values(t.raw('contact.response.items') as Record<string, string>);
 
   return (
     <div style={{ maxWidth: 1280, margin: '0 auto', padding: '16px 16px 60px' }}>
       <div>
         <Breadcrumbs items={[
-          { label: 'Vista İnşaat', href: localizedPath(locale, '/') },
+          { label: companyName, href: localizedPath(locale, '/') },
           { label: locale.startsWith('en') ? 'Contact' : 'İletişim' },
         ]} />
         <JsonLd
@@ -143,7 +150,11 @@ export default async function ContactPage({
             />
 
             <div className="surface-card overflow-hidden rounded-2xl p-2">
-              <GoogleMap className="h-64 w-full overflow-hidden rounded-xl" />
+              <GoogleMap 
+                className="h-64 w-full overflow-hidden rounded-xl" 
+                embedUrl={embedUrl}
+                title={`${companyName} ${locale.startsWith('en') ? 'Location' : 'Konum'}`}
+              />
             </div>
           </div>
         </div>

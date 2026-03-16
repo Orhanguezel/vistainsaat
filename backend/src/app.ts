@@ -35,6 +35,8 @@ import { registerContentReactions } from '@/modules/contentReactions/router';
 import { registerOffer } from '@/modules/offer/router';
 import { registerGallery } from '@/modules/gallery/router';
 import { registerServices } from '@/modules/services/router';
+import { registerNewsletter } from '@/modules/newsletter/router';
+import { registerEmailTemplates } from '@/modules/email-templates/router';
 
 // ✅ Audit single entry
 import { registerAudit } from '@/modules/audit/router';
@@ -55,6 +57,8 @@ import { registerReviewsAdmin } from '@/modules/review/admin.routes';
 import { registerDashboardAdmin } from '@/modules/dashboard/admin.routes';
 import { registerOfferAdmin } from '@/modules/offer/admin.routes';
 import { registerGalleryAdmin } from '@/modules/gallery/admin.routes';
+import { registerNewsletterAdmin } from '@/modules/newsletter/admin.routes';
+import { registerEmailTemplatesAdmin } from '@/modules/email-templates/admin.routes';
 
 import {
   jsonSchemaTransform,
@@ -210,6 +214,12 @@ export async function createApp() {
       await api.register(async (i) => registerDashboardAdmin(i), { prefix: '/admin' });
       await api.register(async (i) => registerOfferAdmin(i), { prefix: '/admin' });
       await api.register(async (i) => registerGalleryAdmin(i), { prefix: '/admin' });
+      await api.register(async (i) => registerNewsletterAdmin(i), { prefix: '/admin' });
+      await api.register(async (i) => registerEmailTemplatesAdmin(i), { prefix: '/admin' });
+
+      // AI content assist
+      const { aiContentAssist } = await import('@/modules/ai/content');
+      api.post('/admin/ai/content', { config: { auth: true } }, aiContentAssist);
 
       // --- Public modüller: /api/...
       await registerAuth(api);
@@ -228,6 +238,8 @@ export async function createApp() {
       await registerOffer(api);
       await registerGallery(api);
       await registerServices(api);
+      await registerNewsletter(api);
+      await registerEmailTemplates(api);
     },
     { prefix: '/api' },
   );

@@ -48,9 +48,9 @@ type Filters = {
 };
 
 function statusVariant(s: string): 'default' | 'secondary' | 'destructive' | 'outline' {
-  if (s === 'sent' || s === 'accepted') return 'default';
+  if (s === 'sent' || s === 'accepted' || s === 'contract_signed' || s === 'construction_completed') return 'default';
   if (s === 'rejected' || s === 'cancelled') return 'destructive';
-  if (s === 'quoted' || s === 'in_review') return 'outline';
+  if (s === 'quoted' || s === 'in_review' || s === 'site_survey' || s === 'construction_started') return 'outline';
   return 'secondary';
 }
 
@@ -130,7 +130,7 @@ export default function AdminOfferClient({ initialSource }: { initialSource?: st
           <p className="text-sm text-muted-foreground">{t('header.subtitle')}</p>
         </div>
 
-        <div className="flex flex-shrink-0 gap-2">
+        <div className="flex shrink-0 gap-2">
           <Button variant="outline" size="sm" onClick={() => listQ.refetch()} disabled={busy}>
             <RefreshCcw className="mr-2 size-4" />
             <span className="hidden sm:inline">{t('actions.refresh')}</span>
@@ -187,6 +187,10 @@ export default function AdminOfferClient({ initialSource }: { initialSource?: st
                 <SelectItem value="quoted">{t('status.quoted')}</SelectItem>
                 <SelectItem value="sent">{t('status.sent')}</SelectItem>
                 <SelectItem value="accepted">{t('status.accepted')}</SelectItem>
+                <SelectItem value="site_survey">{t('status.site_survey')}</SelectItem>
+                <SelectItem value="contract_signed">{t('status.contract_signed')}</SelectItem>
+                <SelectItem value="construction_started">{t('status.construction_started')}</SelectItem>
+                <SelectItem value="construction_completed">{t('status.construction_completed')}</SelectItem>
                 <SelectItem value="rejected">{t('status.rejected')}</SelectItem>
                 <SelectItem value="cancelled">{t('status.cancelled')}</SelectItem>
               </SelectContent>

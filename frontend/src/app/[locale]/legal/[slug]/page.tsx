@@ -25,35 +25,27 @@ async function fetchLegalPage(slug: string, locale: string) {
   }
 }
 
-function getLegalFallback(locale: string, slug: string): LegalFallback | null {
-  const isEn = locale.startsWith('en');
-
+function getLegalFallback(t: any, slug: string): LegalFallback | null {
   if (slug === 'privacy') {
     return {
-      title: isEn ? 'Privacy Policy' : 'Gizlilik Politikasi',
-      description: isEn
-        ? 'Overview of how Vista İnşaat handles contact, quotation and technical project data.'
-        : 'Vista İnşaat ile paylasilan iletisim, teklif ve teknik proje verilerinin nasil ele alindigina dair ozet bilgi.',
-      content: isEn
-        ? '<p>Vista İnşaat uses submitted contact and quotation data only to evaluate requests, prepare offers and maintain project communication.</p><p>We do not request unnecessary personal data and we limit access to project files, drawings and technical documents to relevant operational teams.</p><p>For data updates or removal requests, you can contact us via the communication details provided on the contact page.</p>'
-        : '<p>Vista İnşaat, iletisim ve teklif formlari uzerinden iletilen verileri yalnizca talepleri degerlendirmek, teklif hazirlamak ve proje iletisimini surdurmek amaciyla kullanir.</p><p>Gereksiz kisisel veri talep etmeyiz; proje dosyalari, cizimler ve teknik dokumanlara erisimi ilgili operasyon ekipleriyle sinirli tutariz.</p><p>Veri guncelleme veya silme talepleri icin iletisim sayfasindaki kanallar uzerinden bize ulasabilirsiniz.</p>',
+      title: t('legal.privacy'),
+      description: t('legal.privacyDesc'),
+      content: t('legal.privacyContent'),
     };
   }
 
   if (slug === 'terms') {
     return {
-      title: isEn ? 'Terms of Use' : 'Kullanim Kosullari',
-      description: isEn
-        ? 'General terms for using the Vista İnşaat website, technical content and quotation communication channels.'
-        : 'Vista İnşaat web sitesi, teknik icerikler ve teklif iletisim kanallarinin kullanimina dair genel kosullar.',
-      content: isEn
-        ? '<p>Information published on this website is provided for general technical and commercial guidance. Final product scope, material selection and production conditions are clarified during project review.</p><p>Visuals, technical notes and descriptions on the site do not constitute a final binding offer on their own.</p><p>All quotation and delivery commitments become valid only after mutual confirmation within the commercial process.</p>'
-        : '<p>Bu sitede yer alan bilgiler genel teknik ve ticari yonlendirme amaciyla sunulur. Nihai urun kapsami, malzeme secimi ve uretim kosullari proje degerlendirme surecinde netlestirilir.</p><p>Sitedeki gorseller, teknik notlar ve aciklamalar tek basina baglayici nihai teklif niteliginde degildir.</p><p>Teklif, termin ve teslim kapsamindaki taahhutler ancak ticari surecte karsilikli teyit sonrasinda gecerli olur.</p>',
+      title: t('legal.terms'),
+      description: t('legal.termsDesc'),
+      content: t('legal.termsContent'),
     };
   }
 
   return null;
 }
+
+import { fetchSeoPage } from '@/seo/server';
 
 export async function generateMetadata({
   params,
@@ -61,18 +53,25 @@ export async function generateMetadata({
   params: Promise<{ locale: string; slug: string }>;
 }): Promise<Metadata> {
   const { locale, slug } = await params;
+  const t = await getTranslations({ locale });
+  const seo = await fetchSeoPage(locale, `legal_${slug}`);
   const page = await fetchLegalPage(slug, locale);
-  const fallback = page ? null : getLegalFallback(locale, slug);
+  const fallback = page ? null : getLegalFallback(t, slug);
   const resolved = page || fallback;
-  if (!resolved) return {};
+
+  if (!resolved && !seo) return {};
+
   return buildPageMetadata({
     locale,
     pathname: `/legal/${slug}`,
-    title: 'meta_title' in resolved ? resolved.meta_title || resolved.title : resolved.title,
-    description:
+    title: seo?.title || ('meta_title' in resolved ? resolved.meta_title || resolved.title : resolved.title),
+    description: seo?.description || (
       'meta_description' in resolved
         ? resolved.meta_description || resolved.description || resolved.title
-        : resolved.description,
+        : resolved.description
+    ),
+    ogImage: seo?.og_image || undefined,
+    noIndex: seo?.no_index,
   });
 }
 
@@ -82,8 +81,9 @@ export default async function LegalPage({
   params: Promise<{ locale: string; slug: string }>;
 }) {
   const { locale, slug } = await params;
+  const t = await getTranslations({ locale });
   const page = await fetchLegalPage(slug, locale);
-  const fallback = page ? null : getLegalFallback(locale, slug);
+  const fallback = page ? null : getLegalFallback(t, slug);
   const resolved = page || fallback;
   if (!resolved) notFound();
   const content = 'content' in resolved ? normalizeRichContent(resolved.content) : '';

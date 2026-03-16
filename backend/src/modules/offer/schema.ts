@@ -1,6 +1,6 @@
 // =============================================================
 // FILE: src/modules/offer/schema.ts
-// Ensotek – Offer Module Schema (Drizzle ORM)
+// Vista İnşaat – Offer Module Schema (Drizzle ORM)
 // =============================================================
 
 import {
@@ -34,8 +34,8 @@ export const offersTable = mysqlTable(
 
     status: varchar('status', { length: 32 }).notNull().default('new'),
 
-    /** Teklifin geldiği kaynak site/marka: 'ensotek' | 'vistainsaat' | ... */
-    source: varchar('source', { length: 64 }).notNull().default('ensotek'),
+    /** Teklifin geldiği kaynak site/marka: 'vistainsaat' | 'vistainsaat' | ... */
+    source: varchar('source', { length: 64 }).notNull().default('vistainsaat'),
 
     locale: varchar('locale', { length: 10 }),
 

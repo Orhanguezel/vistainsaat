@@ -31,7 +31,7 @@ import { CustomPageForm, type CustomPageFormValues } from './_components/custom-
 
 function isUuidLike(v?: string) {
   if (!v) return false;
-  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v);
+  return /^[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}$/i.test(v);
 }
 
 function getErrMessage(err: unknown, t: any): string {
@@ -175,8 +175,8 @@ export default function AdminCustomPageDetailClient({
           tags: values.tags.trim() || null,
 
           featured_image: values.featured_image.trim() || null,
-          featured_image_asset_id: values.featured_image_asset_id.trim() || null,
-          featured_image_alt: values.featured_image_alt.trim() || null,
+          featured_image_asset_id: values.featured_image_asset_id?.trim() || null,
+          featured_image_alt: values.featured_image_alt?.trim() || null,
 
           meta_title: values.meta_title.trim() || null,
           meta_description: values.meta_description.trim() || null,
@@ -221,8 +221,8 @@ export default function AdminCustomPageDetailClient({
         tags: values.tags.trim() || null,
 
         featured_image: values.featured_image.trim() || null,
-        featured_image_asset_id: values.featured_image_asset_id.trim() || null,
-        featured_image_alt: values.featured_image_alt.trim() || null,
+        featured_image_asset_id: values.featured_image_asset_id?.trim() || null,
+        featured_image_alt: values.featured_image_alt?.trim() || null,
 
         meta_title: values.meta_title.trim() || null,
         meta_description: values.meta_description.trim() || null,

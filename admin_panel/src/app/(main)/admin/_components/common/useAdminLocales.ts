@@ -100,8 +100,11 @@ export type UseAdminLocalesResult = {
   fetching: boolean;
 };
 
+const DEFAULT_PREFIX = 'vistainsaat__';
+
 export function useAdminLocales(settingPrefix?: string): UseAdminLocalesResult {
-  const appLocalesKey = `${settingPrefix || ''}app_locales`;
+  const prefix = settingPrefix ?? DEFAULT_PREFIX;
+  const appLocalesKey = `${prefix}app_locales`;
   const {
     data: rows,
     isLoading,

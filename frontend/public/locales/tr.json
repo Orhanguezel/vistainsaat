@@ -9,7 +9,19 @@
     "contact": "İletişim",
     "offer": "Teklif Al",
     "login": "Giriş Yap",
-    "register": "Kayıt Ol"
+    "register": "Kayıt Ol",
+    "residential": "Konut Projeleri",
+    "commercial": "Ticari Projeler",
+    "mixed": "Karma Kullanım",
+    "restoration": "Restorasyon",
+    "construction": "İnşaat & Taahhüt",
+    "project_management": "Proje Yönetimi",
+    "architectural_design": "Mimari Tasarım",
+    "interior_design": "İç Mimarlık",
+    "corporate": "Kurumsal",
+    "vision": "Vizyonumuz",
+    "team": "Ekibimiz",
+    "career": "Kariyer"
   },
   "footer": {
     "description": "Konut, ticari ve karma kullanım projelerinde güvenilir inşaat ve mimarlık çözümleri.",
@@ -30,7 +42,12 @@
     "viewAll": "Tümünü Gör",
     "contactUs": "Bize Ulaşın",
     "backToTop": "Yukarı",
-    "requestOffer": "Teklif Al",
+    "relativeTime": {
+      "justNow": "az önce",
+      "hoursAgo": "yaklaşık {hours} saat önce",
+      "daysAgo": "{days} gün önce"
+    },
+    "requestOffer": "Teklif İste",
     "offerCtaTitle": "Projeniz İçin Ücretsiz Keşif ve Teklif Hazırlayalım",
     "offerCtaDescription": "Konut, ticari veya karma kullanım projeleriniz için proje kapsamı, termin ve bütçe beklentilerinizi birlikte netleştirip size özel teklif hazırlayalım.",
     "freeOfObligation": "Ücretsiz ve bağlayıcı değildir",
@@ -55,6 +72,7 @@
       "cta": "Projelerimizi İnceleyin",
       "ctaSecondary": "Teklif Alın",
       "badge": "Vista İnşaat",
+      "newProjectBadge": "Yeni Proje",
       "workflowLabel": "Proje Süreci",
       "workflowTitle": "Projenize özel planlama ve uygulama",
       "workflowBadgeTitle": "Şeffaf",
@@ -144,10 +162,18 @@
     "description": "Konut, ticari ve karma kullanım alanlarında tamamlanan ve devam eden projelerimiz; kalite, estetik ve işlevselliği bir arada sunuyor.",
     "categories": "Kategoriler",
     "allCategories": "Tüm Projeler",
+    "results": "sonuç",
+    "images": "Fotoğraflar",
+    "emptyStateNote": "Şu anda yayında olan bir proje bulunamadı, geçmiş projelerimizden örnekler listeleniyor.",
     "search": "Proje Ara...",
     "noProjects": "Bu kategoride henüz proje bulunmuyor.",
     "specs": "Proje Detayları",
     "requestOffer": "Bu Proje Hakkında Bilgi Alın",
+    "manufacturers": "Üreticiler",
+    "saveProject": "Projeyi Kaydet",
+    "loveTitle": "Beğeneceğiniz Projeler",
+    "getQuoteTitle": "Projeniz İçin Teklif Alın",
+    "getQuoteDesc": "Ücretsiz keşif ve teklif için hemen iletişime geçin.",
     "filters": {
       "type": "Proje Tipi",
       "location": "Lokasyon",
@@ -184,6 +210,8 @@
     "description": "Mimari tasarımdan inşaata, röleve ve restorasyon çalışmalarından proje yönetimine kadar kapsamlı inşaat ve mimarlık faaliyetleri.",
     "viewAll": "Tüm Faaliyetler",
     "noServices": "Henüz faaliyet bulunmuyor.",
+    "learnMore": "DETAYLAR",
+    "emptyStateNote": "Canlı içerik gelene kadar aşağıda örnek faaliyet açıklamaları gösterilmektedir.",
     "requestService": "Bu Faaliyet İçin Teklif Alın",
     "items": {
       "residential": "Konut Projeleri",
@@ -198,15 +226,22 @@
     "title": "Galeri",
     "description": "Tamamlanan projelerimizden, inşaat süreçlerimizden ve mimari detaylardan derlenen fotoğraf galerisi.",
     "viewAll": "Tüm Görseller",
-    "noGalleries": "Henüz galeri bulunmuyor."
+    "noGalleries": "Henüz galeri bulunmuyor.",
+    "photos": "fotoğraf",
+    "emptyStateNote": "Canlı proje görselleri gelene kadar aşağıda örnek galeri başlıkları gösterilmektedir."
   },
   "blog": {
     "title": "Haberler",
-    "description": "İnşaat sektörü haberleri, mimarlık trendleri, proje güncellemeleri ve sektörel içerikler.",
+    "description": "Mimarlık, inşaat teknolojileri ve Vista İnşaat'tan güncel gelişmeler.",
+    "viewPost": "Haberi Oku",
+    "allPosts": "Tüm Haberler",
+    "all": "Tümü",
+    "emptyStateNote": "Canlı haber içeriği gelene kadar aşağıda örnek editoryal başlıklar gösterilmektedir.",
     "noPosts": "Henüz yazı bulunmuyor.",
     "readMore": "Devamını Oku",
     "publishedAt": "Yayın Tarihi",
     "categories": "Kategoriler",
+    "loveTitle": "Beğeneceğiniz Haberler",
     "engagement": {
       "title": "Yorumlar",
       "subtitle": "Bu içerik hakkındaki görüşler",
@@ -308,6 +343,11 @@
         "one": "Bireysel konut yatırımcıları ve aileler",
         "two": "Ticari gayrimenkul geliştiricileri ve kurumlar",
         "three": "Kamu projeleri ve kentsel dönüşüm uygulamaları"
+      },
+      "stats": {
+        "experience": "Yıllık Deneyim",
+        "projects": "Tamamlanan Proje",
+        "team": "Uzman Kadro"
       }
     }
   },
@@ -334,7 +374,11 @@
   "legal": {
     "title": "Yasal",
     "privacy": "Gizlilik Politikası",
-    "terms": "Kullanım Koşulları"
+    "privacyDesc": "Vista İnşaat ile paylaşılan iletişim, teklif ve teknik proje verilerinin nasıl ele alındığına dair özet bilgi.",
+    "privacyContent": "<p>Vista İnşaat, iletişim ve teklif formları üzerinden iletilen verileri yalnızca talepleri değerlendirmek, teklif hazırlamak ve proje iletişimini sürdürmek amacıyla kullanır.</p><p>Gereksiz kişisel veri talep etmeyiz; proje dosyaları, çizimler ve teknik dokümanlara erişimi ilgili operasyon ekipleriyle sınırlı tutarız.</p><p>Veri güncelleme veya silme talepleri için iletişim sayfasındaki kanallar üzerinden bize ulaşabilirsiniz.</p>",
+    "terms": "Kullanım Koşulları",
+    "termsDesc": "Vista İnşaat web sitesi, teknik içerikler ve teklif iletişim kanallarının kullanımına dair genel koşullar.",
+    "termsContent": "<p>Bu sitede yer alan bilgiler genel teknik ve ticari yönlendirme amacıyla sunulur. Nihai ürün kapsamı, malzeme seçimi ve üretim koşulları proje değerlendirme sürecinde netleştirilir.</p><p>Sitedeki görseller, teknik notlar ve açıklamalar tek başına bağlayıcı nihai teklif niteliğinde değildir.</p><p>Teklif, termin ve teslim kapsamındaki taahhütler ancak ticari süreçte karşılıklı teyit sonrasında geçerli olur.</p>"
   },
   "seo": {
     "defaultTitle": "Vista İnşaat | Güvenilir İnşaat ve Mimarlık Hizmetleri",

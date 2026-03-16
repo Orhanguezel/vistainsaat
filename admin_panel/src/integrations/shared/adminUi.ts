@@ -72,6 +72,7 @@ const emptyNav: AdminNavCopy = {
     general: '',
     content: '',
     vista_insaat: '',
+    vista_content: '',
     marketing: '',
     communication: '',
     system: '',
@@ -115,6 +116,7 @@ const emptyNav: AdminNavCopy = {
     vista_corporate: '',
     vista_legal: '',
     vista_settings: '',
+    newsletter: '',
   },
 };
 
@@ -128,6 +130,7 @@ export function normalizeAdminUiCopy(raw: unknown): AdminUiCopy {
     general: uiText(labelsRaw.general),
     content: uiText(labelsRaw.content),
     vista_insaat: uiText(labelsRaw.vista_insaat),
+    vista_content: uiText(labelsRaw.vista_content),
     marketing: uiText(labelsRaw.marketing),
     communication: uiText(labelsRaw.communication),
     system: uiText(labelsRaw.system),
@@ -172,6 +175,7 @@ export function normalizeAdminUiCopy(raw: unknown): AdminUiCopy {
     vista_corporate: uiText(itemsRaw.vista_corporate),
     vista_legal: uiText(itemsRaw.vista_legal),
     vista_settings: uiText(itemsRaw.vista_settings),
+    newsletter: uiText(itemsRaw.newsletter),
   };
 
   const commonRaw = parseJsonObject(o.common);

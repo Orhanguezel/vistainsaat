@@ -1,6 +1,6 @@
 // =============================================================
 // FILE: src/modules/offer/router.ts
-// Ensotek – Offer Module Public Routes
+// Vista İnşaat – Offer Module Public Routes
 // =============================================================
 
 import type { FastifyInstance } from "fastify";

@@ -59,7 +59,7 @@ export const MenuItemHeader: React.FC<MenuItemHeaderProps> = ({
 }) => {
   const t = useAdminT('admin.menuitem');
   const effectiveDefaultLocale = useMemo(
-    () => toShortLocale(defaultLocale ?? 'de'),
+    () => toShortLocale(defaultLocale ?? 'tr'),
     [defaultLocale],
   );
 

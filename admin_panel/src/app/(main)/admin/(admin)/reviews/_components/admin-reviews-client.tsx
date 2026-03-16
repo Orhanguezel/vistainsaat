@@ -193,7 +193,7 @@ export default function AdminReviewsClient() {
     // ✅ FIXED: Correct usage of resolveAdminApiLocale with all parameters
     const apiLocale =
       localeShortClient(filters.locale) ||
-      resolveAdminApiLocale(localeOptions, defaultLocaleFromDb, 'de');
+      resolveAdminApiLocale(localeOptions, defaultLocaleFromDb  , 'tr');
 
     return {
       search: filters.search || undefined,

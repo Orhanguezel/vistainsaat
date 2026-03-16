@@ -313,10 +313,17 @@ export const adminUpdateProduct: RouteHandler = async (req, reply) => {
           : patch.image_url ?? null
         : curMerged.image_url;
 
-    const images =
-      patch.storage_image_ids !== undefined || patch.images !== undefined
-        ? (galleryIds.map((aid: string) => urlMap[aid]).filter(Boolean) as string[])
-        : (curMerged.images as string[]);
+    let images: string[];
+    if (patch.storage_image_ids !== undefined && galleryIds.length > 0) {
+      // storage ID'ler gönderildi — URL'lere çevir
+      images = galleryIds.map((aid: string) => urlMap[aid]).filter(Boolean) as string[];
+    } else if (Array.isArray(patch.images) && patch.images.length > 0) {
+      // Doğrudan URL array gönderildi — kullan
+      images = patch.images;
+    } else {
+      // Hiçbiri gönderilmedi veya boş — mevcut images'ı koru
+      images = (curMerged.images as string[]) ?? [];
+    }
 
     const now = new Date();
 

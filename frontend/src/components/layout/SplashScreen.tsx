@@ -3,8 +3,11 @@
 import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 
-export function SplashScreen() {
+export function SplashScreen({ companyName, tagline }: { companyName?: string; tagline?: string }) {
   const [phase, setPhase] = useState<'loading' | 'reveal' | 'exit' | 'done'>('loading');
+
+  const finalName = companyName || 'Vista İnşaat';
+  const finalTagline = tagline || 'İnşaat & Mimarlık';
 
   const startSequence = useCallback(() => {
     // Remove SSR overlay immediately — client splash takes over
@@ -335,7 +338,7 @@ export function SplashScreen() {
         <div className="splash-halo" />
         <Image
           src="/logo-dark.svg"
-          alt="Vista İnşaat"
+          alt={finalName}
           width={110}
           height={110}
           className="splash-logo-img"
@@ -346,7 +349,7 @@ export function SplashScreen() {
 
       {/* Brand name */}
       <div className="splash-brand">
-        <span>Vista İnşaat</span>
+        <span>{finalName}</span>
       </div>
 
       {/* Divider */}
@@ -354,7 +357,7 @@ export function SplashScreen() {
 
       {/* Tagline */}
       <div className="splash-tagline">
-        <span>İnşaat &amp; Mimarlık</span>
+        <span>{finalTagline}</span>
       </div>
 
       {/* Bottom badge */}

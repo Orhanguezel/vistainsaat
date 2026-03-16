@@ -205,27 +205,15 @@ export const SiteSettingsForm: React.FC<SiteSettingsFormProps> = ({
   return (
     <Card>
       <CardHeader className="gap-3">
-        <div className="flex flex-col gap-2 lg:flex-row lg:items-start lg:justify-between">
-          <div className="space-y-1">
-            <CardTitle className="text-base">
-              {t('admin.siteSettings.form.title')}: <code>{settingKey}</code>
-              <Badge variant="secondary" className="ml-2 align-middle">
-                {locale}
-              </Badge>
-            </CardTitle>
-            <CardDescription>
-              {t('admin.siteSettings.form.description')}
-            </CardDescription>
-          </div>
-
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-wrap items-center gap-2">
             {onDelete ? (
-              <Button type="button" variant="outline" onClick={handleDelete} disabled={disabled}>
+              <Button type="button" variant="outline" size="sm" onClick={handleDelete} disabled={disabled}>
                 {t('admin.siteSettings.actions.delete')}
               </Button>
             ) : null}
 
-            <Button type="button" onClick={handleSave} disabled={disabled}>
+            <Button type="button" size="sm" onClick={handleSave} disabled={disabled}>
               {t('admin.siteSettings.actions.save')}
             </Button>
           </div>

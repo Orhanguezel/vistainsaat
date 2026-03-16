@@ -55,7 +55,7 @@ const isTruthyBoolLike = (v: unknown) => v === true || v === 1 || v === '1' || v
 
 function isUuidLike(v?: string) {
   if (!v) return false;
-  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v);
+  return /^[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}$/i.test(v);
 }
 
 export default function AdminGalleryClient() {
@@ -71,7 +71,7 @@ export default function AdminGalleryClient() {
   } = useAdminLocales();
 
   const apiLocale = React.useMemo(() => {
-    return resolveAdminApiLocale(localeOptions as any, defaultLocaleFromDb, 'de');
+    return resolveAdminApiLocale(localeOptions as any, defaultLocaleFromDb, 'tr');
   }, [localeOptions, defaultLocaleFromDb]);
 
   const urlLocale = React.useMemo(() => {
@@ -92,7 +92,7 @@ export default function AdminGalleryClient() {
     setFilters((prev) => {
       const prevLoc = localeShortClient(prev.locale);
       const urlLoc = localeShortClient(urlLocale);
-      const defLoc = localeShortClientOr(apiLocale, 'de');
+      const defLoc = localeShortClientOr(apiLocale, 'tr');
 
       const canUse = (l: string) =>
         !!l && (localeOptions ?? []).some((x: any) => localeShortClient(x.value) === l);
@@ -163,12 +163,12 @@ export default function AdminGalleryClient() {
     deleteState.isLoading;
 
   function onCreate() {
-    const l = localeShortClientOr(effectiveLocale, 'de');
+    const l = localeShortClientOr(effectiveLocale, 'tr');
     router.push(`/admin/gallery/new?locale=${encodeURIComponent(l)}`);
   }
 
   function onEdit(id: string) {
-    const l = localeShortClientOr(effectiveLocale, 'de');
+    const l = localeShortClientOr(effectiveLocale, 'tr');
     router.push(`/admin/gallery/${encodeURIComponent(id)}?locale=${encodeURIComponent(l)}`);
   }
 

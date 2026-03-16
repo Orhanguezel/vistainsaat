@@ -1240,7 +1240,8 @@
         "marketing": "Marketing",
         "communication": "Communication & CRM",
         "system": "System & Settings",
-        "vista_insaat": "Vista İnşaat"
+        "vista_insaat": "Vista İnşaat",
+        "vista_content": "Content Management"
       }
     },
     "dashboard": {
@@ -1576,6 +1577,7 @@
       "actions": {
         "markAllRead": "Mark All Read",
         "refresh": "Refresh",
+        "viewAll": "View All",
         "create": "New Notification",
         "back": "Back",
         "delete": "Delete",
@@ -2029,8 +2031,8 @@
         "deleted": "\"{key}\" ({locale}) deleted.",
         "deleteError": "Failed to delete setting.",
         "modes": {
-          "structured": "Structured",
-          "raw": "Raw"
+          "structured": "Form",
+          "raw": "JSON"
         },
         "structuredMissingTitle": "Structured renderer missing",
         "structuredMissingDesc": "No structured renderer is defined for this key. Use Raw mode.",

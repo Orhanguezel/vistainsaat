@@ -1,176 +1,70 @@
 // =============================================================
-// FILE: src/components/admin/site-settings/tabs/BrandMediaTab.tsx
-// guezelwebdesign – Brand / Media Settings Tab (GLOBAL '*')
+// FILE: brand-media-tab.tsx
+// Logo & Favicon yönetimi
 // =============================================================
 
 'use client';
 
-import React, { useCallback, useMemo } from 'react';
-import Link from 'next/link';
+import React, { useCallback, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
 
 import {
-  useListSiteSettingsAdminQuery,
+  useGetSiteSettingAdminByKeyQuery,
   useUpdateSiteSettingAdminMutation,
-  useDeleteSiteSettingAdminMutation,
 } from '@/integrations/hooks';
 
-import type { SiteSettingRow, SettingValue } from '@/integrations/shared';
 import { AdminImageUploadField } from '@/app/(main)/admin/_components/common/AdminImageUploadField';
 
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Save, RefreshCcw } from 'lucide-react';
 
-/* ----------------------------- constants ----------------------------- */
+/* ── types ── */
 
-const GLOBAL_LOCALE = '*' as const;
-
-export const SITE_MEDIA_KEYS = [
-  'site_logo',
-  'site_logo_dark',
-  'site_logo_light',
-  'site_favicon',
-  'site_apple_touch_icon',
-  'site_app_icon_512',
-  'site_og_default_image',
-] as const;
-
-type MediaKey = (typeof SITE_MEDIA_KEYS)[number];
-
-function isMediaKey(k: string): k is MediaKey {
-  return (SITE_MEDIA_KEYS as readonly string[]).includes(k);
-}
-
-/** 
- * Labels are now fetched from i18n: admin.siteSettings.brandMedia.labels.*
- */
-
-const previewConfig: Record<
-  MediaKey,
-  {
-    aspect: '16x9' | '4x3' | '1x1';
-    fit: 'cover' | 'contain';
-  }
-> = {
-  site_logo: { aspect: '4x3', fit: 'contain' },
-  site_logo_dark: { aspect: '4x3', fit: 'contain' },
-  site_logo_light: { aspect: '4x3', fit: 'contain' },
-  site_favicon: { aspect: '1x1', fit: 'contain' },
-  site_apple_touch_icon: { aspect: '1x1', fit: 'contain' },
-  site_app_icon_512: { aspect: '1x1', fit: 'contain' },
-  site_og_default_image: { aspect: '16x9', fit: 'cover' },
+type LogoData = {
+  logo_url: string;
+  logo_alt: string;
+  logo_dark_url: string;
+  favicon_url: string;
+  apple_touch_icon_url: string;
 };
 
-/* ----------------------------- helpers ----------------------------- */
+type MediaItem = {
+  field: keyof LogoData;
+  label: string;
+  aspect: '4x3' | '1x1' | '16x9';
+  fit: 'contain' | 'cover';
+  folder: string;
+};
 
-const safeStr = (v: unknown) => (v === null || v === undefined ? '' : String(v).trim());
+const MEDIA_ITEMS: MediaItem[] = [
+  { field: 'logo_url', label: 'Logo', aspect: '1x1', fit: 'contain', folder: 'logo' },
+  { field: 'logo_dark_url', label: 'Logo (Dark)', aspect: '1x1', fit: 'contain', folder: 'logo' },
+  { field: 'favicon_url', label: 'Favicon', aspect: '1x1', fit: 'contain', folder: 'logo' },
+  { field: 'apple_touch_icon_url', label: 'Apple Touch Icon', aspect: '1x1', fit: 'contain', folder: 'logo' },
+];
 
-function getEditHref(key: string, targetLocale: string) {
-  return `/admin/site-settings/${encodeURIComponent(key)}?locale=${encodeURIComponent(
-    targetLocale,
-  )}`;
+/* ── helpers ── */
+
+function coerce(v: any): any {
+  if (typeof v === 'string') { try { return JSON.parse(v); } catch { return v; } }
+  return v;
 }
 
-/**
- * DB'de media value:
- *  - string url
- *  - object: { url: "..." }
- *  - stringified json: "{ "url": "..." }"
- */
-function extractUrlFromSettingValue(v: SettingValue): string {
-  if (v === null || v === undefined) return '';
-
-  if (typeof v === 'string') {
-    const s = v.trim();
-    if (!s) return '';
-
-    // JSON gibi görünüyorsa parse et
-    const looksJson =
-      (s.startsWith('{') && s.endsWith('}')) || (s.startsWith('[') && s.endsWith(']'));
-
-    if (looksJson) {
-      try {
-        const parsed = JSON.parse(s);
-        const url = safeStr((parsed as any)?.url);
-        if (url) return url;
-      } catch {
-        // Parse hatası, direkt string olarak kullan
-      }
-    }
-
-    // JSON değilse veya parse edemediyse, direkt URL olarak kabul et
-    return s;
-  }
-
-  if (typeof v === 'object' && v !== null) {
-    const url = safeStr((v as any)?.url);
-    if (url) return url;
-  }
-
-  return '';
+function extractLogoData(raw: any): LogoData {
+  const obj = coerce(raw?.value ?? raw) ?? {};
+  return {
+    logo_url: String(obj.logo_url ?? ''),
+    logo_alt: String(obj.logo_alt ?? 'Vista İnşaat'),
+    logo_dark_url: String(obj.logo_dark_url ?? ''),
+    favicon_url: String(obj.favicon_url ?? ''),
+    apple_touch_icon_url: String(obj.apple_touch_icon_url ?? ''),
+  };
 }
 
-/** Save format: JSON object { url } */
-function toMediaValue(url: string): SettingValue {
-  const u = safeStr(url);
-  if (!u) return null;
-  return { url: u };
-}
-
-/**
- * Normalize image URL - if relative, try to make it absolute
- * Returns empty string if URL is invalid
- */
-function normalizeImageUrl(rawUrl: string): string {
-  const url = safeStr(rawUrl);
-  if (!url) return '';
-
-  // Already a full URL (http, https, data URI)
-  if (
-    url.startsWith('http://') ||
-    url.startsWith('https://') ||
-    url.startsWith('data:') ||
-    url.startsWith('//')
-  ) {
-    return url;
-  }
-
-  /* 
-  if (typeof window !== 'undefined') {
-    console.warn(
-      `[BrandMediaTab] Relative URL detected: "${url}". ` +
-        'Database should store full URLs. Attempting to resolve...',
-    );
-  }
-  */
-
-  // Try to construct full URL using NEXT_PUBLIC_SITE_URL (public panel URL)
-  // This is where storage/assets are served from
-  const publicSiteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
-  const base = publicSiteUrl.replace(/\/$/, '');
-
-  try {
-    // If URL starts with /, use it directly (absolute path)
-    // Otherwise, assume it's in storage folder
-    const fullUrl = url.startsWith('/') ? `${base}${url}` : `${base}/storage/${url}`;
-
-    /*
-    if (typeof window !== 'undefined') {
-      console.info(`[BrandMediaTab] Resolved "${url}" to: ${fullUrl}`);
-    }
-    */
-    return fullUrl;
-  } catch (e) {
-    // console.error('[BrandMediaTab] Failed to normalize URL:', e);
-  }
-
-  // Return original if all else fails
-  return url;
-}
-
-/* ----------------------------- component ----------------------------- */
+/* ── component ── */
 
 export type BrandMediaTabProps = {
   locale: string;
@@ -179,208 +73,137 @@ export type BrandMediaTabProps = {
 
 export const BrandMediaTab: React.FC<BrandMediaTabProps> = ({ locale, settingPrefix }) => {
   const t = useAdminT();
-  const withPrefix = useCallback((key: MediaKey) => `${settingPrefix || ''}${key}`, [settingPrefix]);
-  const stripPrefix = useCallback(
-    (key: string) => (settingPrefix && key.startsWith(settingPrefix) ? key.slice(settingPrefix.length) : key),
-    [settingPrefix],
+  const fullKey = `${settingPrefix || ''}site_logo`;
+
+  const { data, isLoading, isFetching, refetch } = useGetSiteSettingAdminByKeyQuery(
+    { key: fullKey, locale: '*' },
+    { refetchOnMountOrArgChange: true },
   );
-
-  // We fetch BOTH global '*' and the selected locale to handle overrides
-  const listArgsGlobal = useMemo(() => ({
-    locale: '*',
-    keys: SITE_MEDIA_KEYS.map((key) => withPrefix(key)),
-    sort: 'key' as const,
-    order: 'asc' as const,
-    limit: 200,
-    offset: 0,
-  }), [withPrefix]);
-
-  const listArgsLocale = useMemo(() => ({
-    locale,
-    keys: SITE_MEDIA_KEYS.map((key) => withPrefix(key)),
-    sort: 'key' as const,
-    order: 'asc' as const,
-    limit: 200,
-    offset: 0,
-  }), [locale, withPrefix]);
-
-  const qGlobal = useListSiteSettingsAdminQuery(listArgsGlobal, {
-    refetchOnMountOrArgChange: true,
-  });
-
-  const qLocale = useListSiteSettingsAdminQuery(listArgsLocale, {
-    refetchOnMountOrArgChange: true,
-  });
 
   const [updateSetting, { isLoading: isSaving }] = useUpdateSiteSettingAdminMutation();
-  const [deleteSetting, { isLoading: isDeleting }] = useDeleteSiteSettingAdminMutation();
+  const busy = isLoading || isFetching || isSaving;
 
-  const busy = qGlobal.isLoading || qGlobal.isFetching || qLocale.isLoading || qLocale.isFetching || isSaving || isDeleting;
+  const serverData = useMemo(() => extractLogoData(data), [data]);
+  const [localData, setLocalData] = useState<LogoData | null>(null);
 
-  const refetchAll = useCallback(async () => {
-    // Note: manual refetch is rarely needed because qLocale refetches on arg change,
-    // but we keep this for the Refresh button.
-    await Promise.all([qGlobal.refetch(), qLocale.refetch()]);
-  }, [qGlobal.refetch, qLocale.refetch]);
+  React.useEffect(() => {
+    if (data) setLocalData(extractLogoData(data));
+  }, [data]);
 
-  // ✅ DELETED: Redundant useEffect that caused an infinite re-fetch/re-render loop. 
-  // qLocale already has { locale } in args, so useListSiteSettingsAdminQuery 
-  // with refetchOnMountOrArgChange: true handles the update automatically.
+  const current = localData ?? serverData;
 
-  const byKey = useMemo(() => {
-    const map = new Map<MediaKey, SiteSettingRow | null>();
-    for (const k of SITE_MEDIA_KEYS) map.set(k, null);
+  const updateField = (field: keyof LogoData, value: string) => {
+    setLocalData((prev) => ({ ...(prev ?? serverData), [field]: value }));
+  };
 
-    const gData = qGlobal.data || [];
-    const lData = qLocale.data || [];
-
-    // Priority: locale row > global row
-    for (const k of SITE_MEDIA_KEYS) {
-      const lRow = lData.find((r) => r && stripPrefix(String(r.key || '')) === k && (r.locale === locale || r.locale === locale.trim()));
-      const gRow = gData.find((r) => r && stripPrefix(String(r.key || '')) === k && r.locale === '*');
-      map.set(k, lRow || gRow || null);
+  const handleSave = async () => {
+    if (!localData) return;
+    try {
+      await updateSetting({ key: fullKey, locale: '*', value: localData as any }).unwrap();
+      // Also update legacy 'logo' key for backward compat
+      const legacyKey = `${settingPrefix || ''}logo`;
+      await updateSetting({ key: legacyKey, locale: '*', value: {
+        logo_url: localData.logo_url,
+        logo_alt: localData.logo_alt,
+        favicon_url: localData.favicon_url,
+        logo_dark_url: localData.logo_dark_url,
+      } as any }).unwrap();
+      toast.success('Logo ayarları kaydedildi');
+      await refetch();
+    } catch (err: any) {
+      toast.error(err?.data?.error?.message || 'Kaydetme hatası');
     }
+  };
 
-    return map;
-  }, [qGlobal.data, qLocale.data, locale, stripPrefix]);
-
-  const quickUpload = useCallback(
-    async (key: MediaKey, url: string) => {
-      const u = safeStr(url);
-      if (!u) return;
-
-      try {
-        const label = t(`admin.siteSettings.brandMedia.labels.${key}` as any);
-        await updateSetting({ key: withPrefix(key), locale, value: toMediaValue(u) }).unwrap();
-        toast.success(t('admin.siteSettings.brandMedia.updated', { label }));
-        await refetchAll();
-      } catch (err: any) {
-        const label = t(`admin.siteSettings.brandMedia.labels.${key}` as any);
-        toast.error(
-          err?.data?.error?.message ||
-            err?.message ||
-            t('admin.siteSettings.brandMedia.updateError', { label }),
-        );
-      }
-    },
-    [updateSetting, refetchAll, t, locale, withPrefix],
-  );
-
-  const deleteRow = useCallback(
-    async (key: MediaKey) => {
-      const row = byKey.get(key);
-      const targetLocale = row?.locale || locale;
-      const ok = window.confirm(t('admin.siteSettings.brandMedia.deleteConfirm', { key, locale: targetLocale }));
-      if (!ok) return;
-
-      try {
-        await deleteSetting({ key: withPrefix(key), locale: targetLocale }).unwrap();
-        toast.success(t('admin.common.deleted', { item: key }));
-        await refetchAll();
-      } catch (err: any) {
-        toast.error(err?.data?.error?.message || err?.message || t('admin.siteSettings.brandMedia.deleteError'));
-      }
-    },
-    [deleteSetting, refetchAll, t, byKey, locale, withPrefix],
-  );
+  const isDirty = localData && JSON.stringify(localData) !== JSON.stringify(serverData);
 
   return (
     <Card>
-      <CardHeader className="gap-2">
-        <div className="flex items-start justify-between gap-2">
-          <div className="space-y-1">
-            <CardTitle className="text-base">{t('admin.siteSettings.brandMedia.title')}</CardTitle>
-            <CardDescription>
-              {t('admin.siteSettings.brandMedia.description')}
-            </CardDescription>
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="secondary" className="gap-1.5">
-              <span className="size-1.5 rounded-full bg-blue-500" />
-              {t('admin.siteSettings.filters.language')}: {locale}
-            </Badge>
-
-            {/* If all displayed media rows are global, and we are on a specific locale, show fallback hint */}
-            {locale !== '*' && Array.from(byKey.values()).every(r => !r || r.locale === '*') && (
-              <Badge variant="outline" className="text-[10px] border-amber-200 bg-amber-50 text-amber-700">
-                {t('admin.siteSettings.messages.usingGlobalFallback')}
-              </Badge>
-            )}
-
+      <CardHeader>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <CardTitle className="text-base">Logo & Favicon</CardTitle>
+          <div className="flex items-center gap-2">
+            {busy && <Badge variant="outline">Yükleniyor</Badge>}
+            {isDirty && <Badge variant="default">Değişiklik var</Badge>}
             <Button
               type="button"
-              variant="outline"
               size="sm"
-              onClick={refetchAll}
-              disabled={busy}
+              onClick={handleSave}
+              disabled={busy || !isDirty}
             >
-              {t('admin.siteSettings.actions.refresh')}
+              <Save className="mr-2 h-3.5 w-3.5" />
+              Kaydet
+            </Button>
+            <Button type="button" variant="ghost" size="icon" className="h-8 w-8" onClick={() => refetch()} disabled={busy}>
+              <RefreshCcw className="h-4 w-4" />
             </Button>
           </div>
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-4">
-        {busy && (
-          <Badge variant="secondary">{t('admin.siteSettings.messages.loading')}</Badge>
-        )}
-
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {SITE_MEDIA_KEYS.map((k) => {
-            const row = byKey.get(k) ?? null;
-            const hasRow = Boolean(row);
-
-            const rowValue = (row?.value ?? null) as SettingValue;
-            const rawUrl = normalizeImageUrl(extractUrlFromSettingValue(rowValue));
-
-            const cfg = previewConfig[k];
+      <CardContent>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {MEDIA_ITEMS.map((m) => {
+            const value = current[m.field];
 
             return (
-              <Card key={`media_${k}`} className="overflow-hidden">
-                <CardHeader className="p-3 pb-2">
-                  <div className="flex items-center justify-between gap-2">
-                    <CardTitle className="text-sm">
-                      {t(`admin.siteSettings.brandMedia.labels.${k}` as any)}
-                    </CardTitle>
-                    <div className="flex gap-1">
-                      {row && row.locale !== '*' && (
-                        <Badge variant="default" className="mr-1 text-[10px] h-5">{t('admin.siteSettings.seo.override')}</Badge>
-                      )}
-                      <Button asChild variant="outline" size="sm" className="h-7 px-2 text-xs">
-                        <Link href={getEditHref(withPrefix(k), row?.locale || locale)}>{t('admin.siteSettings.actions.edit')}</Link>
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="destructive"
-                        size="sm"
-                        className="h-7 px-2 text-xs"
-                        disabled={busy || !hasRow}
-                        onClick={() => void deleteRow(k)}
-                      >
-                        {t('admin.siteSettings.actions.delete')}
-                      </Button>
-                    </div>
-                  </div>
-                </CardHeader>
+              <div key={m.field} className="rounded-md border p-2 space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-medium">{m.label}</span>
+                  {value && (
+                    <button
+                      type="button"
+                      className="text-[10px] text-destructive hover:underline"
+                      onClick={() => updateField(m.field, '')}
+                      disabled={busy}
+                    >
+                      Kaldır
+                    </button>
+                  )}
+                </div>
 
-                <CardContent className="p-3 pt-0">
-                  <AdminImageUploadField
-                    label=""
-                    bucket="public"
-                    folder="site-media"
-                    metadata={{ key: withPrefix(k), scope: 'site_settings', locale: row?.locale || locale }}
-                    value={rawUrl}
-                    onChange={(nextUrl) => void quickUpload(k, nextUrl)}
-                    disabled={busy}
-                    openLibraryHref="/admin/storage"
-                    previewAspect={cfg.aspect}
-                    previewObjectFit={cfg.fit}
-                  />
-                </CardContent>
-              </Card>
+                {value ? (
+                  <div className="relative aspect-square w-full max-w-30 mx-auto overflow-hidden rounded border bg-muted/20">
+                    <img
+                      src={value}
+                      alt={m.label}
+                      className="h-full w-full object-contain p-1"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = 'none';
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <div className="flex aspect-square w-full max-w-30 mx-auto items-center justify-center rounded border bg-muted/20">
+                    <span className="text-[10px] text-muted-foreground">Görsel yok</span>
+                  </div>
+                )}
+
+                <AdminImageUploadField
+                  label=""
+                  bucket="public"
+                  folder={m.folder}
+                  metadata={{ field: m.field, scope: 'logo' }}
+                  value=""
+                  onChange={(url) => updateField(m.field, url)}
+                  disabled={busy}
+                  openLibraryHref="/admin/storage"
+                  previewAspect="1x1"
+                  previewObjectFit="contain"
+                />
+              </div>
             );
           })}
         </div>
+
+        {isDirty && (
+          <div className="flex justify-end pt-4">
+            <Button type="button" onClick={handleSave} disabled={busy}>
+              <Save className="mr-2 h-3.5 w-3.5" />
+              Kaydet
+            </Button>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
