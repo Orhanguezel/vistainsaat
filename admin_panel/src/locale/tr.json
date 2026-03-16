@@ -2039,15 +2039,15 @@
         "saving": "Kaydediliyor...",
         "cancel": "İptal",
         "edit": "Düzenle",
-        "markRead": "Okundu Yap",
-        "markUnread": "Okunmadı Yap"
+        "markRead": "Okundu İşaretle",
+        "markUnread": "Okunmadı İşaretle"
       },
       "filters": {
         "title": "Filtreler",
         "search": "Ara",
-        "searchPlaceholder": "Başlık, mesaj veya tip...",
+        "searchPlaceholder": "Başlık, mesaj veya tür...",
         "status": "Durum",
-        "type": "Tip",
+        "type": "Tür",
         "all": "Tümü",
         "read": "Okundu",
         "unread": "Okunmadı",
@@ -2057,7 +2057,7 @@
         "status": "Durum",
         "title": "Başlık",
         "message": "Mesaj",
-        "type": "Tip",
+        "type": "Tür",
         "date": "Tarih",
         "actions": "İşlemler",
         "loading": "Yükleniyor...",
@@ -2078,9 +2078,9 @@
         "titlePlaceholder": "Bildirim başlığı",
         "message": "Mesaj",
         "messagePlaceholder": "Bildirim mesajı",
-        "type": "Tip",
+        "type": "Tür",
         "optional": "(opsiyonel)",
-        "editWarning": "ℹ️ Bildirimler oluşturulduktan sonra düzenlenemez. Sadece okundu/okunmadı durumu değiştirilebilir."
+        "editWarning": "Bildirimler oluşturulduktan sonra düzenlenemez. Sadece okundu/okunmadı durumu değiştirilebilir."
       },
       "details": {
         "title": "Bildirim Detayları",
@@ -2097,18 +2097,22 @@
         "markedUnread": "Okunmadı olarak işaretlendi",
         "deleteConfirm": "\"{title}\" bildirimini silmek istediğinize emin misiniz?",
         "deleteSuccess": "Bildirim silindi",
-        "operationFailed": "İşlem başarısız",
+        "operationFailed": "İşlem başarısız oldu",
         "titleRequired": "Başlık gerekli",
         "messageRequired": "Mesaj gerekli",
         "createSuccess": "Bildirim oluşturuldu",
-        "editNotSupported": "Bildirimleri düzenleme şu anda desteklenmiyor"
+        "editNotSupported": "Bildirim düzenleme şu anda desteklenmiyor"
       },
       "types": {
         "order_created": "Sipariş Oluşturuldu",
         "order_paid": "Sipariş Ödendi",
         "order_failed": "Sipariş Başarısız",
         "system": "Sistem",
-        "custom": "Özel"
+        "custom": "Özel",
+        "password_changed": "Şifre Değiştirildi"
+      },
+      "list": {
+        "empty": "Henüz bildirim yok"
       }
     },
     "audit": {

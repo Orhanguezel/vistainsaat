@@ -1654,7 +1654,11 @@
         "order_paid": "Order Paid",
         "order_failed": "Order Failed",
         "system": "System",
-        "custom": "Custom"
+        "custom": "Custom",
+        "password_changed": "Password Changed"
+      },
+      "list": {
+        "empty": "No notifications yet"
       }
     },
     "mail": {

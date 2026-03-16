@@ -73,7 +73,7 @@ VALUES
      'durum', 'Tamamlandı',
      'mimarlar', 'Vista Mimarlık & Mühendislik',
      'baş_mimar', 'Ahmet Karaoğlu',
-     'fotoğraflar', 'Cemal Emden',
+
      'üreticiler', 'Schüco, Villeroy & Boch, Grohe, KONE'
    ),
    'Boğaz Manzaralı Rezidans | Vista İnşaat',
@@ -91,7 +91,7 @@ VALUES
      'status', 'Completed',
      'architects', 'Vista Architecture & Engineering',
      'lead_architect', 'Ahmet Karaoğlu',
-     'photographs', 'Cemal Emden',
+
      'manufacturers', 'Schüco, Villeroy & Boch, Grohe, KONE'
    ),
    'Bosphorus View Residences | Vista Construction',
@@ -109,7 +109,7 @@ VALUES
      'durum', 'Tamamlandı',
      'mimarlar', 'DB Architects + Vista Mimarlık',
      'baş_mimar', 'Deniz Bayraktar',
-     'fotoğraflar', 'Murat Germen',
+
      'üreticiler', 'Schüco, Knauf, KONE, Daikin, Siemens'
    ),
    'Levent Ofis Kulesi | Vista İnşaat',
@@ -127,7 +127,7 @@ VALUES
      'status', 'Completed',
      'architects', 'DB Architects + Vista Architecture',
      'lead_architect', 'Deniz Bayraktar',
-     'photographs', 'Murat Germen',
+
      'manufacturers', 'Schüco, Knauf, KONE, Daikin, Siemens'
    ),
    'Levent Office Tower | Vista Construction',
@@ -145,7 +145,7 @@ VALUES
      'durum', 'Tamamlandı',
      'mimarlar', 'Vista Mimarlık & Mühendislik',
      'baş_mimar', 'Elif Sönmez',
-     'fotoğraflar', 'Koray Erkaya',
+
      'üreticiler', 'Rehau, Weber, Mapei, dormakaba'
    ),
    'Kadıköy Karma Yapı Kompleksi | Vista İnşaat',
@@ -163,7 +163,7 @@ VALUES
      'status', 'Completed',
      'architects', 'Vista Architecture & Engineering',
      'lead_architect', 'Elif Sönmez',
-     'photographs', 'Koray Erkaya',
+
      'manufacturers', 'Rehau, Weber, Mapei, dormakaba'
    ),
    'Kadıköy Mixed-Use Complex | Vista Construction',
@@ -181,7 +181,7 @@ VALUES
      'durum', 'Tamamlandı',
      'mimarlar', 'Koruma Mimarlık + Vista Mimarlık',
      'baş_mimar', 'Zeynep Akdağ',
-     'fotoğraflar', 'Cemal Emden',
+
      'üreticiler', 'Weber, Mapei, Laufen'
    ),
    'Tarihi Han Restorasyon Projesi | Vista İnşaat',
@@ -199,7 +199,7 @@ VALUES
      'status', 'Completed',
      'architects', 'Koruma Architecture + Vista Architecture',
      'lead_architect', 'Zeynep Akdağ',
-     'photographs', 'Cemal Emden',
+
      'manufacturers', 'Weber, Mapei, Laufen'
    ),
    'Historic Caravanserai Restoration | Vista Construction',
@@ -217,7 +217,7 @@ VALUES
      'durum', 'Tamamlandı',
      'mimarlar', 'Vista Mimarlık & Mühendislik',
      'baş_mimar', 'Can Yılmaz',
-     'fotoğraflar', 'İpek Duben',
+
      'üreticiler', 'Knauf, Franke, Siemens, Blum'
    ),
    'Gebze Lojistik Merkezi | Vista İnşaat',
@@ -235,7 +235,7 @@ VALUES
      'status', 'Completed',
      'architects', 'Vista Architecture & Engineering',
      'lead_architect', 'Can Yılmaz',
-     'photographs', 'İpek Duben',
+
      'manufacturers', 'Knauf, Franke, Siemens, Blum'
    ),
    'Gebze Logistics Centre | Vista Construction',
