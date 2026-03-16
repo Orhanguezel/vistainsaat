@@ -41,30 +41,26 @@ type Props = {
     loading: string;
     error: string;
   };
+  captchaTexts?: {
+    loading: string;
+    pending: string;
+    loadFailed: string;
+    verifyFailed: string;
+    required: string;
+    bypass: string;
+  };
 };
 
-export function BlogEngagementPanel({ locale, postId, texts, commonTexts }: Props) {
+export function BlogEngagementPanel({ locale, postId, texts, commonTexts, captchaTexts }: Props) {
   const isLocalhost =
     typeof window !== 'undefined' &&
     (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
-  const captchaLoadingText = locale.startsWith('en')
-    ? 'Security verification is loading...'
-    : 'Guvenlik dogrulamasi yukleniyor...';
-  const captchaPendingText = locale.startsWith('en')
-    ? 'Complete the verification box to submit your comment.'
-    : 'Yorumu gondermek icin dogrulama kutusunu tamamlayin.';
-  const captchaLoadFailedText = locale.startsWith('en')
-    ? 'Security verification could not be loaded. Disable ad blockers and refresh the page.'
-    : 'Guvenlik dogrulamasi yuklenemedi. Reklam engelleyiciyi kapatip sayfayi yenileyin.';
-  const captchaVerifyFailedText = locale.startsWith('en')
-    ? 'Security verification failed.'
-    : 'Guvenlik dogrulamasi basarisiz oldu.';
-  const captchaRequiredText = locale.startsWith('en')
-    ? 'Complete the security verification before submitting your comment.'
-    : 'Yorumu gondermeden once guvenlik dogrulamasini tamamlayin.';
-  const captchaBypassText = locale.startsWith('en')
-    ? 'Local development mode: security verification is bypassed.'
-    : 'Yerel gelistirme modunda guvenlik dogrulamasi bypass ediliyor.';
+  const captchaLoadingText = captchaTexts?.loading ?? 'Security verification is loading...';
+  const captchaPendingText = captchaTexts?.pending ?? 'Complete the verification box to submit your comment.';
+  const captchaLoadFailedText = captchaTexts?.loadFailed ?? 'Security verification could not be loaded. Disable ad blockers and refresh the page.';
+  const captchaVerifyFailedText = captchaTexts?.verifyFailed ?? 'Security verification failed.';
+  const captchaRequiredText = captchaTexts?.required ?? 'Complete the security verification before submitting your comment.';
+  const captchaBypassText = captchaTexts?.bypass ?? 'Local development mode: security verification is bypassed.';
 
   const [likes, setLikes] = useState(0);
   const [comments, setComments] = useState<ReviewItem[]>([]);

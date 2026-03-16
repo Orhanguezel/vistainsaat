@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { X } from 'lucide-react';
 import { localizedPath } from '@/seo';
+import { loginWithEmail, startGoogleOAuth } from '@/lib/auth';
 
 function GoogleIcon() {
   return (
@@ -19,11 +20,61 @@ function GoogleIcon() {
   );
 }
 
+const ERROR_KEYS: Record<string, string> = {
+  user_exists: 'user_exists',
+  invalid_credentials: 'invalid_credentials',
+  invalid_email: 'invalid_email',
+  weak_password: 'weak_password',
+  account_disabled: 'account_disabled',
+  too_many_requests: 'too_many_attempts',
+  google_oauth_not_configured: 'google_oauth_not_configured',
+};
+
 export function LoginClient({ locale }: { locale: string }) {
   const t = useTranslations('auth');
+  const tc = useTranslations('common');
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const resolveError = (err: unknown): string => {
+    const msg = err instanceof Error ? err.message : '';
+    const key = ERROR_KEYS[msg];
+    if (key) {
+      try { return t(`errors.${key}`); } catch { /* fallback */ }
+    }
+    return msg || t('errors.generic');
+  };
+
+  const handleEmailLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !password) return;
+    setLoading(true);
+    setError('');
+    try {
+      await loginWithEmail(email, password);
+      router.push(localizedPath(locale, '/'));
+      router.refresh();
+    } catch (err) {
+      setError(resolveError(err));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setGoogleLoading(true);
+    setError('');
+    try {
+      await startGoogleOAuth(window.location.origin + localizedPath(locale, '/'));
+    } catch (err) {
+      setError(resolveError(err));
+      setGoogleLoading(false);
+    }
+  };
 
   return (
     <div
@@ -68,7 +119,7 @@ export function LoginClient({ locale }: { locale: string }) {
             color: 'var(--color-text-muted)',
             transition: 'color 0.15s',
           }}
-          aria-label="Kapat"
+          aria-label={tc('closeMenu')}
         >
           <X style={{ width: 22, height: 22 }} />
         </button>
@@ -111,8 +162,27 @@ export function LoginClient({ locale }: { locale: string }) {
           {t('loginSubtitle')}
         </p>
 
+        {error && (
+          <div
+            style={{
+              padding: '10px 14px',
+              marginBottom: 16,
+              borderRadius: 4,
+              background: 'rgba(220, 38, 38, 0.08)',
+              border: '1px solid rgba(220, 38, 38, 0.2)',
+              color: '#dc2626',
+              fontSize: 13,
+              textAlign: 'center',
+            }}
+          >
+            {error}
+          </div>
+        )}
+
         <button
           type="button"
+          onClick={handleGoogleLogin}
+          disabled={googleLoading}
           style={{
             width: '100%',
             display: 'flex',
@@ -126,12 +196,13 @@ export function LoginClient({ locale }: { locale: string }) {
             color: 'var(--color-text-primary)',
             fontSize: 14,
             fontWeight: 600,
-            cursor: 'pointer',
+            cursor: googleLoading ? 'wait' : 'pointer',
+            opacity: googleLoading ? 0.7 : 1,
             transition: 'background 0.15s, border-color 0.15s',
           }}
         >
           <GoogleIcon />
-          {t('continueWithGoogle')}
+          {googleLoading ? tc('loading') : t('continueWithGoogle')}
         </button>
 
         <div
@@ -149,94 +220,100 @@ export function LoginClient({ locale }: { locale: string }) {
           <span style={{ flex: 1, height: 1, background: 'var(--color-border)' }} />
         </div>
 
-        <div style={{ marginBottom: 16 }}>
-          <label
-            style={{
-              display: 'block',
-              fontSize: 13,
-              fontWeight: 500,
-              color: 'var(--color-text-primary)',
-              marginBottom: 6,
-            }}
-          >
-            {t('email')}
-          </label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            style={{
-              width: '100%',
-              padding: '12px 14px',
-              borderRadius: 4,
-              border: '1px solid var(--color-border)',
-              background: 'var(--color-bg)',
-              color: 'var(--color-text-primary)',
-              fontSize: 14,
-              outline: 'none',
-            }}
-          />
-        </div>
-
-        <div style={{ marginBottom: 24 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+        <form onSubmit={handleEmailLogin}>
+          <div style={{ marginBottom: 16 }}>
             <label
               style={{
+                display: 'block',
                 fontSize: 13,
                 fontWeight: 500,
                 color: 'var(--color-text-primary)',
+                marginBottom: 6,
               }}
             >
-              {t('password')}
+              {t('email')}
             </label>
-            <button
-              type="button"
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
               style={{
-                fontSize: 13,
-                color: 'var(--color-brand)',
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                fontWeight: 500,
+                width: '100%',
+                padding: '12px 14px',
+                borderRadius: 4,
+                border: '1px solid var(--color-border)',
+                background: 'var(--color-bg)',
+                color: 'var(--color-text-primary)',
+                fontSize: 14,
+                outline: 'none',
               }}
-            >
-              {t('forgotPassword')}
-            </button>
+            />
           </div>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+
+          <div style={{ marginBottom: 24 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+              <label
+                style={{
+                  fontSize: 13,
+                  fontWeight: 500,
+                  color: 'var(--color-text-primary)',
+                }}
+              >
+                {t('password')}
+              </label>
+              <button
+                type="button"
+                style={{
+                  fontSize: 13,
+                  color: 'var(--color-brand)',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontWeight: 500,
+                }}
+              >
+                {t('forgotPassword')}
+              </button>
+            </div>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              style={{
+                width: '100%',
+                padding: '12px 14px',
+                borderRadius: 4,
+                border: '1px solid var(--color-border)',
+                background: 'var(--color-bg)',
+                color: 'var(--color-text-primary)',
+                fontSize: 14,
+                outline: 'none',
+              }}
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
             style={{
               width: '100%',
-              padding: '12px 14px',
+              padding: '12px 16px',
               borderRadius: 4,
-              border: '1px solid var(--color-border)',
-              background: 'var(--color-bg)',
-              color: 'var(--color-text-primary)',
+              border: 'none',
+              background: 'var(--color-accent)',
+              color: 'var(--color-text-on-dark)',
               fontSize: 14,
-              outline: 'none',
+              fontWeight: 700,
+              cursor: loading ? 'wait' : 'pointer',
+              opacity: loading ? 0.7 : 1,
+              transition: 'opacity 0.15s',
             }}
-          />
-        </div>
-
-        <button
-          type="button"
-          style={{
-            width: '100%',
-            padding: '12px 16px',
-            borderRadius: 4,
-            border: 'none',
-            background: 'var(--color-accent)',
-            color: 'var(--color-text-on-dark)',
-            fontSize: 14,
-            fontWeight: 700,
-            cursor: 'pointer',
-            transition: 'opacity 0.15s',
-          }}
-        >
-          {t('continueWithEmail')}
-        </button>
+          >
+            {loading ? tc('loading') : t('continueWithEmail')}
+          </button>
+        </form>
 
         <p
           style={{

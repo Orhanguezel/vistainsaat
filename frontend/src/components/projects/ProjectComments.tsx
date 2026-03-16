@@ -27,15 +27,40 @@ function isVideoUrl(url: string): boolean {
   return /\.(mp4|webm|ogg)(\?|$)/i.test(url);
 }
 
+type CommentTexts = {
+  title: string;
+  viewing: string;
+  commentingAs: string;
+  guest: string;
+  loginLink: string;
+  signupLink: string;
+  namePlaceholder: string;
+  commentPlaceholder: string;
+  uploadingImage: string;
+  photoVideo: string;
+  submitComment: string;
+  sending: string;
+  successMessage: string;
+  loadingComments: string;
+  emptyTitle: string;
+  emptySubtitle: string;
+  captchaLoading: string;
+  captchaPending: string;
+  captchaLoadFailed: string;
+  captchaVerifyFailed: string;
+  captchaRequired: string;
+  captchaBypass: string;
+};
+
 type Props = {
   targetType: string;
   targetId: string;
   apiBaseUrl: string;
   locale: string;
+  texts: CommentTexts;
 };
 
-export function ProjectComments({ targetType, targetId, apiBaseUrl, locale }: Props) {
-  const isEn = locale.startsWith('en');
+export function ProjectComments({ targetType, targetId, apiBaseUrl, locale, texts }: Props) {
   const [comments, setComments] = useState<Comment[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -163,7 +188,7 @@ export function ProjectComments({ targetType, targetId, apiBaseUrl, locale }: Pr
         const body: Record<string, string> = {
           target_type: targetType,
           target_id: targetId,
-          author_name: authorName || (isEn ? 'Guest' : 'Misafir'),
+          author_name: authorName || texts.guest,
           content,
         };
         if (uploadedImageUrl) body.image_url = uploadedImageUrl;
@@ -190,7 +215,7 @@ export function ProjectComments({ targetType, targetId, apiBaseUrl, locale }: Pr
       } catch { /* silent */ }
       setSubmitting(false);
     },
-    [apiBaseUrl, targetType, targetId, isEn, submitting, uploadedImageUrl, captchaToken, isLocalhost],
+    [apiBaseUrl, targetType, targetId, texts.guest, submitting, uploadedImageUrl, captchaToken, isLocalhost],
   );
 
   /* Image select + upload */
@@ -353,33 +378,31 @@ export function ProjectComments({ targetType, targetId, apiBaseUrl, locale }: Pr
 
       {/* Header */}
       <div className="pc-header">
-        <span className="pc-title">{isEn ? 'Conversation' : 'Yorumlar'}</span>
+        <span className="pc-title">{texts.title}</span>
         <span className="pc-viewing">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-          {viewingCount} {isEn ? 'Viewing' : 'Görüntülüyor'}
+          {viewingCount} {texts.viewing}
         </span>
       </div>
 
       {/* Guest info */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
         <span className="pc-guest">
-          {isEn ? 'Commenting as ' : 'Şu şekilde yorum yapılıyor: '}
-          <b>{isEn ? 'Guest' : 'Misafir'}</b>
+          {texts.commentingAs}
+          <b>{texts.guest}</b>
         </span>
         <span className="pc-auth">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ verticalAlign: '-2px', marginRight: 4 }}><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
-          <a href="#">{isEn ? 'Log in' : 'Giriş yap'}</a>
+          <a href="#">{texts.loginLink}</a>
           {' | '}
-          <a href="#">{isEn ? 'Sign up' : 'Kayıt ol'}</a>
+          <a href="#">{texts.signupLink}</a>
         </span>
       </div>
 
       {/* Success message */}
       {success && (
         <div className="pc-success">
-          {isEn
-            ? 'Your comment has been submitted and is pending approval.'
-            : 'Yorumunuz gönderildi ve onay bekliyor.'}
+          {texts.successMessage}
         </div>
       )}
 
@@ -394,14 +417,14 @@ export function ProjectComments({ targetType, targetId, apiBaseUrl, locale }: Pr
             type="text"
             name="author_name"
             className="pc-name-input"
-            placeholder={isEn ? 'Your name (optional)' : 'Adınız (isteğe bağlı)'}
+            placeholder={texts.namePlaceholder}
             maxLength={255}
           />
           <textarea
             ref={textareaRef}
             name="content"
             className="pc-input"
-            placeholder={isEn ? 'Be the first to comment...' : 'İlk yorumu siz yazın...'}
+            placeholder={texts.commentPlaceholder}
             rows={2}
           />
           {/* Image preview */}
@@ -418,7 +441,7 @@ export function ProjectComments({ targetType, targetId, apiBaseUrl, locale }: Pr
           )}
           {uploading && (
             <div className="pc-uploading">
-              {isEn ? 'Uploading image...' : 'Resim yükleniyor...'}
+              {texts.uploadingImage}
             </div>
           )}
           <div className="pc-input-bar">
@@ -449,7 +472,7 @@ export function ProjectComments({ targetType, targetId, apiBaseUrl, locale }: Pr
                 )}
               </div>
               {/* Photo / Video */}
-              <button type="button" className="pc-input-btn" title={isEn ? 'Photo / Video' : 'Fotoğraf / Video'} onClick={handleImageSelect}>
+              <button type="button" className="pc-input-btn" title={texts.photoVideo} onClick={handleImageSelect}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
               </button>
             </div>
@@ -458,9 +481,7 @@ export function ProjectComments({ targetType, targetId, apiBaseUrl, locale }: Pr
               className="pc-submit"
               disabled={submitting || uploading || (!isLocalhost && !captchaToken)}
             >
-              {submitting
-                ? (isEn ? 'Sending...' : 'Gönderiliyor...')
-                : (isEn ? 'Comment' : 'Yorum Yap')}
+              {submitting ? texts.sending : texts.submitComment}
             </button>
           </div>
           <input
@@ -483,7 +504,7 @@ export function ProjectComments({ targetType, targetId, apiBaseUrl, locale }: Pr
       {/* Comments list */}
       {loading && (
         <div style={{ textAlign: 'center', padding: 20, color: 'var(--color-text-muted)', fontSize: 13 }}>
-          {isEn ? 'Loading comments...' : 'Yorumlar yükleniyor...'}
+          {texts.loadingComments}
         </div>
       )}
 
@@ -495,14 +516,10 @@ export function ProjectComments({ targetType, targetId, apiBaseUrl, locale }: Pr
             </svg>
           </div>
           <div className="pc-empty-title">
-            {isEn
-              ? 'No one seems to have shared their thoughts on this topic yet'
-              : 'Henüz bu konu hakkında düşüncelerini paylaşan olmamış'}
+            {texts.emptyTitle}
           </div>
           <div className="pc-empty-sub">
-            {isEn
-              ? 'Leave a comment so your voice will be heard first.'
-              : 'İlk yorumu siz yazın, sesiniz ilk duyulsun.'}
+            {texts.emptySubtitle}
           </div>
         </div>
       )}

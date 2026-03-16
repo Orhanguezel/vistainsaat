@@ -176,7 +176,7 @@ export function makeGoogleAuthController(app: FastifyInstance) {
       }
 
       const base = baseUrlFrom(req);
-      const redirectUri = `${base}/auth/google/callback`;
+      const redirectUri = `${base}/api/auth/google/callback`;
       const csrf = randomUUID();
 
       const u = new URL(
@@ -272,7 +272,7 @@ export function makeGoogleAuthController(app: FastifyInstance) {
         }
 
         const base = baseUrlFrom(req);
-        const redirectUri = `${base}/auth/google/callback`;
+        const redirectUri = `${base}/api/auth/google/callback`;
 
         const client = new OAuth2Client(
           clientId,

@@ -167,7 +167,7 @@ export default async function HomePage({
               title={headline || visibleProducts[0]?.title}
               description={subheadline || undefined}
               ctaText={ctaText || undefined}
-              ctaUrl={asStr(h.cta_url) || undefined}
+              ctaUrl={asStr(h.cta_url)?.replace('[locale]', locale) || undefined}
             />
 
             {/* Right — left stack + full-height news */}

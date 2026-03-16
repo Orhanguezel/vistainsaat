@@ -6,8 +6,9 @@ import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
 import { usePathname } from 'next/navigation';
-import { Menu, X, Search } from 'lucide-react';
+import { Menu, X, Search, LogOut, User } from 'lucide-react';
 import { localizedPath } from '@/seo';
+import { fetchCurrentUser, logout, type AuthUser } from '@/lib/auth';
 
 const ThemeToggle = dynamic(
   () => import('@/components/theme/ThemeToggle').then((m) => m.ThemeToggle),
@@ -116,20 +117,47 @@ export function Header({
   news?: Record<string, unknown>[];
 }) {
   const t = useTranslations('nav');
+  const tc = useTranslations('common');
   const fT = useTranslations('footer');
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
   const expandedRef = useRef<HTMLDivElement>(null);
   const compactRef = useRef<HTMLDivElement>(null);
   const items = normalizeItems(menuItems);
 
   const isHome = /^\/[a-z]{2}\/?$/.test(pathname);
   const compactOnly = !isHome;
-  const isEn = locale.startsWith('en');
+  // Fetch auth user
+  useEffect(() => {
+    fetchCurrentUser().then(setUser);
+  }, [pathname]);
+
+  // Close profile dropdown on outside click
+  useEffect(() => {
+    if (!profileOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
+        setProfileOpen(false);
+      }
+    };
+    document.addEventListener('click', handler);
+    return () => document.removeEventListener('click', handler);
+  }, [profileOpen]);
+
+  const handleLogout = async () => {
+    await logout();
+    setUser(null);
+    setProfileOpen(false);
+    window.location.href = localizedPath(locale, '/');
+  };
 
   // Close menu on route change
   useEffect(() => {
     setMenuOpen(false);
+    setProfileOpen(false);
   }, [pathname]);
 
   // Lock body scroll when menu open
@@ -199,28 +227,94 @@ export function Header({
                   whiteSpace: 'nowrap' as const,
                 }}
               >
-                {isEn ? "Turkey's leading construction firm" : "Türkiye'nin lider inşaat firması"}
+                {t('tagline')}
               </span>
             </Link>
 
             <div className="flex items-center justify-end gap-4" style={{ paddingTop: 4 }}>
-              <Link
-                href={localizedPath(locale, '/login')}
-                style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-text-primary)', transition: 'color 0.15s' }}
-              >
-                {t('login')}
-              </Link>
-              <span style={{ width: 1, height: 16, background: 'var(--color-border)' }} aria-hidden="true" />
-              <Link
-                href={localizedPath(locale, '/register')}
-                style={{
-                  fontSize: 13, fontWeight: 700, color: 'var(--color-text-on-dark)',
-                  background: 'var(--color-accent)', padding: '8px 20px', borderRadius: 4,
-                  transition: 'opacity 0.15s',
-                }}
-              >
-                {t('register')}
-              </Link>
+              {user ? (
+                <div ref={profileRef} style={{ position: 'relative' }}>
+                  <button
+                    type="button"
+                    onClick={() => setProfileOpen(!profileOpen)}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: 8,
+                      padding: '6px 12px', borderRadius: 4,
+                      border: '1px solid var(--color-border)', background: 'var(--color-bg)',
+                      cursor: 'pointer', fontSize: 13, fontWeight: 600,
+                      color: 'var(--color-text-primary)',
+                    }}
+                  >
+                    <span style={{
+                      width: 28, height: 28, borderRadius: '50%',
+                      background: 'var(--color-brand)', color: '#fff',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: 12, fontWeight: 700,
+                    }}>
+                      {(user.full_name || user.email).charAt(0).toUpperCase()}
+                    </span>
+                    {user.full_name || user.email.split('@')[0]}
+                  </button>
+                  {profileOpen && (
+                    <div style={{
+                      position: 'absolute', top: '100%', right: 0, marginTop: 6,
+                      minWidth: 200, background: 'var(--color-bg)',
+                      border: '1px solid var(--color-border)', borderRadius: 6,
+                      boxShadow: '0 4px 16px rgba(0,0,0,0.1)', zIndex: 60,
+                      padding: '8px 0',
+                    }}>
+                      <div style={{ padding: '8px 16px', fontSize: 12, color: 'var(--color-text-muted)', borderBottom: '1px solid var(--color-border)', marginBottom: 4 }}>
+                        {user.email}
+                      </div>
+                      <Link
+                        href={localizedPath(locale, '/profil')}
+                        onClick={() => setProfileOpen(false)}
+                        style={{
+                          width: '100%', display: 'flex', alignItems: 'center', gap: 8,
+                          padding: '8px 16px', fontSize: 13, color: 'var(--color-text-primary)',
+                          textDecoration: 'none',
+                        }}
+                      >
+                        <User style={{ width: 14, height: 14 }} />
+                        {t('profile')}
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={handleLogout}
+                        style={{
+                          width: '100%', display: 'flex', alignItems: 'center', gap: 8,
+                          padding: '8px 16px', border: 'none', background: 'none',
+                          cursor: 'pointer', fontSize: 13, color: 'var(--color-text-primary)',
+                          textAlign: 'left',
+                        }}
+                      >
+                        <LogOut style={{ width: 14, height: 14 }} />
+                        {t('logout')}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <>
+                  <Link
+                    href={localizedPath(locale, '/login')}
+                    style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-text-primary)', transition: 'color 0.15s' }}
+                  >
+                    {t('login')}
+                  </Link>
+                  <span style={{ width: 1, height: 16, background: 'var(--color-border)' }} aria-hidden="true" />
+                  <Link
+                    href={localizedPath(locale, '/register')}
+                    style={{
+                      fontSize: 13, fontWeight: 700, color: 'var(--color-text-on-dark)',
+                      background: 'var(--color-accent)', padding: '8px 20px', borderRadius: 4,
+                      transition: 'opacity 0.15s',
+                    }}
+                  >
+                    {t('register')}
+                  </Link>
+                </>
+              )}
               <span style={{ width: 1, height: 16, background: 'var(--color-border)' }} aria-hidden="true" />
               <button
                 type="button"
@@ -290,7 +384,7 @@ export function Header({
           <div className="mx-auto" style={{ maxWidth: 640 }}>
             <div className="flex items-center gap-3" style={{ border: '1px solid var(--color-border)', background: 'var(--color-bg-secondary)', borderRadius: 2, padding: '10px 16px' }}>
               <Search style={{ width: 18, height: 18, flexShrink: 0, color: 'var(--color-text-muted)' }} />
-              <input type="search" placeholder={isEn ? `Search ${companyName}` : `${companyName}'ta Ara`}
+              <input type="search" placeholder={tc('searchIn', { company: companyName })}
                 className="w-full bg-transparent outline-none" style={{ color: 'var(--color-text-primary)', fontSize: 14 }} />
             </div>
           </div>
@@ -326,7 +420,7 @@ export function Header({
 
           <div className="flex items-center gap-2" style={{ border: '1px solid var(--color-border)', background: 'var(--color-bg-secondary)', borderRadius: 2, padding: '6px 12px', minWidth: 200, maxWidth: 320 }}>
             <Search style={{ width: 14, height: 14, flexShrink: 0, color: 'var(--color-text-muted)' }} />
-            <input type="search" placeholder={isEn ? 'Search' : 'Ara'} className="w-full bg-transparent outline-none" style={{ color: 'var(--color-text-primary)', fontSize: 13 }} />
+            <input type="search" placeholder={tc('search')} className="w-full bg-transparent outline-none" style={{ color: 'var(--color-text-primary)', fontSize: 13 }} />
           </div>
 
           <nav className="flex items-center justify-center" aria-label="Compact navigasyon">
@@ -339,13 +433,30 @@ export function Header({
           </nav>
 
           <div className="flex items-center justify-end gap-3">
-            <Link href={localizedPath(locale, '/login')} style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-text-primary)', transition: 'color 0.15s' }}>
-              {t('login')}
-            </Link>
-            <Link href={localizedPath(locale, '/register')} style={{
-              fontSize: 12, fontWeight: 700, color: 'var(--color-text-on-dark)',
-              background: 'var(--color-accent)', padding: '6px 16px', borderRadius: 4, transition: 'opacity 0.15s',
-            }}>{t('register')}</Link>
+            {user ? (
+              <button
+                type="button"
+                onClick={() => setProfileOpen(!profileOpen)}
+                style={{
+                  width: 30, height: 30, borderRadius: '50%',
+                  background: 'var(--color-brand)', color: '#fff',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 12, fontWeight: 700, border: 'none', cursor: 'pointer',
+                }}
+              >
+                {(user.full_name || user.email).charAt(0).toUpperCase()}
+              </button>
+            ) : (
+              <>
+                <Link href={localizedPath(locale, '/login')} style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-text-primary)', transition: 'color 0.15s' }}>
+                  {t('login')}
+                </Link>
+                <Link href={localizedPath(locale, '/register')} style={{
+                  fontSize: 12, fontWeight: 700, color: 'var(--color-text-on-dark)',
+                  background: 'var(--color-accent)', padding: '6px 16px', borderRadius: 4, transition: 'opacity 0.15s',
+                }}>{t('register')}</Link>
+              </>
+            )}
             <span style={{ width: 1, height: 16, background: 'var(--color-border)' }} aria-hidden="true" />
             <button type="button" onClick={() => setMenuOpen(!menuOpen)} style={{ padding: 4, color: 'var(--color-text-primary)' }} aria-label="Menü">
               {menuOpen ? <X style={{ width: 20, height: 20 }} /> : <Menu style={{ width: 20, height: 20 }} />}
@@ -400,29 +511,61 @@ export function Header({
                 <LanguageSwitcher locale={locale} activeLocales={activeLocales} />
               </div>
               <div className="flex items-center gap-4">
-                <Link
-                  href={localizedPath(locale, '/login')}
-                  onClick={() => setMenuOpen(false)}
-                  style={{ fontSize: 14, fontWeight: 500, color: 'var(--color-text-primary)' }}
-                >
-                  {t('login')}
-                </Link>
-                <Link
-                  href={localizedPath(locale, '/register')}
-                  onClick={() => setMenuOpen(false)}
-                  style={{
-                    fontSize: 13, fontWeight: 700, color: 'var(--color-text-on-dark)',
-                    background: 'var(--color-accent)', padding: '8px 20px', borderRadius: 4,
-                  }}
-                >
-                  {t('register')}
-                </Link>
+                {user ? (
+                  <>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{
+                        width: 28, height: 28, borderRadius: '50%',
+                        background: 'var(--color-brand)', color: '#fff',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontSize: 12, fontWeight: 700,
+                      }}>
+                        {(user.full_name || user.email).charAt(0).toUpperCase()}
+                      </span>
+                      <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-text-primary)' }}>
+                        {user.full_name || user.email.split('@')[0]}
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => { setMenuOpen(false); handleLogout(); }}
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: 6,
+                        fontSize: 13, fontWeight: 500, color: 'var(--color-text-secondary)',
+                        background: 'none', border: 'none', cursor: 'pointer',
+                      }}
+                    >
+                      <LogOut style={{ width: 14, height: 14 }} />
+                      {t('logout')}
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href={localizedPath(locale, '/login')}
+                      onClick={() => setMenuOpen(false)}
+                      style={{ fontSize: 14, fontWeight: 500, color: 'var(--color-text-primary)' }}
+                    >
+                      {t('login')}
+                    </Link>
+                    <Link
+                      href={localizedPath(locale, '/register')}
+                      onClick={() => setMenuOpen(false)}
+                      style={{
+                        fontSize: 13, fontWeight: 700, color: 'var(--color-text-on-dark)',
+                        background: 'var(--color-accent)', padding: '8px 20px', borderRadius: 4,
+                      }}
+                    >
+                      {t('register')}
+                    </Link>
+                  </>
+                )}
                 <span style={{ width: 1, height: 16, background: 'var(--color-border)' }} aria-hidden="true" />
                 <button
                   type="button"
                   onClick={() => setMenuOpen(false)}
                   style={{ padding: 6, color: 'var(--color-text-primary)' }}
-                  aria-label={isEn ? 'Close menu' : 'Menüyü kapat'}
+                  aria-label={tc('closeMenu')}
                 >
                   <X style={{ width: 22, height: 22 }} />
                 </button>
@@ -451,9 +594,9 @@ export function Header({
                     {col.title}
                   </h3>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                    {col.links.map((link) => (
+                    {col.links.map((link, i) => (
                       <Link
-                        key={link.label}
+                        key={`${link.label}-${i}`}
                         href={link.url}
                         onClick={() => setMenuOpen(false)}
                         style={{

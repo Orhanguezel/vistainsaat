@@ -7,9 +7,10 @@ type Props = {
   title: string;
   description?: string;
   locale: string;
+  saveLabel?: string;
 };
 
-export function SocialShare({ url, title, description, locale }: Props) {
+export function SocialShare({ url, title, description, locale, saveLabel: saveLabelProp }: Props) {
   const encoded = encodeURIComponent(url);
   const encodedTitle = encodeURIComponent(title);
   const encodedDesc = encodeURIComponent(description || title);
@@ -21,7 +22,7 @@ export function SocialShare({ url, title, description, locale }: Props) {
     [],
   );
 
-  const saveLabel = locale.startsWith('en') ? 'Save' : 'Kaydet';
+  const saveLabel = saveLabelProp ?? 'Kaydet';
 
   return (
     <>

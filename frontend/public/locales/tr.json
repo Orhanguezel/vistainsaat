@@ -21,7 +21,10 @@
     "corporate": "Kurumsal",
     "vision": "Vizyonumuz",
     "team": "Ekibimiz",
-    "career": "Kariyer"
+    "career": "Kariyer",
+    "tagline": "Türkiye'nin lider inşaat firması",
+    "profile": "Profilim",
+    "logout": "Çıkış Yap"
   },
   "footer": {
     "description": "Konut, ticari ve karma kullanım projelerinde güvenilir inşaat ve mimarlık çözümleri.",
@@ -42,6 +45,14 @@
     "viewAll": "Tümünü Gör",
     "contactUs": "Bize Ulaşın",
     "backToTop": "Yukarı",
+    "search": "Ara",
+    "searchIn": "{company}'ta Ara",
+    "closeMenu": "Menüyü kapat",
+    "clearFilters": "Filtreleri temizle",
+    "allLabel": "Tüm",
+    "save": "Kaydet",
+    "sending": "Gönderiliyor...",
+    "guest": "Misafir",
     "relativeTime": {
       "justNow": "az önce",
       "hoursAgo": "yaklaşık {hours} saat önce",
@@ -171,6 +182,8 @@
     "requestOffer": "Bu Proje Hakkında Bilgi Alın",
     "manufacturers": "Üreticiler",
     "saveProject": "Projeyi Kaydet",
+    "viewProject": "Projeyi Görüntüle",
+    "allProjects": "Tüm Projeler",
     "loveTitle": "Beğeneceğiniz Projeler",
     "getQuoteTitle": "Projeniz İçin Teklif Alın",
     "getQuoteDesc": "Ücretsiz keşif ve teklif için hemen iletişime geçin.",
@@ -203,6 +216,28 @@
       "architect": "Mimar",
       "floors": "Kat Sayısı",
       "units": "Daire/Birim Sayısı"
+    },
+    "comments": {
+      "title": "Yorumlar",
+      "viewing": "Görüntülüyor",
+      "commentingAs": "Şu şekilde yorum yapılıyor: ",
+      "loginLink": "Giriş yap",
+      "signupLink": "Kayıt ol",
+      "namePlaceholder": "Adınız (isteğe bağlı)",
+      "commentPlaceholder": "İlk yorumu siz yazın...",
+      "uploadingImage": "Resim yükleniyor...",
+      "photoVideo": "Fotoğraf / Video",
+      "submitComment": "Yorum Yap",
+      "successMessage": "Yorumunuz gönderildi ve onay bekliyor.",
+      "loadingComments": "Yorumlar yükleniyor...",
+      "emptyTitle": "Henüz bu konu hakkında düşüncelerini paylaşan olmamış",
+      "emptySubtitle": "İlk yorumu siz yazın, sesiniz ilk duyulsun.",
+      "captchaLoading": "Güvenlik doğrulaması yükleniyor...",
+      "captchaPending": "Yorumu göndermek için doğrulama kutusunu tamamlayın.",
+      "captchaLoadFailed": "Güvenlik doğrulaması yüklenemedi. Reklam engelleyiciyi kapatıp sayfayı yenileyin.",
+      "captchaVerifyFailed": "Güvenlik doğrulaması başarısız oldu.",
+      "captchaRequired": "Yorumu göndermeden önce güvenlik doğrulamasını tamamlayın.",
+      "captchaBypass": "Yerel geliştirme modunda güvenlik doğrulaması bypass ediliyor."
     }
   },
   "services": {
@@ -369,7 +404,40 @@
     "termsAgreement": "Devam ederek, <terms>Kullanım Koşulları</terms> ve <privacy>Gizlilik Politikası</privacy>'nı kabul etmiş olursunuz.",
     "termsOfService": "Kullanım Koşulları",
     "privacyPolicy": "Gizlilik Politikası",
-    "step": "Adım {current} / {total}"
+    "step": "Adım {current} / {total}",
+    "profile": {
+      "title": "Profil Bilgilerim",
+      "subtitle": "Hesap bilgilerinizi görüntüleyin ve güncelleyin.",
+      "fullName": "Ad Soyad",
+      "email": "E-posta",
+      "phone": "Telefon",
+      "currentPassword": "Mevcut Şifre",
+      "newPassword": "Yeni Şifre",
+      "changePassword": "Şifre Değiştir",
+      "saveChanges": "Değişiklikleri Kaydet",
+      "saving": "Kaydediliyor...",
+      "saved": "Bilgileriniz başarıyla güncellendi.",
+      "passwordChanged": "Şifreniz başarıyla değiştirildi.",
+      "memberSince": "Üyelik tarihi",
+      "role": "Hesap türü",
+      "roles": {
+        "admin": "Yönetici",
+        "moderator": "Moderatör",
+        "user": "Kullanıcı"
+      },
+      "notLoggedIn": "Bu sayfayı görüntülemek için giriş yapmanız gerekiyor.",
+      "goToLogin": "Giriş Yap"
+    },
+    "errors": {
+      "user_exists": "Bu e-posta adresi zaten kayıtlı. Giriş yapmayı deneyin.",
+      "invalid_credentials": "E-posta veya şifre hatalı.",
+      "invalid_email": "Geçerli bir e-posta adresi girin.",
+      "weak_password": "Şifre en az 6 karakter olmalıdır.",
+      "account_disabled": "Hesabınız devre dışı bırakılmış.",
+      "too_many_attempts": "Çok fazla deneme. Lütfen bir süre bekleyin.",
+      "google_oauth_not_configured": "Google ile giriş şu anda kullanılamıyor.",
+      "generic": "Bir hata oluştu. Lütfen tekrar deneyin."
+    }
   },
   "legal": {
     "title": "Yasal",

@@ -34,6 +34,16 @@ type FilterLabels = {
   status: string;
   all: string;
   search: string;
+  clearFilters: string;
+  allLabel: string;
+  noResults: string;
+};
+
+type DetailLabels = {
+  architects: string;
+  location: string;
+  year: string;
+  area: string;
 };
 
 type Props = {
@@ -41,6 +51,7 @@ type Props = {
   locale: string;
   labels: { projects: string; images: string };
   filterLabels: FilterLabels;
+  detailLabels?: DetailLabels;
 };
 
 /* ── Extract unique non-empty values for a field ── */
@@ -53,7 +64,7 @@ function uniqueValues(items: ProjectViewItem[], field: keyof ProjectViewItem): s
   return Array.from(set).sort();
 }
 
-export function ProjectsView({ projects, locale, labels, filterLabels }: Props) {
+export function ProjectsView({ projects, locale, labels, filterLabels, detailLabels }: Props) {
   const rootRef = useRef<HTMLDivElement>(null);
   const searchParams = useSearchParams();
 
@@ -307,7 +318,7 @@ export function ProjectsView({ projects, locale, labels, filterLabels }: Props) 
           ))}
           {activeFilterCount > 0 && (
             <button className="pv-clear-btn" onClick={clearFilters}>
-              {locale === 'en' ? 'Clear filters' : 'Filtreleri temizle'}
+              {filterLabels.clearFilters}
             </button>
           )}
         </div>
@@ -357,7 +368,7 @@ export function ProjectsView({ projects, locale, labels, filterLabels }: Props) 
           <div className="pv-panel-label">
             {filters[openDim.key]
               ? `${openDim.label}: ${filters[openDim.key]}`
-              : `${locale === 'en' ? 'All' : 'Tüm'} ${openDim.label}`
+              : `${filterLabels.allLabel} ${openDim.label}`
             }
           </div>
           {/* Options grid */}
@@ -375,7 +386,7 @@ export function ProjectsView({ projects, locale, labels, filterLabels }: Props) 
             ))}
             {filteredOptions.length === 0 && (
               <span style={{ fontSize: 13, color: 'var(--color-text-muted)', padding: '6px 0' }}>
-                {locale === 'en' ? 'No results' : 'Sonuç bulunamadı'}
+                {filterLabels.noResults}
               </span>
             )}
           </div>
@@ -407,7 +418,7 @@ export function ProjectsView({ projects, locale, labels, filterLabels }: Props) 
         {/* List view */}
         <div className="pv-list-section" style={{ marginTop: 0 }}>
           {filtered.map((p) => (
-            <ListCard key={p.id ?? p.title} item={p} locale={locale} />
+            <ListCard key={p.id ?? p.title} item={p} detailLabels={detailLabels} />
           ))}
         </div>
       </div>
@@ -460,7 +471,7 @@ function GridCard({ item, aspectRatio, titleSize, sizes }: { item: ProjectViewIt
 }
 
 /* ── List card ── */
-function ListCard({ item, locale }: { item: ProjectViewItem; locale: string }) {
+function ListCard({ item, detailLabels }: { item: ProjectViewItem; detailLabels?: DetailLabels }) {
   return (
     <Link href={item.href} className="pv-list-item">
       <div className="pv-list-img">
@@ -477,23 +488,23 @@ function ListCard({ item, locale }: { item: ProjectViewItem; locale: string }) {
         )}
         {item.architects && (
           <p style={{ fontSize: 14, color: 'var(--color-text-secondary)', marginTop: 10 }}>
-            <strong>{locale === 'en' ? 'Architects:' : 'Mimarlar:'}</strong>{' '}
+            <strong>{detailLabels?.architects ?? 'Mimarlar'}:</strong>{' '}
             <span style={{ color: 'var(--color-brand)' }}>{item.architects}</span>
           </p>
         )}
         {item.location && (
           <p style={{ fontSize: 14, color: 'var(--color-text-secondary)', marginTop: 4 }}>
-            <strong>{locale === 'en' ? 'Location:' : 'Lokasyon:'}</strong> {item.location}
+            <strong>{detailLabels?.location ?? 'Lokasyon'}:</strong> {item.location}
           </p>
         )}
         {item.year && (
           <p style={{ fontSize: 14, color: 'var(--color-text-secondary)', marginTop: 4 }}>
-            <strong>{locale === 'en' ? 'Year:' : 'Yıl:'}</strong> {item.year}
+            <strong>{detailLabels?.year ?? 'Yıl'}:</strong> {item.year}
           </p>
         )}
         {item.area && (
           <p style={{ fontSize: 14, color: 'var(--color-text-secondary)', marginTop: 4 }}>
-            <strong>{locale === 'en' ? 'Area:' : 'Alan:'}</strong> {item.area}
+            <strong>{detailLabels?.area ?? 'Alan'}:</strong> {item.area}
           </p>
         )}
       </div>

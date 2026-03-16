@@ -33,7 +33,7 @@ VALUES (
     'subheadline_en', 'Quality and on-time delivery for residential, commercial and industrial projects.',
     'cta_text_tr', 'Projelerimizi İnceleyin',
     'cta_text_en', 'Explore Our Projects',
-    'cta_url', '/projeler'
+    'cta_url', '/[locale]/projeler'
   ) AS CHAR CHARACTER SET utf8mb4),
   NOW(3), NOW(3)
 )

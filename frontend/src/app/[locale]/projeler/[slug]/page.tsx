@@ -249,6 +249,7 @@ export default async function ProjectDetailPage({
             title={project.title}
             description={project.meta_description || project.description?.slice(0, 160)}
             locale={locale}
+            saveLabel={t('common.save')}
           />
         </div>
 
@@ -372,6 +373,30 @@ export default async function ProjectDetailPage({
               targetId={projectId || slug}
               apiBaseUrl={API_BASE_URL}
               locale={locale}
+              texts={{
+                title: t('projects.comments.title'),
+                viewing: t('projects.comments.viewing'),
+                commentingAs: t('projects.comments.commentingAs'),
+                guest: t('common.guest'),
+                loginLink: t('projects.comments.loginLink'),
+                signupLink: t('projects.comments.signupLink'),
+                namePlaceholder: t('projects.comments.namePlaceholder'),
+                commentPlaceholder: t('projects.comments.commentPlaceholder'),
+                uploadingImage: t('projects.comments.uploadingImage'),
+                photoVideo: t('projects.comments.photoVideo'),
+                submitComment: t('projects.comments.submitComment'),
+                sending: t('common.sending'),
+                successMessage: t('projects.comments.successMessage'),
+                loadingComments: t('projects.comments.loadingComments'),
+                emptyTitle: t('projects.comments.emptyTitle'),
+                emptySubtitle: t('projects.comments.emptySubtitle'),
+                captchaLoading: t('projects.comments.captchaLoading'),
+                captchaPending: t('projects.comments.captchaPending'),
+                captchaLoadFailed: t('projects.comments.captchaLoadFailed'),
+                captchaVerifyFailed: t('projects.comments.captchaVerifyFailed'),
+                captchaRequired: t('projects.comments.captchaRequired'),
+                captchaBypass: t('projects.comments.captchaBypass'),
+              }}
             />
           </div>
 

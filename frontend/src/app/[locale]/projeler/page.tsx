@@ -185,6 +185,15 @@ export default async function ProjectsPage({
               status: t('projects.filters.status'),
               all: t('projects.filters.all'),
               search: t('projects.filters.search'),
+              clearFilters: t('common.clearFilters'),
+              noResults: t('common.noResults'),
+              allLabel: t('common.allLabel'),
+            }}
+            detailLabels={{
+              architects: t('projects.detail.architect'),
+              location: t('projects.detail.location'),
+              year: t('projects.detail.year'),
+              area: t('projects.detail.area'),
             }}
           /></Suspense>
         </div>

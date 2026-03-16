@@ -21,7 +21,10 @@
     "corporate": "Corporate",
     "vision": "Our Vision",
     "team": "Our Team",
-    "career": "Career"
+    "career": "Career",
+    "tagline": "Turkey's leading construction firm",
+    "profile": "My Profile",
+    "logout": "Log Out"
   },
   "footer": {
     "description": "Reliable construction and architecture solutions for residential, commercial and mixed-use projects.",
@@ -42,6 +45,14 @@
     "viewAll": "View All",
     "contactUs": "Contact Us",
     "backToTop": "Back to Top",
+    "search": "Search",
+    "searchIn": "Search {company}",
+    "closeMenu": "Close menu",
+    "clearFilters": "Clear filters",
+    "allLabel": "All",
+    "save": "Save",
+    "sending": "Sending...",
+    "guest": "Guest",
     "relativeTime": {
       "justNow": "just now",
       "hoursAgo": "about {hours} hours ago",
@@ -205,6 +216,28 @@
       "architect": "Architect",
       "floors": "Number of Floors",
       "units": "Number of Units"
+    },
+    "comments": {
+      "title": "Conversation",
+      "viewing": "Viewing",
+      "commentingAs": "Commenting as ",
+      "loginLink": "Log in",
+      "signupLink": "Sign up",
+      "namePlaceholder": "Your name (optional)",
+      "commentPlaceholder": "Be the first to comment...",
+      "uploadingImage": "Uploading image...",
+      "photoVideo": "Photo / Video",
+      "submitComment": "Comment",
+      "successMessage": "Your comment has been submitted and is pending approval.",
+      "loadingComments": "Loading comments...",
+      "emptyTitle": "No one seems to have shared their thoughts on this topic yet",
+      "emptySubtitle": "Leave a comment so your voice will be heard first.",
+      "captchaLoading": "Security verification is loading...",
+      "captchaPending": "Complete the verification box to submit your comment.",
+      "captchaLoadFailed": "Security verification could not be loaded. Disable ad blockers and refresh the page.",
+      "captchaVerifyFailed": "Security verification failed.",
+      "captchaRequired": "Complete the security verification before submitting your comment.",
+      "captchaBypass": "Local development mode: security verification is bypassed."
     }
   },
   "services": {
@@ -368,7 +401,40 @@
     "termsAgreement": "By continuing, you agree to the <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>.",
     "termsOfService": "Terms of Service",
     "privacyPolicy": "Privacy Policy",
-    "step": "Step {current} / {total}"
+    "step": "Step {current} / {total}",
+    "profile": {
+      "title": "My Profile",
+      "subtitle": "View and update your account information.",
+      "fullName": "Full Name",
+      "email": "Email",
+      "phone": "Phone",
+      "currentPassword": "Current Password",
+      "newPassword": "New Password",
+      "changePassword": "Change Password",
+      "saveChanges": "Save Changes",
+      "saving": "Saving...",
+      "saved": "Your information has been updated successfully.",
+      "passwordChanged": "Your password has been changed successfully.",
+      "memberSince": "Member since",
+      "role": "Account type",
+      "roles": {
+        "admin": "Administrator",
+        "moderator": "Moderator",
+        "user": "User"
+      },
+      "notLoggedIn": "You need to log in to view this page.",
+      "goToLogin": "Log In"
+    },
+    "errors": {
+      "user_exists": "This email is already registered. Try logging in instead.",
+      "invalid_credentials": "Invalid email or password.",
+      "invalid_email": "Please enter a valid email address.",
+      "weak_password": "Password must be at least 6 characters.",
+      "account_disabled": "Your account has been disabled.",
+      "too_many_attempts": "Too many attempts. Please wait a moment.",
+      "google_oauth_not_configured": "Google sign-in is currently unavailable.",
+      "generic": "An error occurred. Please try again."
+    }
   },
   "legal": {
     "title": "Legal",

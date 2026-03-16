@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { X } from 'lucide-react';
 import { localizedPath } from '@/seo';
+import { signupWithEmail, startGoogleOAuth } from '@/lib/auth';
 
 function GoogleIcon() {
   return (
@@ -19,10 +20,69 @@ function GoogleIcon() {
   );
 }
 
+const ERROR_KEYS: Record<string, string> = {
+  user_exists: 'user_exists',
+  invalid_credentials: 'invalid_credentials',
+  invalid_email: 'invalid_email',
+  weak_password: 'weak_password',
+  account_disabled: 'account_disabled',
+  too_many_requests: 'too_many_attempts',
+  google_oauth_not_configured: 'google_oauth_not_configured',
+};
+
 export function RegisterClient({ locale }: { locale: string }) {
   const t = useTranslations('auth');
+  const tc = useTranslations('common');
   const router = useRouter();
+  const [step, setStep] = useState(1);
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const resolveError = (err: unknown): string => {
+    const msg = err instanceof Error ? err.message : '';
+    const key = ERROR_KEYS[msg];
+    if (key) {
+      try { return t(`errors.${key}`); } catch { /* fallback */ }
+    }
+    return msg || t('errors.generic');
+  };
+
+  const handleEmailContinue = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+    setStep(2);
+  };
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !password) return;
+    setLoading(true);
+    setError('');
+    try {
+      await signupWithEmail(email, password, fullName || undefined);
+      router.push(localizedPath(locale, '/'));
+      router.refresh();
+    } catch (err) {
+      setError(resolveError(err));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleRegister = async () => {
+    setGoogleLoading(true);
+    setError('');
+    try {
+      await startGoogleOAuth(window.location.origin + localizedPath(locale, '/'));
+    } catch (err) {
+      setError(resolveError(err));
+      setGoogleLoading(false);
+    }
+  };
 
   return (
     <div
@@ -67,7 +127,7 @@ export function RegisterClient({ locale }: { locale: string }) {
             color: 'var(--color-text-muted)',
             transition: 'color 0.15s',
           }}
-          aria-label="Kapat"
+          aria-label={tc('closeMenu')}
         >
           <X style={{ width: 22, height: 22 }} />
         </button>
@@ -110,8 +170,27 @@ export function RegisterClient({ locale }: { locale: string }) {
           {t('registerSubtitle')}
         </p>
 
+        {error && (
+          <div
+            style={{
+              padding: '10px 14px',
+              marginBottom: 16,
+              borderRadius: 4,
+              background: 'rgba(220, 38, 38, 0.08)',
+              border: '1px solid rgba(220, 38, 38, 0.2)',
+              color: '#dc2626',
+              fontSize: 13,
+              textAlign: 'center',
+            }}
+          >
+            {error}
+          </div>
+        )}
+
         <button
           type="button"
+          onClick={handleGoogleRegister}
+          disabled={googleLoading}
           style={{
             width: '100%',
             display: 'flex',
@@ -125,12 +204,13 @@ export function RegisterClient({ locale }: { locale: string }) {
             color: 'var(--color-text-primary)',
             fontSize: 14,
             fontWeight: 600,
-            cursor: 'pointer',
+            cursor: googleLoading ? 'wait' : 'pointer',
+            opacity: googleLoading ? 0.7 : 1,
             transition: 'background 0.15s, border-color 0.15s',
           }}
         >
           <GoogleIcon />
-          {t('continueWithGoogle')}
+          {googleLoading ? tc('loading') : t('continueWithGoogle')}
         </button>
 
         <div
@@ -148,81 +228,187 @@ export function RegisterClient({ locale }: { locale: string }) {
           <span style={{ flex: 1, height: 1, background: 'var(--color-border)' }} />
         </div>
 
-        <div style={{ marginBottom: 16 }}>
-          <label
-            style={{
-              display: 'block',
-              fontSize: 13,
-              fontWeight: 500,
-              color: 'var(--color-text-primary)',
-              marginBottom: 6,
-            }}
-          >
-            {t('email')}
-          </label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            style={{
-              width: '100%',
-              padding: '12px 14px',
-              borderRadius: 4,
-              border: '1px solid var(--color-border)',
-              background: 'var(--color-bg)',
-              color: 'var(--color-text-primary)',
-              fontSize: 14,
-              outline: 'none',
-            }}
-          />
-        </div>
-
-        <p
-          style={{
-            fontSize: 12,
-            color: 'var(--color-text-muted)',
-            lineHeight: 1.5,
-            marginBottom: 20,
-            textAlign: 'center',
-          }}
-        >
-          {t.rich('termsAgreement', {
-            terms: (chunks) => (
-              <Link
-                href={localizedPath(locale, '/legal/terms')}
-                style={{ color: 'var(--color-brand)', textDecoration: 'underline' }}
+        {step === 1 ? (
+          <form onSubmit={handleEmailContinue}>
+            <div style={{ marginBottom: 16 }}>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: 13,
+                  fontWeight: 500,
+                  color: 'var(--color-text-primary)',
+                  marginBottom: 6,
+                }}
               >
-                {chunks}
-              </Link>
-            ),
-            privacy: (chunks) => (
-              <Link
-                href={localizedPath(locale, '/legal/privacy')}
-                style={{ color: 'var(--color-brand)', textDecoration: 'underline' }}
-              >
-                {chunks}
-              </Link>
-            ),
-          })}
-        </p>
+                {t('email')}
+              </label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                style={{
+                  width: '100%',
+                  padding: '12px 14px',
+                  borderRadius: 4,
+                  border: '1px solid var(--color-border)',
+                  background: 'var(--color-bg)',
+                  color: 'var(--color-text-primary)',
+                  fontSize: 14,
+                  outline: 'none',
+                }}
+              />
+            </div>
 
-        <button
-          type="button"
-          style={{
-            width: '100%',
-            padding: '12px 16px',
-            borderRadius: 4,
-            border: 'none',
-            background: 'var(--color-accent)',
-            color: 'var(--color-text-on-dark)',
-            fontSize: 14,
-            fontWeight: 700,
-            cursor: 'pointer',
-            transition: 'opacity 0.15s',
-          }}
-        >
-          {t('continueWithEmail')}
-        </button>
+            <p
+              style={{
+                fontSize: 12,
+                color: 'var(--color-text-muted)',
+                lineHeight: 1.5,
+                marginBottom: 20,
+                textAlign: 'center',
+              }}
+            >
+              {t.rich('termsAgreement', {
+                terms: (chunks) => (
+                  <Link
+                    href={localizedPath(locale, '/legal/terms')}
+                    style={{ color: 'var(--color-brand)', textDecoration: 'underline' }}
+                  >
+                    {chunks}
+                  </Link>
+                ),
+                privacy: (chunks) => (
+                  <Link
+                    href={localizedPath(locale, '/legal/privacy')}
+                    style={{ color: 'var(--color-brand)', textDecoration: 'underline' }}
+                  >
+                    {chunks}
+                  </Link>
+                ),
+              })}
+            </p>
+
+            <button
+              type="submit"
+              style={{
+                width: '100%',
+                padding: '12px 16px',
+                borderRadius: 4,
+                border: 'none',
+                background: 'var(--color-accent)',
+                color: 'var(--color-text-on-dark)',
+                fontSize: 14,
+                fontWeight: 700,
+                cursor: 'pointer',
+                transition: 'opacity 0.15s',
+              }}
+            >
+              {t('continueWithEmail')}
+            </button>
+          </form>
+        ) : (
+          <form onSubmit={handleRegister}>
+            <div style={{ marginBottom: 16 }}>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: 13,
+                  fontWeight: 500,
+                  color: 'var(--color-text-primary)',
+                  marginBottom: 6,
+                }}
+              >
+                {tc('name')}
+              </label>
+              <input
+                type="text"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '12px 14px',
+                  borderRadius: 4,
+                  border: '1px solid var(--color-border)',
+                  background: 'var(--color-bg)',
+                  color: 'var(--color-text-primary)',
+                  fontSize: 14,
+                  outline: 'none',
+                }}
+              />
+            </div>
+
+            <div style={{ marginBottom: 24 }}>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: 13,
+                  fontWeight: 500,
+                  color: 'var(--color-text-primary)',
+                  marginBottom: 6,
+                }}
+              >
+                {t('password')}
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={6}
+                style={{
+                  width: '100%',
+                  padding: '12px 14px',
+                  borderRadius: 4,
+                  border: '1px solid var(--color-border)',
+                  background: 'var(--color-bg)',
+                  color: 'var(--color-text-primary)',
+                  fontSize: 14,
+                  outline: 'none',
+                }}
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              style={{
+                width: '100%',
+                padding: '12px 16px',
+                borderRadius: 4,
+                border: 'none',
+                background: 'var(--color-accent)',
+                color: 'var(--color-text-on-dark)',
+                fontSize: 14,
+                fontWeight: 700,
+                cursor: loading ? 'wait' : 'pointer',
+                opacity: loading ? 0.7 : 1,
+                transition: 'opacity 0.15s',
+              }}
+            >
+              {loading ? tc('loading') : t('signUp')}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setStep(1)}
+              style={{
+                width: '100%',
+                marginTop: 8,
+                padding: '10px 16px',
+                borderRadius: 4,
+                border: '1px solid var(--color-border)',
+                background: 'none',
+                color: 'var(--color-text-secondary)',
+                fontSize: 13,
+                fontWeight: 500,
+                cursor: 'pointer',
+              }}
+            >
+              ← {t('email')}: {email}
+            </button>
+          </form>
+        )}
 
         <p
           style={{
@@ -254,7 +440,7 @@ export function RegisterClient({ locale }: { locale: string }) {
             fontWeight: 500,
           }}
         >
-          {t('step', { current: 1, total: 2 })}
+          {t('step', { current: step, total: 2 })}
         </div>
       </div>
     </div>

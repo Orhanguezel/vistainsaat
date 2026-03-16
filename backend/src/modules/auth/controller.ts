@@ -694,9 +694,11 @@ export function makeAuthController(app: FastifyInstance) {
           .send({ error: { message: "invalid_body" } });
       }
 
-      const { email, password } = parsed.data as {
+      const { email, password, full_name, phone } = parsed.data as {
         email?: string;
         password?: string;
+        full_name?: string;
+        phone?: string;
       };
 
       let passwordChanged = false;
@@ -707,6 +709,16 @@ export function makeAuthController(app: FastifyInstance) {
           .set({ email, updated_at: new Date() })
           .where(eq(users.id, p.sub));
         p.email = email;
+      }
+
+      if (full_name !== undefined || phone !== undefined) {
+        const profileUpdate: Record<string, unknown> = { updated_at: new Date() };
+        if (full_name !== undefined) profileUpdate.full_name = full_name;
+        if (phone !== undefined) profileUpdate.phone = phone;
+        await db
+          .update(users)
+          .set(profileUpdate)
+          .where(eq(users.id, p.sub));
       }
 
       if (password) {
@@ -760,7 +772,13 @@ export function makeAuthController(app: FastifyInstance) {
       )[0];
       const role = getUserRole(currentUser);
       return reply.send({
-        user: { id: p.sub, email: p.email ?? null, role },
+        user: {
+          id: p.sub,
+          email: currentUser?.email ?? p.email ?? null,
+          full_name: currentUser?.full_name ?? null,
+          phone: currentUser?.phone ?? null,
+          role,
+        },
       });
     },
 

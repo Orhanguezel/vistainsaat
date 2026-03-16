@@ -36,6 +36,8 @@ export const tokenBody = z.object({
 export const updateBody = z.object({
   email: z.string().email().optional(),
   password: z.string().min(6).optional(),
+  full_name: z.string().max(255).optional(),
+  phone: z.string().max(50).optional(),
 });
 
 export const googleBody = z.object({
