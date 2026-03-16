@@ -1123,7 +1123,7 @@ export default function AdminAuditClient() {
                   {getErrMessage(geoQ.error, t('error'))}
                 </div>
               )}
-              <AuditGeoMap items={geoData.items ?? []} loading={geoLoading} />
+              <AuditGeoMap items={geoData.items ?? []} cities={geoData.cities ?? []} loading={geoLoading} />
             </CardContent>
           </Card>
         </TabsContent>

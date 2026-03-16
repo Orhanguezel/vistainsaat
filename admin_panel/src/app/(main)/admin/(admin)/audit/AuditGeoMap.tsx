@@ -5,10 +5,20 @@ import {
   ComposableMap,
   Geographies,
   Geography,
+  Marker,
   ZoomableGroup,
 } from 'react-simple-maps';
 
 import type { AuditGeoStatsRowDto } from '@/integrations/shared';
+
+type CityMarker = {
+  country: string;
+  city: string;
+  lat: number;
+  lng: number;
+  count: number;
+  unique_ips: number;
+};
 import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
 
 const GEO_URL = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';
@@ -85,10 +95,11 @@ function clampTooltip(x: number, y: number): { left: number; top: number } {
 
 type Props = {
   items: AuditGeoStatsRowDto[];
+  cities?: CityMarker[];
   loading?: boolean;
 };
 
-export const AuditGeoMap: React.FC<Props> = ({ items, loading }) => {
+export const AuditGeoMap: React.FC<Props> = ({ items, cities = [], loading }) => {
   const t = useAdminT('admin.audit');
 
   const [tooltip, setTooltip] = useState<{
@@ -202,6 +213,35 @@ export const AuditGeoMap: React.FC<Props> = ({ items, loading }) => {
                 })
               }
             </Geographies>
+            {/* City markers */}
+            {cities.map((c) => (
+              <Marker key={`${c.city}-${c.country}`} coordinates={[c.lng, c.lat]}>
+                <circle
+                  r={Math.max(3, Math.min(12, Math.sqrt(c.count) * 1.5))}
+                  fill="#ef4444"
+                  fillOpacity={0.7}
+                  stroke="#fff"
+                  strokeWidth={0.8}
+                  onMouseEnter={(evt) => {
+                    setTooltip({
+                      name: `${c.city}, ${c.country}`,
+                      code: c.country,
+                      count: c.count,
+                      unique_ips: c.unique_ips,
+                      x: evt.clientX,
+                      y: evt.clientY,
+                    });
+                  }}
+                  onMouseMove={(evt) => {
+                    setTooltip((prev) =>
+                      prev ? { ...prev, x: evt.clientX, y: evt.clientY } : null,
+                    );
+                  }}
+                  onMouseLeave={() => setTooltip(null)}
+                  style={{ cursor: 'pointer' }}
+                />
+              </Marker>
+            ))}
           </ZoomableGroup>
         </ComposableMap>
 

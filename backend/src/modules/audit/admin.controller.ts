@@ -20,7 +20,7 @@ import {
   isTruthyBoolLike,
 } from './validation';
 
-import { listAuditAuthEvents, listAuditRequestLogs, getAuditMetricsDaily, getAuditGeoStats, clearAuditLogs } from './repository';
+import { listAuditAuthEvents, listAuditRequestLogs, getAuditMetricsDaily, getAuditGeoStats, getAuditGeoCityStats, clearAuditLogs } from './repository';
 import { setContentRange } from '@/common/utils/contentRange';
 
 type ListResponse<T> = { items: T[]; total: number };
@@ -150,5 +150,12 @@ export const getAuditGeoStatsAdmin: RouteHandler = async (req, reply) => {
     source: q.source,
   });
 
-  return reply.send({ items: rows });
+  // Şehir bazlı detay da ekle
+  const cities = await getAuditGeoCityStats({
+    days: q.days,
+    only_admin: onlyAdmin,
+    source: q.source,
+  });
+
+  return reply.send({ items: rows, cities });
 };

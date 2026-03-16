@@ -4,7 +4,7 @@
 // FIX: LONGTEXT via customType + proper index() usage
 // =============================================================
 
-import { mysqlTable, varchar, bigint, int, datetime, index } from 'drizzle-orm/mysql-core';
+import { mysqlTable, varchar, bigint, int, datetime, index, decimal } from 'drizzle-orm/mysql-core';
 import { sql } from 'drizzle-orm';
 import { longtext } from '@/modules/_shared';
 
@@ -31,6 +31,8 @@ export const auditRequestLogs = mysqlTable(
 
     country: varchar('country', { length: 8 }),
     city: varchar('city', { length: 64 }),
+    lat: decimal('lat', { precision: 8, scale: 4 }),
+    lng: decimal('lng', { precision: 8, scale: 4 }),
 
     error_message: varchar('error_message', { length: 512 }),
     error_code: varchar('error_code', { length: 64 }),
@@ -64,6 +66,8 @@ export const auditAuthEvents = mysqlTable(
 
     country: varchar('country', { length: 8 }),
     city: varchar('city', { length: 64 }),
+    lat: decimal('lat', { precision: 8, scale: 4 }),
+    lng: decimal('lng', { precision: 8, scale: 4 }),
 
     created_at: datetime('created_at', { fsp: 3 })
       .notNull()

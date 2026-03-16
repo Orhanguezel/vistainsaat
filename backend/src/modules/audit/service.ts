@@ -110,11 +110,13 @@ function normalizeReferer(req: FastifyRequest): string | null {
   return ref ? ref : null;
 }
 
-function normalizeGeo(req: FastifyRequest, ip: string): { country: string | null; city: string | null } {
+type GeoResult = { country: string | null; city: string | null; lat: number | null; lng: number | null };
+
+function normalizeGeo(req: FastifyRequest, ip: string): GeoResult {
   // 1. CDN header'larından oku (Cloudflare vb.)
   const cfCountry = firstHeader(req, 'cf-ipcountry') || null;
   const cfCity = firstHeader(req, 'x-geo-city') || null;
-  if (cfCountry) return { country: cfCountry, city: cfCity };
+  if (cfCountry) return { country: cfCountry, city: cfCity, lat: null, lng: null };
 
   // 2. Header yoksa geoip-lite ile IP lookup yap
   const isLocal =
@@ -123,14 +125,15 @@ function normalizeGeo(req: FastifyRequest, ip: string): { country: string | null
   if (!isLocal) {
     const geo = geoip.lookup(ip);
     if (geo) {
-      return { country: geo.country || null, city: geo.city || null };
+      const [lat, lng] = geo.ll || [null, null];
+      return { country: geo.country || null, city: geo.city || null, lat: lat ?? null, lng: lng ?? null };
     }
   }
 
   // 3. Yerel/özel IP ise "LOCAL" işaretle
-  if (isLocal) return { country: 'LOCAL', city: null };
+  if (isLocal) return { country: 'LOCAL', city: null, lat: null, lng: null };
 
-  return { country: null, city: null };
+  return { country: null, city: null, lat: null, lng: null };
 }
 
 /* -------------------- request body sanitization -------------------- */
@@ -241,6 +244,8 @@ export async function writeRequestAuditLog(args: {
     is_admin: isAdmin,
     country: geo.country,
     city: geo.city,
+    lat: geo.lat != null ? String(geo.lat) : null,
+    lng: geo.lng != null ? String(geo.lng) : null,
     error_message: errorMessage,
     error_code: errorCode,
     request_body: requestBody,
