@@ -3814,5 +3814,95 @@
     "title": "Sayfa bulunamadı.",
     "description": "Aradığınız sayfa mevcut olmayabilir veya taşınmış olabilir.",
     "goBack": "Anasayfaya dön"
+  },
+  "notifications": {
+    "title": "Bildirimler",
+    "description": "Tüm sistem bildirimlerini yönetin ({count} bildirim, {unread} okunmamış)",
+    "actions": {
+      "markAllRead": "Tümünü Okundu İşaretle",
+      "refresh": "Yenile",
+      "viewAll": "Tümünü Gör",
+      "create": "Yeni Bildirim",
+      "back": "Geri",
+      "delete": "Sil",
+      "save": "Kaydet",
+      "saving": "Kaydediliyor...",
+      "cancel": "İptal",
+      "edit": "Düzenle",
+      "markRead": "Okundu İşaretle",
+      "markUnread": "Okunmadı İşaretle"
+    },
+    "filters": {
+      "title": "Filtreler",
+      "search": "Ara",
+      "searchPlaceholder": "Başlık, mesaj veya tür...",
+      "status": "Durum",
+      "type": "Tür",
+      "all": "Tümü",
+      "read": "Okundu",
+      "unread": "Okunmadı",
+      "typePlaceholder": "Tümü"
+    },
+    "table": {
+      "status": "Durum",
+      "title": "Başlık",
+      "message": "Mesaj",
+      "type": "Tür",
+      "date": "Tarih",
+      "actions": "İşlemler",
+      "loading": "Yükleniyor...",
+      "noRecords": "Bildirim bulunamadı",
+      "read": "Okundu",
+      "unread": "Okunmadı"
+    },
+    "form": {
+      "createTitle": "Yeni Bildirim",
+      "editTitle": "Bildirim Detayı",
+      "createDescription": "Yeni bir bildirim oluşturun",
+      "editDescription": "Bildirim detaylarını görüntüleyin",
+      "infoTitle": "Bildirim Bilgileri",
+      "userId": "Kullanıcı ID",
+      "userIdPlaceholder": "Boş bırakılırsa mevcut kullanıcı",
+      "userIdHelp": "Belirli bir kullanıcıya göndermek için UUID girin",
+      "title": "Başlık",
+      "titlePlaceholder": "Bildirim başlığı",
+      "message": "Mesaj",
+      "messagePlaceholder": "Bildirim mesajı",
+      "type": "Tür",
+      "optional": "(opsiyonel)",
+      "editWarning": "Bildirimler oluşturulduktan sonra düzenlenemez. Sadece okundu/okunmadı durumu değiştirilebilir."
+    },
+    "details": {
+      "title": "Bildirim Detayları",
+      "id": "ID",
+      "userId": "Kullanıcı ID",
+      "status": "Durum",
+      "createdAt": "Oluşturulma Tarihi",
+      "read": "Okundu",
+      "unread": "Okunmadı"
+    },
+    "messages": {
+      "markAllSuccess": "Tüm bildirimler okundu olarak işaretlendi",
+      "markedRead": "Okundu olarak işaretlendi",
+      "markedUnread": "Okunmadı olarak işaretlendi",
+      "deleteConfirm": "\"{title}\" bildirimini silmek istediğinize emin misiniz?",
+      "deleteSuccess": "Bildirim silindi",
+      "operationFailed": "İşlem başarısız oldu",
+      "titleRequired": "Başlık gerekli",
+      "messageRequired": "Mesaj gerekli",
+      "createSuccess": "Bildirim oluşturuldu",
+      "editNotSupported": "Bildirim düzenleme şu anda desteklenmiyor"
+    },
+    "types": {
+      "order_created": "Sipariş Oluşturuldu",
+      "order_paid": "Sipariş Ödendi",
+      "order_failed": "Sipariş Başarısız",
+      "system": "Sistem",
+      "custom": "Özel",
+      "password_changed": "Şifre Değiştirildi"
+    },
+    "list": {
+      "empty": "Henüz bildirim yok"
+    }
   }
 }

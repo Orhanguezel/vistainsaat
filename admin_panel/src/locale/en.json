@@ -3715,5 +3715,95 @@
     "title": "Page not found.",
     "description": "The page you are looking for could not be found or has been moved.",
     "goBack": "Go to home"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "description": "Manage all system notifications ({count} notifications, {unread} unread)",
+    "actions": {
+      "markAllRead": "Mark All Read",
+      "refresh": "Refresh",
+      "viewAll": "View All",
+      "create": "New Notification",
+      "back": "Back",
+      "delete": "Delete",
+      "save": "Save",
+      "saving": "Saving...",
+      "cancel": "Cancel",
+      "edit": "Edit",
+      "markRead": "Mark Read",
+      "markUnread": "Mark Unread"
+    },
+    "filters": {
+      "title": "Filters",
+      "search": "Search",
+      "searchPlaceholder": "Title, message or type...",
+      "status": "Status",
+      "type": "Type",
+      "all": "All",
+      "read": "Read",
+      "unread": "Unread",
+      "typePlaceholder": "All"
+    },
+    "table": {
+      "status": "Status",
+      "title": "Title",
+      "message": "Message",
+      "type": "Type",
+      "date": "Date",
+      "actions": "Actions",
+      "loading": "Loading...",
+      "noRecords": "No notifications found",
+      "read": "Read",
+      "unread": "Unread"
+    },
+    "form": {
+      "createTitle": "New Notification",
+      "editTitle": "Notification Detail",
+      "createDescription": "Create a new notification",
+      "editDescription": "View notification details",
+      "infoTitle": "Notification Information",
+      "userId": "User ID",
+      "userIdPlaceholder": "Existing user if left empty",
+      "userIdHelp": "Enter UUID to send to a specific user",
+      "title": "Title",
+      "titlePlaceholder": "Notification title",
+      "message": "Message",
+      "messagePlaceholder": "Notification message",
+      "type": "Type",
+      "optional": "(optional)",
+      "editWarning": "ℹ️ Notifications cannot be edited after creation. Only read/unread status can be changed."
+    },
+    "details": {
+      "title": "Notification Details",
+      "id": "ID",
+      "userId": "User ID",
+      "status": "Status",
+      "createdAt": "Created At",
+      "read": "Read",
+      "unread": "Unread"
+    },
+    "messages": {
+      "markAllSuccess": "All notifications marked as read",
+      "markedRead": "Marked as read",
+      "markedUnread": "Marked as unread",
+      "deleteConfirm": "Are you sure you want to delete notification \"{title}\"?",
+      "deleteSuccess": "Notification deleted",
+      "operationFailed": "Operation failed",
+      "titleRequired": "Title required",
+      "messageRequired": "Message required",
+      "createSuccess": "Notification created",
+      "editNotSupported": "Editing notifications is not supported at this time"
+    },
+    "types": {
+      "order_created": "Order Created",
+      "order_paid": "Order Paid",
+      "order_failed": "Order Failed",
+      "system": "System",
+      "custom": "Custom",
+      "password_changed": "Password Changed"
+    },
+    "list": {
+      "empty": "No notifications yet"
+    }
   }
 }

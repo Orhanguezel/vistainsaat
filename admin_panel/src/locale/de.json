@@ -3873,5 +3873,90 @@
     "title": "Seite nicht gefunden.",
     "description": "Die von Ihnen gesuchte Seite konnte nicht gefunden werden oder wurde verschoben.",
     "goBack": "Zur Startseite"
+  },
+  "notifications": {
+    "title": "Benachrichtigungen",
+    "description": "Alle Systembenachrichtigungen verwalten ({count} Benachrichtigungen, {unread} ungelesen)",
+    "actions": {
+      "markAllRead": "Alle als gelesen markieren",
+      "refresh": "Aktualisieren",
+      "create": "Neue Benachrichtigung",
+      "back": "Zurück",
+      "delete": "Löschen",
+      "save": "Speichern",
+      "saving": "Speichert...",
+      "cancel": "Abbrechen",
+      "edit": "Bearbeiten",
+      "markRead": "Als gelesen markieren",
+      "markUnread": "Als ungelesen markieren"
+    },
+    "filters": {
+      "title": "Filter",
+      "search": "Suche",
+      "searchPlaceholder": "Titel, Nachricht oder Typ...",
+      "status": "Status",
+      "type": "Typ",
+      "all": "Alle",
+      "read": "Gelesen",
+      "unread": "Ungelesen",
+      "typePlaceholder": "Alle"
+    },
+    "table": {
+      "status": "Status",
+      "title": "Titel",
+      "message": "Nachricht",
+      "type": "Typ",
+      "date": "Datum",
+      "actions": "Aktionen",
+      "loading": "Lädt...",
+      "noRecords": "Keine Benachrichtigungen gefunden",
+      "read": "Gelesen",
+      "unread": "Ungelesen"
+    },
+    "form": {
+      "createTitle": "Neue Benachrichtigung",
+      "editTitle": "Benachrichtigungsdetails",
+      "createDescription": "Erstellen Sie eine neue Benachrichtigung",
+      "editDescription": "Benachrichtigungsdetails anzeigen",
+      "infoTitle": "Benachrichtigungsinformationen",
+      "userId": "Benutzer-ID",
+      "userIdPlaceholder": "Vorhandener Benutzer, wenn leer gelassen",
+      "userIdHelp": "UUID eingeben, um an einen bestimmten Benutzer zu senden",
+      "title": "Titel",
+      "titlePlaceholder": "Benachrichtigungstitel",
+      "message": "Nachricht",
+      "messagePlaceholder": "Benachrichtigungsnachricht",
+      "type": "Typ",
+      "optional": "(optional)",
+      "editWarning": "ℹ️ Benachrichtigungen können nach der Erstellung nicht mehr bearbeitet werden. Nur der Status gelesen/ungelesen kann geändert werden."
+    },
+    "details": {
+      "title": "Benachrichtigungsdetails",
+      "id": "ID",
+      "userId": "Benutzer-ID",
+      "status": "Status",
+      "createdAt": "Erstellt am",
+      "read": "Gelesen",
+      "unread": "Ungelesen"
+    },
+    "messages": {
+      "markAllSuccess": "Alle Benachrichtigungen wurden als gelesen markiert",
+      "markedRead": "Als gelesen markiert",
+      "markedUnread": "Als ungelesen markiert",
+      "deleteConfirm": "Sind Sie sicher, dass Sie die Benachrichtigung \"{title}\" löschen möchten?",
+      "deleteSuccess": "Benachrichtigung gelöscht",
+      "operationFailed": "Vorgang fehlgeschlagen",
+      "titleRequired": "Titel erforderlich",
+      "messageRequired": "Nachricht erforderlich",
+      "createSuccess": "Benachrichtigung erstellt",
+      "editNotSupported": "Das Bearbeiten von Benachrichtigungen wird derzeit nicht unterstützt"
+    },
+    "types": {
+      "order_created": "Rückfrage",
+      "order_paid": "Bestellung bezahlt",
+      "order_failed": "Bestellung fehlgeschlagen",
+      "system": "System",
+      "custom": "Benutzerdefiniert"
+    }
   }
 }
