@@ -88,7 +88,7 @@ export const getUnreadCount: RouteHandler = async (req, reply) => {
     return reply.send({ count: Number(row?.count ?? 0) });
   } catch (e: any) {
     if (e?.message === "unauthorized") {
-      return reply.code(401).send({ error: { message: "unauthorized" } });
+      return reply.send({ count: 0 });
     }
     req.log.error(e);
     return reply
