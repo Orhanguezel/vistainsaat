@@ -17,7 +17,7 @@ const BASE = "/notifications";
 
 export async function registerNotifications(app: FastifyInstance) {
   // Liste + unread sayısı
-  app.get(BASE, { preHandler: [requireAuth] }, listNotifications);
+  app.get(BASE, listNotifications);
   app.get(
     `${BASE}/unread-count`,
     getUnreadCount,

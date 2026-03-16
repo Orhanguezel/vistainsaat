@@ -65,7 +65,7 @@ export const listNotifications: RouteHandler = async (req, reply) => {
     return reply.send(rows);
   } catch (e: any) {
     if (e?.message === "unauthorized") {
-      return reply.code(401).send({ error: { message: "unauthorized" } });
+      return reply.send([]);
     }
     req.log.error(e);
     return reply
