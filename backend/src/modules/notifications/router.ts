@@ -20,7 +20,6 @@ export async function registerNotifications(app: FastifyInstance) {
   app.get(BASE, { preHandler: [requireAuth] }, listNotifications);
   app.get(
     `${BASE}/unread-count`,
-    { preHandler: [requireAuth] },
     getUnreadCount,
   );
 

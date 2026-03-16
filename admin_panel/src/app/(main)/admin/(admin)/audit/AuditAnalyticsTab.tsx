@@ -232,7 +232,7 @@ export default function AuditAnalyticsTab({ excludeLocalhost, dateRange }: Props
   return (
     <div className="space-y-6">
       {/* ==================== 1. SUMMARY CARDS ==================== */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Today's Total Requests */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
