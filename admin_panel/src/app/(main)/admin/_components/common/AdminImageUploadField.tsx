@@ -675,9 +675,15 @@ export const AdminImageUploadField: React.FC<AdminImageUploadFieldProps> = ({
                   <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
                     {assetsData.items.map((asset) => {
                       const url = asset.url || '';
+                      const name = asset.name || '';
+                      const lower = (url + name).toLowerCase();
                       const isSelected = multiple
                         ? gallery.includes(url)
                         : value === url;
+                      const isVideo = /\.(mp4|webm|ogg|mov)(\?|$)/i.test(lower);
+                      const isSvg = isSvgUrl(url);
+                      const isIco = /\.ico(\?|$)/i.test(lower);
+                      const isNonImage = isVideo || /\.(pdf|zip|rar|doc|xls)(\?|$)/i.test(lower);
 
                       return (
                         <button
@@ -691,12 +697,47 @@ export const AdminImageUploadField: React.FC<AdminImageUploadFieldProps> = ({
                           )}
                         >
                           <AspectRatio ratio={1}>
-                            <img
-                              src={url}
-                              alt={asset.name || 'Asset'}
-                              className="size-full object-cover transition-transform group-hover:scale-105"
-                            />
+                            {isVideo ? (
+                              <div className="flex size-full flex-col items-center justify-center gap-1 bg-muted/30">
+                                <svg className="size-8 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                <span className="max-w-full truncate px-1 text-[10px] text-muted-foreground">{name || 'video'}</span>
+                              </div>
+                            ) : isNonImage ? (
+                              <div className="flex size-full flex-col items-center justify-center gap-1 bg-muted/30">
+                                <svg className="size-8 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+                                <span className="max-w-full truncate px-1 text-[10px] text-muted-foreground">{name || 'file'}</span>
+                              </div>
+                            ) : (isSvg || isIco) ? (
+                              <div className="flex size-full items-center justify-center bg-[repeating-conic-gradient(#e5e7eb_0%_25%,transparent_0%_50%)] bg-[size:16px_16px]">
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img
+                                  src={isSvg ? withCloudinarySanitizeIfSvg(url) : url}
+                                  alt={name || 'SVG'}
+                                  className="max-h-full max-w-full object-contain p-2"
+                                  onError={(e) => {
+                                    const el = e.currentTarget;
+                                    el.style.display = 'none';
+                                    el.parentElement!.innerHTML = `<div class="flex flex-col items-center gap-1"><svg class="size-8 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v13.5A1.5 1.5 0 003.75 21z"/></svg><span class="text-[10px] text-muted-foreground">${name || 'svg'}</span></div>`;
+                                  }}
+                                />
+                              </div>
+                            ) : (
+                              /* eslint-disable-next-line @next/next/no-img-element */
+                              <img
+                                src={url}
+                                alt={name || 'Asset'}
+                                className="size-full object-cover transition-transform group-hover:scale-105"
+                                onError={(e) => {
+                                  const el = e.currentTarget;
+                                  el.style.display = 'none';
+                                  el.parentElement!.innerHTML = `<div class="flex size-full flex-col items-center justify-center gap-1 bg-muted/30"><svg class="size-8 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v13.5A1.5 1.5 0 003.75 21z"/></svg><span class="max-w-full truncate px-1 text-[10px] text-muted-foreground">${name || 'image'}</span></div>`;
+                                }}
+                              />
+                            )}
                           </AspectRatio>
+                          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-1.5">
+                            <span className="block truncate text-[10px] font-medium text-white">{name}</span>
+                          </div>
                           {isSelected && (
                             <div className="absolute inset-0 flex items-center justify-center bg-primary/20">
                               <Badge>Seçildi</Badge>
