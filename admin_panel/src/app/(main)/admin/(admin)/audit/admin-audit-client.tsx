@@ -495,7 +495,7 @@ export default function AdminAuditClient() {
     total: 0,
   };
   const metricsData = (metricsQ.data as AuditMetricsDailyResponseDto | undefined) ?? { days: [] };
-  const geoData = (geoQ.data as AuditGeoStatsResponseDto | undefined) ?? { items: [] };
+  const geoData = (geoQ.data as AuditGeoStatsResponseDto | undefined) ?? { items: [], cities: [] };
 
   const reqLoading = reqQ.isLoading || reqQ.isFetching;
   const authLoading = authQ.isLoading || authQ.isFetching;
