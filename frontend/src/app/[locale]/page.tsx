@@ -44,7 +44,7 @@ async function fetchFeaturedProducts(locale: string) {
 async function fetchReferences(locale: string) {
   try {
     const res = await fetch(
-      `${API_BASE_URL}/references?module_key=vistainsaat&is_active=1&locale=${locale}&limit=30`,
+      `${API_BASE_URL}/references?is_published=1&locale=${locale}&limit=30`,
       { next: { revalidate: 3600 } },
     );
     if (!res.ok) return [];
