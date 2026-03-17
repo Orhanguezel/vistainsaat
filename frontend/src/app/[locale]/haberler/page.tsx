@@ -265,10 +265,10 @@ export default async function NewsPage({
                 {featured.created_at && (
                   <span className="nw-featured-time">{formatRelativeTime(featured.created_at, t, locale)}</span>
                 )}
-                {(featured.image_url || featured.imageSrc) && (
+                {(featured.featured_image || featured.image_url || featured.imageSrc) && (
                   <div className="nw-featured-img">
                     <OptimizedImage
-                      src={absoluteAssetUrl(featured.image_url || featured.imageSrc) || NEWS_PLACEHOLDER}
+                      src={absoluteAssetUrl(featured.featured_image || featured.image_url || featured.imageSrc) || NEWS_PLACEHOLDER}
                       alt={buildMediaAlt({
                         locale,
                         kind: 'blog',
@@ -330,10 +330,10 @@ export default async function NewsPage({
                     <span className="nw-article-time">{formatRelativeTime(post.created_at, t, locale)}</span>
                   )}
                 </div>
-                {(post.image_url || post.imageSrc) && (
+                {(post.featured_image || post.image_url || post.imageSrc) && (
                   <div className="nw-article-thumb">
                     <OptimizedImage
-                      src={absoluteAssetUrl(post.image_url || post.imageSrc) || NEWS_PLACEHOLDER}
+                      src={absoluteAssetUrl(post.featured_image || post.image_url || post.imageSrc) || NEWS_PLACEHOLDER}
                       alt={buildMediaAlt({
                         locale,
                         kind: 'blog',
@@ -364,10 +364,10 @@ export default async function NewsPage({
                     href={sp.slug ? localizedPath(locale, `/haberler/${sp.slug}`) : '#'}
                     className="nw-sidebar-item"
                   >
-                    {(sp.image_url || sp.imageSrc) && (
+                    {(sp.featured_image || sp.image_url || sp.imageSrc) && (
                       <div className="nw-sidebar-thumb">
                         <OptimizedImage
-                          src={absoluteAssetUrl(sp.image_url || sp.imageSrc) || NEWS_PLACEHOLDER}
+                          src={absoluteAssetUrl(sp.featured_image || sp.image_url || sp.imageSrc) || NEWS_PLACEHOLDER}
                           alt={sp.title}
                           fill
                           className="object-cover"

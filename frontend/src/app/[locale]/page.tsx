@@ -238,7 +238,7 @@ export default async function HomePage({
                   >
                     <div className="relative flex-1 overflow-hidden bg-(--color-bg-muted) aspect-4/5 sm:aspect-auto">
                       <OptimizedImage
-                        src={resolveImageUrl(featuredBlogPost.image_url || featuredBlogPost.featured_image) || BLOG_PLACEHOLDER_SRC}
+                        src={resolveImageUrl(featuredBlogPost.featured_image || featuredBlogPost.image_url) || BLOG_PLACEHOLDER_SRC}
                         alt={featuredBlogPost.title}
                         fill
                         sizes="(max-width: 1024px) 100vw, 25vw"
