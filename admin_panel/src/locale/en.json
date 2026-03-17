@@ -1288,7 +1288,8 @@
         "vista_corporate": "Corporate Pages",
         "vista_legal": "Legal Pages",
         "vista_settings": "Vista Site Settings",
-        "gallery": "Gallery"
+        "gallery": "Gallery",
+        "cache": "Cache Management"
       },
       "stats": {
         "deliveredOrders": "Delivered Orders",

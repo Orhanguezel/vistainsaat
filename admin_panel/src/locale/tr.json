@@ -867,7 +867,8 @@
         "vista_legal": "Yasal Sayfalar",
         "vista_settings": "Vista Site Ayarları",
         "vista_blog": "Haberler / Blog",
-        "gallery": "Galeri"
+        "gallery": "Galeri",
+        "cache": "Cache Yönetimi"
       },
       "stats": {
         "deliveredOrders": "Teslim Edilen Sipariş",

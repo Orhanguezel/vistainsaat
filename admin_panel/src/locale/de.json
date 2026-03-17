@@ -863,7 +863,8 @@
         "vista_corporate": "Unternehmensseiten",
         "vista_legal": "Rechtsseiten",
         "vista_settings": "Site-Einstellungen",
-        "gallery": "Galerie"
+        "gallery": "Galerie",
+        "cache": "Cache-Verwaltung"
       },
       "stats": {
         "deliveredOrders": "Gelieferte Bestellungen",
