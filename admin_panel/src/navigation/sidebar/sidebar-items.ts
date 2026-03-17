@@ -136,6 +136,7 @@ export const adminNavConfig: AdminNavConfigGroup[] = [
       { key: 'vista_projects', url: '/admin/products?type=vistainsaat', icon: Layers },
       { key: 'vista_categories', url: '/admin/categories?module=vistainsaat', icon: Folders },
       { key: 'vista_gallery', url: '/admin/gallery', icon: Images },
+      { key: 'references', url: '/admin/references', icon: Award },
       { key: 'vista_offers', url: '/admin/offer?module=vistainsaat', icon: DollarSign },
       { key: 'contacts', url: '/admin/contacts', icon: Contact2 },
     ],
