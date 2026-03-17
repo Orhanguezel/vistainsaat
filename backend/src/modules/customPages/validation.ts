@@ -24,7 +24,7 @@ const LOCALE_LIKE = z
   .min(1)
   .transform((s) => normalizeLocale(s) || s.toLowerCase());
 
-const UUID36 = z.string().length(36).or(z.literal('').transform(() => null as unknown as string));
+const UUID36 = z.string().min(1).max(64).or(z.literal('').transform(() => null as unknown as string));
 const URL2000 = z.string().trim().max(2000).refine(
   (v) => v.startsWith('/') || v.startsWith('http://') || v.startsWith('https://') || v.startsWith('data:'),
   { message: 'Geçersiz URL veya dosya yolu' },
@@ -85,7 +85,7 @@ export const customPageListQuerySchema = z.object({
   slug: z.string().optional(),
   select: z.string().optional(),
 
-  category_id: z.string().uuid().optional(),
+  category_id: z.string().min(1).optional(),
 
   /** parent filter */
   module_key: MODULE_KEY.optional(),
@@ -116,7 +116,7 @@ export const upsertCustomPageParentBodySchema = z.object({
   images: UrlArrayLike.optional(),
   storage_image_ids: UuidArrayLike.optional(),
 
-  category_id: z.string().uuid().nullable().optional(),
+  category_id: z.string().min(1).nullable().optional(),
 });
 
 export type UpsertCustomPageParentBody = z.infer<typeof upsertCustomPageParentBodySchema>;
@@ -174,7 +174,7 @@ export const upsertCustomPageBodySchema = upsertCustomPageI18nBodySchema.extend(
   featured_image: URL2000.nullable().optional(),
   featured_image_asset_id: UUID36.nullable().optional(),
 
-  category_id: z.string().uuid().nullable().optional(),
+  category_id: z.string().min(1).nullable().optional(),
 
   display_order: z.coerce.number().int().min(0).optional(),
   order_num: z.coerce.number().int().min(0).optional(),
@@ -198,7 +198,7 @@ export const patchCustomPageBodySchema = patchCustomPageI18nBodySchema.extend({
   featured_image: URL2000.nullable().optional(),
   featured_image_asset_id: UUID36.nullable().optional(),
 
-  category_id: z.string().uuid().nullable().optional(),
+  category_id: z.string().min(1).nullable().optional(),
 
   display_order: z.coerce.number().int().min(0).optional(),
   order_num: z.coerce.number().int().min(0).optional(),
