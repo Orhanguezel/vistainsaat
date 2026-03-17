@@ -135,22 +135,22 @@ export default async function ProjectDetailPage({
     return null;
   }
 
-  const location = sv('lokasyon', 'location');
-  const year = sv('yıl', 'yil', 'year');
-  const area = sv('alan', 'area');
-  const projectType = sv('tip', 'type') || project.category_name || null;
+  const location = sv('lokasyon', 'location', 'standort');
+  const year = sv('yıl', 'yil', 'year', 'jahr');
+  const area = sv('alan', 'area', 'fläche');
+  const projectType = sv('tip', 'type', 'typ') || project.category_name || null;
   const status = sv('durum', 'status');
-  const architects = sv('mimarlar', 'architects');
-  const leadArchitect = sv('baş mimar', 'baş_mimar', 'lead_architect');
-  const manufacturers = sv('üreticiler', 'manufacturers');
-  const projectTeam = sv('proje ekibi', 'proje_ekibi', 'project_team');
-  const landscapeArch = sv('peyzaj mimarlığı', 'peyzaj_mimarlığı', 'landscape_architecture');
-  const interiorDesign = sv('iç tasarım', 'iç_tasarım', 'interior_design');
-  const engineering = sv('mühendislik', 'engineering');
-  const generalConstruction = sv('genel inşaat', 'genel_inşaat', 'general_construction');
-  const city = sv('şehir', 'city');
-  const country = sv('ülke', 'country');
-  const contractor = sv('müteahhit', 'müteahhit firma', 'contractor');
+  const architects = sv('mimarlar', 'architects', 'architekten');
+  const leadArchitect = sv('baş_mimar', 'lead_architect', 'leitender_architekt');
+  const manufacturers = sv('üreticiler', 'manufacturers', 'hersteller');
+  const projectTeam = sv('proje_ekibi', 'project_team', 'projektteam');
+  const landscapeArch = sv('peyzaj_mimarlığı', 'landscape_architecture', 'landschaftsarchitektur');
+  const interiorDesign = sv('iç_tasarım', 'interior_design', 'innenarchitektur');
+  const engineering = sv('mühendislik', 'engineering', 'ingenieurwesen');
+  const generalConstruction = sv('genel_inşaat', 'general_construction', 'hochbau');
+  const city = sv('şehir', 'city', 'stadt');
+  const country = sv('ülke', 'country', 'land');
+  const contractor = sv('müteahhit', 'contractor', 'auftragnehmer');
   const tags = projectTags;
 
   // Build spec items for the expandable component

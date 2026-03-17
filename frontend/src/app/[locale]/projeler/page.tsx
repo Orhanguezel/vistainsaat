@@ -69,7 +69,6 @@ function specVal(specs: Record<string, string> | undefined, ...keys: string[]): 
 
 function toViewItem(p: any, locale: string): ProjectViewItem {
   const specs = p.specifications as Record<string, string> | undefined;
-  const isEn = locale.startsWith('en');
   return {
     id: p.id,
     title: p.title,
@@ -85,15 +84,15 @@ function toViewItem(p: any, locale: string): ProjectViewItem {
       caption: p.caption,
       description: p.description,
     }),
-    category: p.category_name || p.type || specVal(specs, isEn ? 'type' : 'tip', 'tip', 'type') || undefined,
-    location: specVal(specs, isEn ? 'location' : 'lokasyon', 'lokasyon', 'location') || undefined,
-    architects: specVal(specs, isEn ? 'architects' : 'mimarlar', 'mimarlar', 'architects', 'baş mimar', 'bas_mimar') || undefined,
-    year: specVal(specs, 'yil', 'year', 'yıl') || undefined,
-    area: specVal(specs, 'alan', 'area') || undefined,
-    status: specVal(specs, isEn ? 'status' : 'durum', 'durum', 'status') || undefined,
-    materials: specVal(specs, isEn ? 'materials' : 'malzeme', 'malzeme', 'materials') || undefined,
-    floors: specVal(specs, isEn ? 'floors' : 'kat', 'kat', 'floors') || undefined,
-    client: specVal(specs, isEn ? 'client' : 'isveren', 'isveren', 'client', 'müteahhit', 'müteahhit firma') || undefined,
+    category: p.category_name || p.type || specVal(specs, 'tip', 'type', 'typ') || undefined,
+    location: specVal(specs, 'lokasyon', 'location', 'standort') || undefined,
+    architects: specVal(specs, 'mimarlar', 'architects', 'architekten', 'baş_mimar', 'lead_architect') || undefined,
+    year: specVal(specs, 'yıl', 'yil', 'year', 'jahr') || undefined,
+    area: specVal(specs, 'alan', 'area', 'fläche') || undefined,
+    status: specVal(specs, 'durum', 'status') || undefined,
+    materials: specVal(specs, 'malzeme', 'materials', 'materialien') || undefined,
+    floors: specVal(specs, 'kat', 'floors', 'kat_sayısı', 'stockwerke') || undefined,
+    client: specVal(specs, 'müteahhit', 'contractor', 'auftragnehmer', 'işveren', 'client', 'bauherr') || undefined,
   };
 }
 

@@ -56,8 +56,8 @@ type TabKey = 'general' | 'images' | 'specs' | 'seo' | 'faqs' | 'reviews' | 'jso
 // ─── Specifications Key-Value Editor ─────────────────────────
 
 // İnşaat projesi için önerilen özellik şablonları
-/** Standart proje özellik key'leri — frontend bu key'leri bekler */
-const PROJECT_SPEC_OPTIONS: { key: string; label: string }[] = [
+/** Standart proje özellik key'leri — her locale kendi key setini kullanır */
+const PROJECT_SPEC_OPTIONS_TR: { key: string; label: string }[] = [
   { key: 'lokasyon', label: 'Lokasyon' },
   { key: 'yıl', label: 'Yıl' },
   { key: 'alan', label: 'Alan' },
@@ -81,10 +81,67 @@ const PROJECT_SPEC_OPTIONS: { key: string; label: string }[] = [
   { key: 'genel_inşaat', label: 'Genel İnşaat' },
 ];
 
+const PROJECT_SPEC_OPTIONS_EN: { key: string; label: string }[] = [
+  { key: 'location', label: 'Location' },
+  { key: 'year', label: 'Year' },
+  { key: 'area', label: 'Area' },
+  { key: 'type', label: 'Type / Category' },
+  { key: 'status', label: 'Status' },
+  { key: 'architects', label: 'Architects' },
+  { key: 'lead_architect', label: 'Lead Architect' },
+  { key: 'manufacturers', label: 'Manufacturers' },
+  { key: 'contractor', label: 'Contractor' },
+  { key: 'floors', label: 'Floors' },
+  { key: 'plot_area', label: 'Plot Area' },
+  { key: 'building_type', label: 'Building Type' },
+  { key: 'materials', label: 'Materials' },
+  { key: 'client', label: 'Client' },
+  { key: 'city', label: 'City' },
+  { key: 'country', label: 'Country' },
+  { key: 'project_team', label: 'Project Team' },
+  { key: 'landscape_architecture', label: 'Landscape Architecture' },
+  { key: 'interior_design', label: 'Interior Design' },
+  { key: 'engineering', label: 'Engineering' },
+  { key: 'general_construction', label: 'General Construction' },
+];
+
+const PROJECT_SPEC_OPTIONS_DE: { key: string; label: string }[] = [
+  { key: 'standort', label: 'Standort' },
+  { key: 'jahr', label: 'Jahr' },
+  { key: 'fläche', label: 'Fläche' },
+  { key: 'typ', label: 'Typ / Kategorie' },
+  { key: 'status', label: 'Status' },
+  { key: 'architekten', label: 'Architekten' },
+  { key: 'leitender_architekt', label: 'Leitender Architekt' },
+  { key: 'hersteller', label: 'Hersteller' },
+  { key: 'auftragnehmer', label: 'Auftragnehmer' },
+  { key: 'stockwerke', label: 'Stockwerke' },
+  { key: 'grundstücksfläche', label: 'Grundstücksfläche' },
+  { key: 'gebäudetyp', label: 'Gebäudetyp' },
+  { key: 'materialien', label: 'Materialien' },
+  { key: 'bauherr', label: 'Bauherr' },
+  { key: 'stadt', label: 'Stadt' },
+  { key: 'land', label: 'Land' },
+  { key: 'projektteam', label: 'Projektteam' },
+  { key: 'landschaftsarchitektur', label: 'Landschaftsarchitektur' },
+  { key: 'innenarchitektur', label: 'Innenarchitektur' },
+  { key: 'ingenieurwesen', label: 'Ingenieurwesen' },
+  { key: 'hochbau', label: 'Hochbau' },
+];
+
+function getSpecOptionsForLocale(locale: string): { key: string; label: string }[] {
+  if (locale.startsWith('en')) return PROJECT_SPEC_OPTIONS_EN;
+  if (locale.startsWith('de')) return PROJECT_SPEC_OPTIONS_DE;
+  return PROJECT_SPEC_OPTIONS_TR;
+}
+
+/** All spec options (for label resolution regardless of locale) */
+const ALL_SPEC_OPTIONS = [...PROJECT_SPEC_OPTIONS_TR, ...PROJECT_SPEC_OPTIONS_EN, ...PROJECT_SPEC_OPTIONS_DE];
+
 
 /** Resolve display label for a spec key */
 function specKeyLabel(key: string): string {
-  const found = PROJECT_SPEC_OPTIONS.find(
+  const found = ALL_SPEC_OPTIONS.find(
     (o) => o.key.toLowerCase().replace(/[\s_]+/g, '') === key.toLowerCase().replace(/[\s_]+/g, ''),
   );
   return found?.label ?? key;
@@ -95,19 +152,22 @@ function SpecificationsEditor({
   onChange,
   disabled,
   isProject,
+  locale = 'tr',
 }: {
   value: Record<string, string>;
   onChange: (v: Record<string, string>) => void;
   disabled?: boolean;
   isProject?: boolean;
+  locale?: string;
 }) {
+  const specOptions = getSpecOptionsForLocale(locale);
   const entries = Object.entries(value);
   const [customKeyInputs, setCustomKeyInputs] = React.useState<Record<number, boolean>>({});
 
   /** Normalize existing non-standard keys to standard format */
   const normalizeKey = (key: string): string => {
     const norm = key.toLowerCase().replace(/[\s_]+/g, '');
-    const match = PROJECT_SPEC_OPTIONS.find(
+    const match = specOptions.find(
       (o) => o.key.toLowerCase().replace(/[\s_]+/g, '') === norm,
     );
     return match?.key ?? key;
@@ -140,11 +200,11 @@ function SpecificationsEditor({
   // Henüz eklenmemiş standart özellikler
   const usedKeys = new Set(entries.map(([k]) => normalizeKey(k)));
   const availableOptions = isProject
-    ? PROJECT_SPEC_OPTIONS.filter((o) => !usedKeys.has(o.key))
+    ? specOptions.filter((o) => !usedKeys.has(o.key))
     : [];
 
   const isStandardKey = (key: string) =>
-    PROJECT_SPEC_OPTIONS.some(
+    specOptions.some(
       (o) => o.key.toLowerCase().replace(/[\s_]+/g, '') === key.toLowerCase().replace(/[\s_]+/g, ''),
     );
 
@@ -1108,6 +1168,7 @@ export default function ProductDetailClient({ id, itemType }: Props) {
                   onChange={(v) => handleChange('specifications', v)}
                   disabled={isLoading}
                   isProject={isProject}
+                  locale={activeLocale}
                 />
               </CardContent>
             </Card>
