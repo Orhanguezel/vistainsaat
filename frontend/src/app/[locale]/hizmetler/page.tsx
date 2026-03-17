@@ -25,14 +25,6 @@ async function fetchServices(locale: string) {
   }
 }
 
-const FALLBACK_SERVICES = [
-  { id: '1', title: 'Konut İnşaatı', description: 'Modern yaşam standartlarına uygun, estetik ve dayanıklı konut projeleri.', slug: 'konut-insaati' },
-  { id: '2', title: 'Ticari İnşaat', description: 'Ofis, alışveriş merkezi ve karma kullanım yapılarında komple inşaat çözümleri.', slug: 'ticari-insaat' },
-  { id: '3', title: 'Restorasyon ve Güçlendirme', description: 'Tarihi yapı restorasyonu, tadilat ve deprem güçlendirme projeleri.', slug: 'restorasyon-guclendirme' },
-  { id: '4', title: 'Proje Yönetimi', description: 'Ruhsattan teslimata tüm sürecin profesyonel yönetimi.', slug: 'proje-yonetimi' },
-  { id: '5', title: 'Mimari Tasarım', description: 'Projeye özel mimari tasarım, statik ve mühendislik çözümleri.', slug: 'mimari-tasarim' },
-  { id: '6', title: 'İç Mimari ve Dekorasyon', description: 'Yaşam alanlarında estetik ve işlevsel iç mekan tasarımı.', slug: 'ic-mimari-dekorasyon' },
-];
 
 import { fetchSeoPage } from '@/seo/server';
 
@@ -72,7 +64,7 @@ export default async function ServicesPage({
   const companyProfile = (profile?.value as any) ?? {};
   const companyName = companyProfile.company_name || 'Vista İnşaat';
 
-  const visibleServices = services.length > 0 ? services : FALLBACK_SERVICES;
+  const visibleServices = services;
   const featured = visibleServices[0];
   const rest = visibleServices.slice(1);
 

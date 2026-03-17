@@ -47,6 +47,7 @@ import { registerCustomPagesAdmin } from '@/modules/customPages/admin.routes';
 import { registerSiteSettingsAdmin } from '@/modules/siteSettings/admin.routes';
 import { registerUserAdmin } from '@/modules/auth/admin.routes';
 import { registerReferencesAdmin } from '@/modules/references/admin.routes';
+import { registerServicesAdmin } from '@/modules/services/admin.routes';
 import { registerStorageAdmin } from '@/modules/storage/admin.routes';
 import { registerMenuItemsAdmin } from '@/modules/menuItems/admin.routes';
 import { registerCategoriesAdmin } from '@/modules/categories/admin.routes';
@@ -205,6 +206,7 @@ export async function createApp() {
       await api.register(async (i) => registerSiteSettingsAdmin(i), { prefix: '/admin' });
       await api.register(async (i) => registerUserAdmin(i), { prefix: '/admin' });
       await api.register(async (i) => registerReferencesAdmin(i), { prefix: '/admin' });
+      await api.register(async (i) => registerServicesAdmin(i), { prefix: '/admin' });
       await api.register(async (i) => registerStorageAdmin(i), { prefix: '/admin' });
       await api.register(async (i) => registerMenuItemsAdmin(i), { prefix: '/admin' });
       await api.register(async (i) => registerCategoriesAdmin(i), { prefix: '/admin' });
