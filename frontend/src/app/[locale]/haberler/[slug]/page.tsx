@@ -80,7 +80,7 @@ export async function generateMetadata({
       (locale.startsWith('en')
         ? `${post.title}. Read architectural news and construction insights by Vista Construction.`
         : `${post.title}. Vista İnşaat mimarlık haberleri ve inşaat sektörü içerikleri.`),
-    ogImage: post.image_url,
+    ogImage: post.featured_image || post.image_url,
     openGraphType: 'article',
     includeLocaleAlternates: true,
   });
@@ -128,7 +128,8 @@ export default async function NewsDetailPage({
 
   const content = normalizeRichContent(post.content);
   const org = organizationJsonLd(locale);
-  const imageSrc = absoluteAssetUrl(post.image_url) || NEWS_PLACEHOLDER;
+  const coverImage = post.featured_image || post.image_url;
+  const imageSrc = absoluteAssetUrl(coverImage) || NEWS_PLACEHOLDER;
   const shareUrl = `${SITE_URL}/${locale}/haberler/${slug}`;
   const rawImages: string[] = Array.isArray(post.images) ? post.images : [];
   const author = post.author_name || 'Vista İnşaat';
@@ -386,10 +387,10 @@ export default async function NewsDetailPage({
                     href={sp.slug ? localizedPath(locale, `/haberler/${sp.slug}`) : '#'}
                     className="nd-sidebar-item"
                   >
-                    {sp.image_url && (
+                    {(sp.featured_image || sp.image_url) && (
                       <div className="nd-sidebar-thumb">
                         <OptimizedImage
-                          src={absoluteAssetUrl(sp.image_url) || NEWS_PLACEHOLDER}
+                          src={absoluteAssetUrl(sp.featured_image || sp.image_url) || NEWS_PLACEHOLDER}
                           alt={sp.title}
                           fill
                           className="object-cover"
@@ -413,10 +414,10 @@ export default async function NewsDetailPage({
                     href={ra.slug ? localizedPath(locale, `/haberler/${ra.slug}`) : '#'}
                     className="nd-sidebar-item"
                   >
-                    {ra.image_url && (
+                    {(ra.featured_image || ra.image_url) && (
                       <div className="nd-sidebar-thumb">
                         <OptimizedImage
-                          src={absoluteAssetUrl(ra.image_url) || NEWS_PLACEHOLDER}
+                          src={absoluteAssetUrl(ra.featured_image || ra.image_url) || NEWS_PLACEHOLDER}
                           alt={ra.title}
                           fill
                           className="object-cover"
