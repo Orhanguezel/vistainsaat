@@ -42,9 +42,9 @@ import {
   useUpdateReferenceAdminMutation,
 } from '@/integrations/hooks';
 
-function isUuidLike(v?: string) {
-  if (!v) return false;
-  return /^[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}$/i.test(v);
+function isValidId(v?: string) {
+  if (!v || v === 'new') return false;
+  return v.length >= 10 && v.includes('-');
 }
 
 const normalizeLocale = (v: unknown): string =>
@@ -219,7 +219,7 @@ export default function AdminReferenceDetailClient({ id }: { id: string }) {
   const localesReady = !localesLoading && !localesFetching;
   const hasLocales = (localeOptions?.length ?? 0) > 0;
 
-  const shouldSkipDetail = isCreateMode || !isUuidLike(String(id || '')) || !queryLocale;
+  const shouldSkipDetail = isCreateMode || !isValidId(String(id || '')) || !queryLocale;
 
   const {
     data: reference,
@@ -315,7 +315,7 @@ export default function AdminReferenceDetailClient({ id }: { id: string }) {
         const created = await createReference(payload as any).unwrap();
         const nextId = String((created as any)?.id ?? '').trim();
 
-        if (!isUuidLike(nextId)) {
+        if (!isValidId(nextId)) {
           toast.error(t('admin.references.formHeader.createdNoId'));
           return;
         }
@@ -329,7 +329,7 @@ export default function AdminReferenceDetailClient({ id }: { id: string }) {
       }
 
       const currentId = String((reference as any)?.id ?? id);
-      if (!isUuidLike(currentId)) {
+      if (!isValidId(currentId)) {
         toast.error(t('admin.references.formHeader.idNotFound'));
         return;
       }
@@ -376,7 +376,7 @@ export default function AdminReferenceDetailClient({ id }: { id: string }) {
     );
   }
 
-  if (!isCreateMode && !isUuidLike(String(id || ''))) {
+  if (!isCreateMode && !isValidId(String(id || ''))) {
     return (
       <div className="space-y-6">
         <div className="space-y-1">

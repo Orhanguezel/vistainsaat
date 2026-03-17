@@ -32,9 +32,9 @@ import {
   useUpdateServiceAdminMutation,
 } from '@/integrations/hooks';
 
-function isUuidLike(v?: string) {
-  if (!v) return false;
-  return /^[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}$/i.test(v);
+function isValidId(v?: string) {
+  if (!v || v === 'new') return false;
+  return v.length >= 10 && v.includes('-');
 }
 
 const norm = (v: unknown) => String(v ?? '').trim();
@@ -103,7 +103,7 @@ export default function AdminServiceDetailClient({ id }: { id: string }) {
 
   const { data: service, isLoading, isFetching } = useGetServiceAdminQuery(
     { id, locale: queryLocale } as any,
-    { skip: isNew || !isUuidLike(id) || !queryLocale } as any,
+    { skip: isNew || !isValidId(id) || !queryLocale } as any,
   );
 
   const [createService, createState] = useCreateServiceAdminMutation();
@@ -173,7 +173,7 @@ export default function AdminServiceDetailClient({ id }: { id: string }) {
         const result = await createService(payload).unwrap();
         const newId = String((result as any)?.id ?? '');
         toast.success('Hizmet oluşturuldu');
-        if (isUuidLike(newId)) router.replace(`/admin/services/${newId}?locale=${queryLocale}`);
+        if (isValidId(newId)) router.replace(`/admin/services/${newId}?locale=${queryLocale}`);
       } else {
         await updateService({ id, patch: payload } as any).unwrap();
         toast.success('Hizmet güncellendi');

@@ -53,9 +53,9 @@ type Filters = {
 
 const isTruthyBoolLike = (v: unknown) => v === true || v === 1 || v === '1' || v === 'true';
 
-function isUuidLike(v?: string) {
-  if (!v) return false;
-  return /^[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}$/i.test(v);
+function isValidId(v?: string) {
+  if (!v || v === 'new') return false;
+  return v.length >= 10 && v.includes('-');
 }
 
 export default function AdminReferencesClient() {
@@ -174,7 +174,7 @@ export default function AdminReferencesClient() {
 
   async function onTogglePublished(item: ReferenceDto, next: boolean) {
     const id = String(item?.id ?? '');
-    if (!isUuidLike(id)) return;
+    if (!isValidId(id)) return;
 
     try {
       await updateReference({ id, patch: { is_published: next ? 1 : 0 } } as any).unwrap();
@@ -189,7 +189,7 @@ export default function AdminReferencesClient() {
 
   async function onToggleFeatured(item: ReferenceDto, next: boolean) {
     const id = String(item?.id ?? '');
-    if (!isUuidLike(id)) return;
+    if (!isValidId(id)) return;
 
     try {
       await updateReference({ id, patch: { is_featured: next ? 1 : 0 } } as any).unwrap();
@@ -204,7 +204,7 @@ export default function AdminReferencesClient() {
 
   async function onDelete(item: ReferenceDto) {
     const id = String(item?.id ?? '');
-    if (!isUuidLike(id)) return;
+    if (!isValidId(id)) return;
 
     const ok = window.confirm(
       t('admin.references.list.deleteConfirm', { name: String(item?.title ?? 'Referans') }),
@@ -441,7 +441,7 @@ export default function AdminReferencesClient() {
                           <Switch
                             checked={isFeatured}
                             onCheckedChange={(v) => onToggleFeatured(item, !!v)}
-                            disabled={busy || !isUuidLike(id)}
+                            disabled={busy || !isValidId(id)}
                           />
                           <Badge variant="secondary">
                             {isFeatured
@@ -456,7 +456,7 @@ export default function AdminReferencesClient() {
                           <Switch
                             checked={isPublished}
                             onCheckedChange={(v) => onTogglePublished(item, !!v)}
-                            disabled={busy || !isUuidLike(id)}
+                            disabled={busy || !isValidId(id)}
                           />
                           {isPublished ? (
                             <Badge variant="secondary">
@@ -476,7 +476,7 @@ export default function AdminReferencesClient() {
                             variant="outline"
                             size="sm"
                             onClick={() => onEdit(id)}
-                            disabled={busy || !isUuidLike(id)}
+                            disabled={busy || !isValidId(id)}
                           >
                             <Pencil className="mr-2 size-4" />
                             {t('admin.references.list.editButton')}
@@ -487,7 +487,7 @@ export default function AdminReferencesClient() {
                             size="sm"
                             className="border-destructive text-destructive hover:text-destructive"
                             onClick={() => onDelete(item)}
-                            disabled={busy || !isUuidLike(id)}
+                            disabled={busy || !isValidId(id)}
                           >
                             <Trash2 className="mr-2 size-4" />
                             {t('admin.references.list.deleteButton')}
@@ -543,7 +543,7 @@ export default function AdminReferencesClient() {
                         variant="outline"
                         size="sm"
                         onClick={() => onEdit(id)}
-                        disabled={busy || !isUuidLike(id)}
+                        disabled={busy || !isValidId(id)}
                       >
                         <Pencil className="mr-2 size-4" />
                         {t('admin.references.list.editButton')}
@@ -554,7 +554,7 @@ export default function AdminReferencesClient() {
                         size="sm"
                         className="border-destructive text-destructive hover:text-destructive"
                         onClick={() => onDelete(item)}
-                        disabled={busy || !isUuidLike(id)}
+                        disabled={busy || !isValidId(id)}
                       >
                         <Trash2 className="mr-2 size-4" />
                         {t('admin.references.list.deleteButton')}

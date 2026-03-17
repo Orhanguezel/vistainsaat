@@ -30,9 +30,9 @@ import {
 
 const isTruthyBoolLike = (v: unknown) => v === true || v === 1 || v === '1' || v === 'true';
 
-function isUuidLike(v?: string) {
-  if (!v) return false;
-  return /^[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}$/i.test(v);
+function isValidId(v?: string) {
+  if (!v || v === 'new') return false;
+  return v.length >= 10 && v.includes('-');
 }
 
 export default function AdminServicesClient() {
@@ -95,7 +95,7 @@ export default function AdminServicesClient() {
 
   async function onToggleActive(item: any, next: boolean) {
     const id = String(item?.id ?? '');
-    if (!isUuidLike(id)) return;
+    if (!isValidId(id)) return;
     try {
       await updateService({ id, patch: { is_active: next ? 1 : 0, locale: effectiveLocale } } as any).unwrap();
       toast.success('Durum güncellendi');
@@ -105,7 +105,7 @@ export default function AdminServicesClient() {
 
   async function onToggleFeatured(item: any, next: boolean) {
     const id = String(item?.id ?? '');
-    if (!isUuidLike(id)) return;
+    if (!isValidId(id)) return;
     try {
       await updateService({ id, patch: { is_featured: next ? 1 : 0, locale: effectiveLocale } } as any).unwrap();
       toast.success('Öne çıkarma güncellendi');
@@ -115,7 +115,7 @@ export default function AdminServicesClient() {
 
   async function onDelete(item: any) {
     const id = String(item?.id ?? '');
-    if (!isUuidLike(id)) return;
+    if (!isValidId(id)) return;
     if (!window.confirm(`"${item?.title || item?.name || 'Hizmet'}" silinsin mi?`)) return;
     try {
       await deleteService(id as any).unwrap();
@@ -219,20 +219,20 @@ export default function AdminServicesClient() {
                         <div className="text-xs text-muted-foreground"><code>{slug}</code></div>
                       </TableCell>
                       <TableCell>
-                        <Switch checked={isFeatured} onCheckedChange={(v) => onToggleFeatured(item, !!v)} disabled={busy || !isUuidLike(id)} />
+                        <Switch checked={isFeatured} onCheckedChange={(v) => onToggleFeatured(item, !!v)} disabled={busy || !isValidId(id)} />
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <Switch checked={isActive} onCheckedChange={(v) => onToggleActive(item, !!v)} disabled={busy || !isUuidLike(id)} />
+                          <Switch checked={isActive} onCheckedChange={(v) => onToggleActive(item, !!v)} disabled={busy || !isValidId(id)} />
                           <Badge variant={isActive ? 'secondary' : 'destructive'}>{isActive ? 'Aktif' : 'Pasif'}</Badge>
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="inline-flex items-center gap-2">
-                          <Button variant="outline" size="sm" onClick={() => router.push(`/admin/services/${encodeURIComponent(id)}?locale=${encodeURIComponent(effectiveLocale || 'tr')}`)} disabled={busy || !isUuidLike(id)}>
+                          <Button variant="outline" size="sm" onClick={() => router.push(`/admin/services/${encodeURIComponent(id)}?locale=${encodeURIComponent(effectiveLocale || 'tr')}`)} disabled={busy || !isValidId(id)}>
                             <Pencil className="mr-2 size-4" />Düzenle
                           </Button>
-                          <Button variant="outline" size="sm" className="border-destructive text-destructive hover:text-destructive" onClick={() => onDelete(item)} disabled={busy || !isUuidLike(id)}>
+                          <Button variant="outline" size="sm" className="border-destructive text-destructive hover:text-destructive" onClick={() => onDelete(item)} disabled={busy || !isValidId(id)}>
                             <Trash2 className="mr-2 size-4" />Sil
                           </Button>
                         </div>
