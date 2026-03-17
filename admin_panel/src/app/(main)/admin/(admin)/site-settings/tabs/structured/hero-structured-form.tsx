@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AdminImageUploadField } from "@/app/(main)/admin/_components/common/AdminImageUploadField";
 
 /* ── types ── */
 
@@ -80,13 +81,14 @@ export const HeroStructuredForm: React.FC<HeroStructuredFormProps> = ({
         <h3 className="text-sm font-medium">Videolar</h3>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">Masaüstü Video</Label>
-            <Input
+            <AdminImageUploadField
+              label="Masaüstü Video"
+              helperText="16:9 yatay video (mp4). Dosya yükle veya URL yapıştır."
+              bucket="public"
+              folder="uploads/video"
               value={hero.video_desktop}
-              onChange={(e) => set({ video_desktop: e.target.value })}
+              onChange={(url) => set({ video_desktop: url })}
               disabled={disabled}
-              className="h-8"
-              placeholder="/uploads/video/hero-desktop.mp4"
             />
             {hero.video_desktop && (
               <video
@@ -101,13 +103,14 @@ export const HeroStructuredForm: React.FC<HeroStructuredFormProps> = ({
           </div>
 
           <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">Mobil Video</Label>
-            <Input
+            <AdminImageUploadField
+              label="Mobil Video"
+              helperText="9:16 dikey video (mp4). Dosya yükle veya URL yapıştır."
+              bucket="public"
+              folder="uploads/video"
               value={hero.video_mobile}
-              onChange={(e) => set({ video_mobile: e.target.value })}
+              onChange={(url) => set({ video_mobile: url })}
               disabled={disabled}
-              className="h-8"
-              placeholder="/uploads/video/hero-mobile.mp4"
             />
             {hero.video_mobile && (
               <video
@@ -123,13 +126,14 @@ export const HeroStructuredForm: React.FC<HeroStructuredFormProps> = ({
         </div>
 
         <div className="space-y-1.5">
-          <Label className="text-xs text-muted-foreground">Video Poster (opsiyonel)</Label>
-          <Input
+          <AdminImageUploadField
+            label="Video Poster (opsiyonel)"
+            helperText="Video yüklenirken gösterilecek kapak görseli."
+            bucket="public"
+            folder="uploads/video"
             value={hero.video_poster}
-            onChange={(e) => set({ video_poster: e.target.value })}
+            onChange={(url) => set({ video_poster: url })}
             disabled={disabled}
-            className="h-8"
-            placeholder="Video yüklenirken gösterilecek görsel URL"
           />
         </div>
       </div>
