@@ -101,8 +101,6 @@ type FormValues = {
   featured_image_alt: string;
   meta_title: string;
   meta_description: string;
-  replicate_all_locales: boolean;
-  apply_all_locales: boolean;
 };
 
 const emptyForm = (locale: string): FormValues => ({
@@ -120,8 +118,6 @@ const emptyForm = (locale: string): FormValues => ({
   featured_image_alt: '',
   meta_title: '',
   meta_description: '',
-  replicate_all_locales: false,
-  apply_all_locales: false,
 });
 
 const dtoToForm = (dto: ReferenceDto): FormValues => ({
@@ -140,8 +136,6 @@ const dtoToForm = (dto: ReferenceDto): FormValues => ({
   featured_image_alt: norm((dto as any).featured_image_alt),
   meta_title: norm((dto as any).meta_title),
   meta_description: norm((dto as any).meta_description),
-  replicate_all_locales: false,
-  apply_all_locales: false,
 });
 
 export default function AdminReferenceDetailClient({ id }: { id: string }) {
@@ -311,7 +305,7 @@ export default function AdminReferenceDetailClient({ id }: { id: string }) {
 
     try {
       if (isCreateMode) {
-        const payload = { ...common, replicate_all_locales: values.replicate_all_locales };
+        const payload = { ...common };
         const created = await createReference(payload as any).unwrap();
         const nextId = String((created as any)?.id ?? '').trim();
 
@@ -334,7 +328,7 @@ export default function AdminReferenceDetailClient({ id }: { id: string }) {
         return;
       }
 
-      const patch = { ...common, apply_all_locales: values.apply_all_locales };
+      const patch = { ...common };
       await updateReference({ id: currentId, patch } as any).unwrap();
       toast.success(t('admin.references.formHeader.updated'));
 
@@ -692,51 +686,6 @@ export default function AdminReferenceDetailClient({ id }: { id: string }) {
                       onOpenLibraryClick={() => router.push('/admin/storage')}
                     />
 
-                    <Separator />
-
-                    <div className="space-y-3">
-                      <div className="text-sm font-medium">
-                        {t('admin.references.form.multiLocaleTitle')}
-                      </div>
-
-                      <div className="flex items-start gap-2">
-                        <Checkbox
-                          id="ref_replicate_all"
-                          checked={!!values.replicate_all_locales}
-                          onCheckedChange={(v) =>
-                            setValues((p) => ({ ...p, replicate_all_locales: v === true }))
-                          }
-                          disabled={disabled}
-                        />
-                        <div className="space-y-1">
-                          <Label htmlFor="ref_replicate_all" className="leading-none">
-                            {t('admin.references.form.replicateAllLocales')}
-                          </Label>
-                          <p className="text-xs text-muted-foreground">
-                            <code>replicate_all_locales</code>
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-start gap-2">
-                        <Checkbox
-                          id="ref_apply_all"
-                          checked={!!values.apply_all_locales}
-                          onCheckedChange={(v) =>
-                            setValues((p) => ({ ...p, apply_all_locales: v === true }))
-                          }
-                          disabled={disabled}
-                        />
-                        <div className="space-y-1">
-                          <Label htmlFor="ref_apply_all" className="leading-none">
-                            {t('admin.references.form.applyAllLocales')}
-                          </Label>
-                          <p className="text-xs text-muted-foreground">
-                            <code>apply_all_locales</code>
-                          </p>
-                        </div>
-                      </div>
-                    </div>
                   </div>
                 </div>
               </TabsContent>
