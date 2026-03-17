@@ -12,6 +12,7 @@ import { ProjectsView } from '@/components/projects/ProjectsView';
 import { fetchSetting } from '@/i18n/server';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs';
 import type { ProjectViewItem } from '@/components/projects/ProjectsView';
+import specKeysData from '@shared/spec-keys.json';
 
 const PROJECT_PLACEHOLDER = '/media/gallery-placeholder.svg';
 
@@ -55,13 +56,22 @@ export async function generateMetadata({
   });
 }
 
-/** Case-insensitive spec lookup — keys may be "Tip", "tip", "TIP" etc. */
-function specVal(specs: Record<string, string> | undefined, ...keys: string[]): string | undefined {
+type SpecEntry = { id: string; keys: Record<string, string>; labels: Record<string, string> };
+const SPEC_ENTRIES: SpecEntry[] = specKeysData.project;
+
+/** Get all locale key variants for a spec id */
+function allKeysForId(id: string): string[] {
+  const entry = SPEC_ENTRIES.find((e) => e.id === id);
+  return entry ? Object.values(entry.keys) : [id];
+}
+
+/** Case-insensitive spec lookup by spec id — searches all locale key variants */
+function specById(specs: Record<string, string> | undefined, id: string): string | undefined {
   if (!specs) return undefined;
-  for (const k of keys) {
-    const lower = k.toLowerCase().replace(/[\s_]+/g, '');
+  for (const k of allKeysForId(id)) {
+    const norm = k.toLowerCase().replace(/[\s_]+/g, '');
     for (const [sk, sv] of Object.entries(specs)) {
-      if (sk.toLowerCase().replace(/[\s_]+/g, '') === lower && sv) return sv;
+      if (sk.toLowerCase().replace(/[\s_]+/g, '') === norm && sv) return sv;
     }
   }
   return undefined;
@@ -84,15 +94,15 @@ function toViewItem(p: any, locale: string): ProjectViewItem {
       caption: p.caption,
       description: p.description,
     }),
-    category: p.category_name || p.type || specVal(specs, 'tip', 'type', 'typ') || undefined,
-    location: specVal(specs, 'lokasyon', 'location', 'standort') || undefined,
-    architects: specVal(specs, 'mimarlar', 'architects', 'architekten', 'baş_mimar', 'lead_architect') || undefined,
-    year: specVal(specs, 'yıl', 'yil', 'year', 'jahr') || undefined,
-    area: specVal(specs, 'alan', 'area', 'fläche') || undefined,
-    status: specVal(specs, 'durum', 'status') || undefined,
-    materials: specVal(specs, 'malzeme', 'materials', 'materialien') || undefined,
-    floors: specVal(specs, 'kat', 'floors', 'kat_sayısı', 'stockwerke') || undefined,
-    client: specVal(specs, 'müteahhit', 'contractor', 'auftragnehmer', 'işveren', 'client', 'bauherr') || undefined,
+    category: p.category_name || p.type || specById(specs, 'type') || undefined,
+    location: specById(specs, 'location') || undefined,
+    architects: specById(specs, 'architects') || specById(specs, 'lead_architect') || undefined,
+    year: specById(specs, 'year') || undefined,
+    area: specById(specs, 'area') || undefined,
+    status: specById(specs, 'status') || undefined,
+    materials: specById(specs, 'materials') || undefined,
+    floors: specById(specs, 'floors') || undefined,
+    client: specById(specs, 'contractor') || specById(specs, 'client') || undefined,
   };
 }
 

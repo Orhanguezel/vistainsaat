@@ -56,87 +56,27 @@ type TabKey = 'general' | 'images' | 'specs' | 'seo' | 'faqs' | 'reviews' | 'jso
 // ─── Specifications Key-Value Editor ─────────────────────────
 
 // İnşaat projesi için önerilen özellik şablonları
-/** Standart proje özellik key'leri — her locale kendi key setini kullanır */
-const PROJECT_SPEC_OPTIONS_TR: { key: string; label: string }[] = [
-  { key: 'lokasyon', label: 'Lokasyon' },
-  { key: 'yıl', label: 'Yıl' },
-  { key: 'alan', label: 'Alan' },
-  { key: 'tip', label: 'Tip / Kategori' },
-  { key: 'durum', label: 'Durum' },
-  { key: 'mimarlar', label: 'Mimarlar' },
-  { key: 'baş_mimar', label: 'Baş Mimar' },
-  { key: 'üreticiler', label: 'Üreticiler' },
-  { key: 'müteahhit', label: 'Müteahhit' },
-  { key: 'kat_sayısı', label: 'Kat Sayısı' },
-  { key: 'arsa_alanı', label: 'Arsa Alanı' },
-  { key: 'yapı_türü', label: 'Yapı Türü' },
-  { key: 'malzeme', label: 'Malzeme' },
-  { key: 'işveren', label: 'İşveren' },
-  { key: 'şehir', label: 'Şehir' },
-  { key: 'ülke', label: 'Ülke' },
-  { key: 'proje_ekibi', label: 'Proje Ekibi' },
-  { key: 'peyzaj_mimarlığı', label: 'Peyzaj Mimarlığı' },
-  { key: 'iç_tasarım', label: 'İç Tasarım' },
-  { key: 'mühendislik', label: 'Mühendislik' },
-  { key: 'genel_inşaat', label: 'Genel İnşaat' },
-];
+/** Spec key definitions — loaded from shared/spec-keys.json */
+import specKeysData from '@shared/spec-keys.json';
 
-const PROJECT_SPEC_OPTIONS_EN: { key: string; label: string }[] = [
-  { key: 'location', label: 'Location' },
-  { key: 'year', label: 'Year' },
-  { key: 'area', label: 'Area' },
-  { key: 'type', label: 'Type / Category' },
-  { key: 'status', label: 'Status' },
-  { key: 'architects', label: 'Architects' },
-  { key: 'lead_architect', label: 'Lead Architect' },
-  { key: 'manufacturers', label: 'Manufacturers' },
-  { key: 'contractor', label: 'Contractor' },
-  { key: 'floors', label: 'Floors' },
-  { key: 'plot_area', label: 'Plot Area' },
-  { key: 'building_type', label: 'Building Type' },
-  { key: 'materials', label: 'Materials' },
-  { key: 'client', label: 'Client' },
-  { key: 'city', label: 'City' },
-  { key: 'country', label: 'Country' },
-  { key: 'project_team', label: 'Project Team' },
-  { key: 'landscape_architecture', label: 'Landscape Architecture' },
-  { key: 'interior_design', label: 'Interior Design' },
-  { key: 'engineering', label: 'Engineering' },
-  { key: 'general_construction', label: 'General Construction' },
-];
-
-const PROJECT_SPEC_OPTIONS_DE: { key: string; label: string }[] = [
-  { key: 'standort', label: 'Standort' },
-  { key: 'jahr', label: 'Jahr' },
-  { key: 'fläche', label: 'Fläche' },
-  { key: 'typ', label: 'Typ / Kategorie' },
-  { key: 'status', label: 'Status' },
-  { key: 'architekten', label: 'Architekten' },
-  { key: 'leitender_architekt', label: 'Leitender Architekt' },
-  { key: 'hersteller', label: 'Hersteller' },
-  { key: 'auftragnehmer', label: 'Auftragnehmer' },
-  { key: 'stockwerke', label: 'Stockwerke' },
-  { key: 'grundstücksfläche', label: 'Grundstücksfläche' },
-  { key: 'gebäudetyp', label: 'Gebäudetyp' },
-  { key: 'materialien', label: 'Materialien' },
-  { key: 'bauherr', label: 'Bauherr' },
-  { key: 'stadt', label: 'Stadt' },
-  { key: 'land', label: 'Land' },
-  { key: 'projektteam', label: 'Projektteam' },
-  { key: 'landschaftsarchitektur', label: 'Landschaftsarchitektur' },
-  { key: 'innenarchitektur', label: 'Innenarchitektur' },
-  { key: 'ingenieurwesen', label: 'Ingenieurwesen' },
-  { key: 'hochbau', label: 'Hochbau' },
-];
+type SpecKeyEntry = { id: string; labels: Record<string, string>; keys: Record<string, string> };
+const SPEC_ENTRIES: SpecKeyEntry[] = specKeysData.project;
 
 function getSpecOptionsForLocale(locale: string): { key: string; label: string }[] {
-  if (locale.startsWith('en')) return PROJECT_SPEC_OPTIONS_EN;
-  if (locale.startsWith('de')) return PROJECT_SPEC_OPTIONS_DE;
-  return PROJECT_SPEC_OPTIONS_TR;
+  const lang = locale.split('-')[0].split('_')[0];
+  return SPEC_ENTRIES.map((e) => ({
+    key: e.keys[lang] ?? e.keys['en'] ?? e.id,
+    label: e.labels[lang] ?? e.labels['en'] ?? e.id,
+  }));
 }
 
-/** All spec options (for label resolution regardless of locale) */
-const ALL_SPEC_OPTIONS = [...PROJECT_SPEC_OPTIONS_TR, ...PROJECT_SPEC_OPTIONS_EN, ...PROJECT_SPEC_OPTIONS_DE];
+/** All spec keys across all locales (for label resolution) */
+const ALL_SPEC_OPTIONS: { key: string; label: string }[] = SPEC_ENTRIES.flatMap((e) =>
+  Object.entries(e.keys).map(([lang, key]) => ({
+    key,
+    label: e.labels[lang] ?? e.labels['en'] ?? e.id,
+  })),
+);
 
 
 /** Resolve display label for a spec key */

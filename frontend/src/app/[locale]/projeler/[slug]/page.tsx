@@ -16,8 +16,27 @@ import { ProjectComments } from '@/components/projects/ProjectComments';
 import { buildMediaAlt } from '@/lib/media-seo';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs';
 import { Reveal } from '@/components/motion/Reveal';
+import specKeysData from '@shared/spec-keys.json';
 
 const PROJECT_PLACEHOLDER = '/media/gallery-placeholder.svg';
+
+/** Build a lookup: spec id → all possible locale keys */
+type SpecEntry = { id: string; keys: Record<string, string>; labels: Record<string, string> };
+const SPEC_ENTRIES: SpecEntry[] = specKeysData.project;
+
+/** For a given spec id, return all known locale keys */
+function allKeysForId(id: string): string[] {
+  const entry = SPEC_ENTRIES.find((e) => e.id === id);
+  return entry ? Object.values(entry.keys) : [id];
+}
+
+/** Get spec label for a given id and locale */
+function specLabel(id: string, locale: string): string {
+  const lang = locale.split('-')[0] || 'en';
+  const entry = SPEC_ENTRIES.find((e) => e.id === id);
+  if (!entry) return id;
+  return entry.labels[lang] || entry.labels['en'] || id;
+}
 
 async function fetchProject(slug: string, locale: string) {
   try {
@@ -124,8 +143,9 @@ export default async function ProjectDetailPage({
   const specs = (project.specifications || {}) as Record<string, string>;
   const isEn = locale.startsWith('en');
 
-  /** Case-insensitive spec lookup — keys may be "Tip", "Baş Mimar", "baş_mimar" etc. */
-  function sv(...keys: string[]): string | null {
+  /** Resolve spec value by id — searches all locale key variants */
+  function sv(id: string): string | null {
+    const keys = allKeysForId(id);
     for (const k of keys) {
       const norm = k.toLowerCase().replace(/[\s_]+/g, '');
       for (const [sk, val] of Object.entries(specs)) {
@@ -135,45 +155,48 @@ export default async function ProjectDetailPage({
     return null;
   }
 
-  const location = sv('lokasyon', 'location', 'standort');
-  const year = sv('yıl', 'yil', 'year', 'jahr');
-  const area = sv('alan', 'area', 'fläche');
-  const projectType = sv('tip', 'type', 'typ') || project.category_name || null;
-  const status = sv('durum', 'status');
-  const architects = sv('mimarlar', 'architects', 'architekten');
-  const leadArchitect = sv('baş_mimar', 'lead_architect', 'leitender_architekt');
-  const manufacturers = sv('üreticiler', 'manufacturers', 'hersteller');
-  const projectTeam = sv('proje_ekibi', 'project_team', 'projektteam');
-  const landscapeArch = sv('peyzaj_mimarlığı', 'landscape_architecture', 'landschaftsarchitektur');
-  const interiorDesign = sv('iç_tasarım', 'interior_design', 'innenarchitektur');
-  const engineering = sv('mühendislik', 'engineering', 'ingenieurwesen');
-  const generalConstruction = sv('genel_inşaat', 'general_construction', 'hochbau');
-  const city = sv('şehir', 'city', 'stadt');
-  const country = sv('ülke', 'country', 'land');
-  const contractor = sv('müteahhit', 'contractor', 'auftragnehmer');
+  /** Shorthand: label with colon for current locale */
+  const sl = (id: string) => `${specLabel(id, locale)}:`;
+
+  const location = sv('location');
+  const year = sv('year');
+  const area = sv('area');
+  const projectType = sv('type') || project.category_name || null;
+  const status = sv('status');
+  const architects = sv('architects');
+  const leadArchitect = sv('lead_architect');
+  const manufacturers = sv('manufacturers');
+  const projectTeam = sv('project_team');
+  const landscapeArch = sv('landscape_architecture');
+  const interiorDesign = sv('interior_design');
+  const engineering = sv('engineering');
+  const generalConstruction = sv('general_construction');
+  const city = sv('city');
+  const country = sv('country');
+  const contractor = sv('contractor');
   const tags = projectTags;
 
   // Build spec items for the expandable component
   const primarySpecs: SpecItem[] = [
-    architects && { icon: 'architects', label: isEn ? 'Architects:' : 'Mimarlar:', value: architects, isLink: true },
-    area && { icon: 'area', label: isEn ? 'Area:' : 'Alan:', value: area },
-    year && { icon: 'year', label: isEn ? 'Year:' : 'Yıl:', value: year },
-    manufacturers && { icon: 'manufacturers', label: isEn ? 'Manufacturers:' : 'Üreticiler:', value: manufacturers },
-    leadArchitect && { icon: 'leadArchitect', label: isEn ? 'Lead Architect:' : 'Baş Mimar:', value: leadArchitect },
-    status && { icon: 'status', label: isEn ? 'Status:' : 'Durum:', value: status },
+    architects && { icon: 'architects', label: sl('architects'), value: architects, isLink: true },
+    area && { icon: 'area', label: sl('area'), value: area },
+    year && { icon: 'year', label: sl('year'), value: year },
+    manufacturers && { icon: 'manufacturers', label: sl('manufacturers'), value: manufacturers },
+    leadArchitect && { icon: 'leadArchitect', label: sl('lead_architect'), value: leadArchitect },
+    status && { icon: 'status', label: sl('status'), value: status },
   ].filter(Boolean) as SpecItem[];
 
   const secondarySpecs: SpecItem[] = [
-    projectType && { icon: 'category', label: isEn ? 'Category:' : 'Kategori:', value: projectType, isLink: true },
-    projectTeam && { icon: 'team', label: isEn ? 'Project Team:' : 'Proje Ekibi:', value: projectTeam },
-    landscapeArch && { icon: 'default', label: isEn ? 'Landscape Architecture:' : 'Peyzaj Mimarlığı:', value: landscapeArch },
-    interiorDesign && { icon: 'default', label: isEn ? 'Interior Design:' : 'İç Tasarım:', value: interiorDesign },
-    engineering && { icon: 'default', label: isEn ? 'Engineering & Consulting:' : 'Mühendislik & Danışmanlık:', value: engineering },
-    generalConstruction && { icon: 'default', label: isEn ? 'General Construction:' : 'Genel İnşaat:', value: generalConstruction },
-    city && { icon: 'city', label: isEn ? 'City:' : 'Şehir:', value: city },
-    country && { icon: 'country', label: isEn ? 'Country:' : 'Ülke:', value: country },
-    location && { icon: 'location', label: isEn ? 'Location:' : 'Lokasyon:', value: location },
-    contractor && { icon: 'default', label: isEn ? 'Contractor:' : 'Müteahhit:', value: contractor },
+    projectType && { icon: 'category', label: sl('type'), value: projectType, isLink: true },
+    projectTeam && { icon: 'team', label: sl('project_team'), value: projectTeam },
+    landscapeArch && { icon: 'default', label: sl('landscape_architecture'), value: landscapeArch },
+    interiorDesign && { icon: 'default', label: sl('interior_design'), value: interiorDesign },
+    engineering && { icon: 'default', label: sl('engineering'), value: engineering },
+    generalConstruction && { icon: 'default', label: sl('general_construction'), value: generalConstruction },
+    city && { icon: 'city', label: sl('city'), value: city },
+    country && { icon: 'country', label: sl('country'), value: country },
+    location && { icon: 'location', label: sl('location'), value: location },
+    contractor && { icon: 'default', label: sl('contractor'), value: contractor },
   ].filter(Boolean) as SpecItem[];
 
   const rawGalleryImages: string[] = Array.isArray(project.images) ? project.images : [];

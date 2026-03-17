@@ -1,0 +1,109 @@
+{
+  "project": [
+    {
+      "id": "location",
+      "labels": { "tr": "Lokasyon", "en": "Location", "de": "Standort" },
+      "keys": { "tr": "lokasyon", "en": "location", "de": "standort" }
+    },
+    {
+      "id": "year",
+      "labels": { "tr": "Yıl", "en": "Year", "de": "Jahr" },
+      "keys": { "tr": "yıl", "en": "year", "de": "jahr" }
+    },
+    {
+      "id": "area",
+      "labels": { "tr": "Alan", "en": "Area", "de": "Fläche" },
+      "keys": { "tr": "alan", "en": "area", "de": "fläche" }
+    },
+    {
+      "id": "type",
+      "labels": { "tr": "Tip / Kategori", "en": "Type / Category", "de": "Typ / Kategorie" },
+      "keys": { "tr": "tip", "en": "type", "de": "typ" }
+    },
+    {
+      "id": "status",
+      "labels": { "tr": "Durum", "en": "Status", "de": "Status" },
+      "keys": { "tr": "durum", "en": "status", "de": "status" }
+    },
+    {
+      "id": "architects",
+      "labels": { "tr": "Mimarlar", "en": "Architects", "de": "Architekten" },
+      "keys": { "tr": "mimarlar", "en": "architects", "de": "architekten" }
+    },
+    {
+      "id": "lead_architect",
+      "labels": { "tr": "Baş Mimar", "en": "Lead Architect", "de": "Leitender Architekt" },
+      "keys": { "tr": "baş_mimar", "en": "lead_architect", "de": "leitender_architekt" }
+    },
+    {
+      "id": "manufacturers",
+      "labels": { "tr": "Üreticiler", "en": "Manufacturers", "de": "Hersteller" },
+      "keys": { "tr": "üreticiler", "en": "manufacturers", "de": "hersteller" }
+    },
+    {
+      "id": "contractor",
+      "labels": { "tr": "Müteahhit", "en": "Contractor", "de": "Auftragnehmer" },
+      "keys": { "tr": "müteahhit", "en": "contractor", "de": "auftragnehmer" }
+    },
+    {
+      "id": "floors",
+      "labels": { "tr": "Kat Sayısı", "en": "Floors", "de": "Stockwerke" },
+      "keys": { "tr": "kat_sayısı", "en": "floors", "de": "stockwerke" }
+    },
+    {
+      "id": "plot_area",
+      "labels": { "tr": "Arsa Alanı", "en": "Plot Area", "de": "Grundstücksfläche" },
+      "keys": { "tr": "arsa_alanı", "en": "plot_area", "de": "grundstücksfläche" }
+    },
+    {
+      "id": "building_type",
+      "labels": { "tr": "Yapı Türü", "en": "Building Type", "de": "Gebäudetyp" },
+      "keys": { "tr": "yapı_türü", "en": "building_type", "de": "gebäudetyp" }
+    },
+    {
+      "id": "materials",
+      "labels": { "tr": "Malzeme", "en": "Materials", "de": "Materialien" },
+      "keys": { "tr": "malzeme", "en": "materials", "de": "materialien" }
+    },
+    {
+      "id": "client",
+      "labels": { "tr": "İşveren", "en": "Client", "de": "Bauherr" },
+      "keys": { "tr": "işveren", "en": "client", "de": "bauherr" }
+    },
+    {
+      "id": "city",
+      "labels": { "tr": "Şehir", "en": "City", "de": "Stadt" },
+      "keys": { "tr": "şehir", "en": "city", "de": "stadt" }
+    },
+    {
+      "id": "country",
+      "labels": { "tr": "Ülke", "en": "Country", "de": "Land" },
+      "keys": { "tr": "ülke", "en": "country", "de": "land" }
+    },
+    {
+      "id": "project_team",
+      "labels": { "tr": "Proje Ekibi", "en": "Project Team", "de": "Projektteam" },
+      "keys": { "tr": "proje_ekibi", "en": "project_team", "de": "projektteam" }
+    },
+    {
+      "id": "landscape_architecture",
+      "labels": { "tr": "Peyzaj Mimarlığı", "en": "Landscape Architecture", "de": "Landschaftsarchitektur" },
+      "keys": { "tr": "peyzaj_mimarlığı", "en": "landscape_architecture", "de": "landschaftsarchitektur" }
+    },
+    {
+      "id": "interior_design",
+      "labels": { "tr": "İç Tasarım", "en": "Interior Design", "de": "Innenarchitektur" },
+      "keys": { "tr": "iç_tasarım", "en": "interior_design", "de": "innenarchitektur" }
+    },
+    {
+      "id": "engineering",
+      "labels": { "tr": "Mühendislik", "en": "Engineering", "de": "Ingenieurwesen" },
+      "keys": { "tr": "mühendislik", "en": "engineering", "de": "ingenieurwesen" }
+    },
+    {
+      "id": "general_construction",
+      "labels": { "tr": "Genel İnşaat", "en": "General Construction", "de": "Hochbau" },
+      "keys": { "tr": "genel_inşaat", "en": "general_construction", "de": "hochbau" }
+    }
+  ]
+}
