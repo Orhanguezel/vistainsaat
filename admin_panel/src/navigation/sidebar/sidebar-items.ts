@@ -12,6 +12,7 @@ import {
   BookOpen,
   Bot,
   Briefcase,
+  RefreshCcw,
 
   ClipboardList,
   Cog,
@@ -108,7 +109,8 @@ export type AdminNavItemKey =
   | 'vista_legal'
   | 'vista_settings'
   | 'newsletter'
-  | 'email_templates';
+  | 'email_templates'
+  | 'cache';
 
 export type AdminNavGroupKey = 'general' | 'content' | 'vista_insaat' | 'vista_content' | 'marketing' | 'communication' | 'system';
 
@@ -162,6 +164,7 @@ export const adminNavConfig: AdminNavConfigGroup[] = [
       { key: 'notifications', url: '/admin/notifications', icon: Bell },
       { key: 'storage', url: '/admin/storage', icon: HardDrive },
       { key: 'audit', url: '/admin/audit', icon: FileSearch },
+      { key: 'cache', url: '/admin/cache', icon: RefreshCcw },
       { key: 'vista_settings', url: '/admin/site-settings', icon: Settings },
     ],
   },
@@ -221,6 +224,7 @@ const FALLBACK_TITLES: Record<AdminNavItemKey, string> = {
   vista_legal: 'Yasal Sayfalar',
   vista_settings: 'Site Ayarları',
   newsletter: 'Bülten Aboneleri',
+  cache: 'Cache Yönetimi',
 };
 
 export function buildAdminSidebarItems(

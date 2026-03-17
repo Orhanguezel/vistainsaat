@@ -117,6 +117,7 @@ const emptyNav: AdminNavCopy = {
     vista_legal: '',
     vista_settings: '',
     newsletter: '',
+    cache: '',
   },
 };
 
@@ -176,6 +177,7 @@ export function normalizeAdminUiCopy(raw: unknown): AdminUiCopy {
     vista_legal: uiText(itemsRaw.vista_legal),
     vista_settings: uiText(itemsRaw.vista_settings),
     newsletter: uiText(itemsRaw.newsletter),
+    cache: uiText(itemsRaw.cache),
   };
 
   const commonRaw = parseJsonObject(o.common);
