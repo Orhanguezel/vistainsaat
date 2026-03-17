@@ -79,9 +79,11 @@ interface SortableImageProps {
   onEdit: (img: GalleryImageDto) => void;
   onDelete: (id: string) => void;
   t: (key: string) => string;
+  isCover?: boolean;
+  onSelectCover?: (url: string) => void;
 }
 
-function SortableImageCard({ image, disabled, onEdit, onDelete, t }: SortableImageProps) {
+function SortableImageCard({ image, disabled, onEdit, onDelete, t, isCover, onSelectCover }: SortableImageProps) {
   const {
     attributes,
     listeners,
@@ -103,7 +105,7 @@ function SortableImageCard({ image, disabled, onEdit, onDelete, t }: SortableIma
     <div
       ref={setNodeRef}
       style={style}
-      className="flex items-start gap-3 rounded-lg border bg-card p-3"
+      className={`flex items-start gap-3 rounded-lg border bg-card p-3 ${isCover ? 'ring-2 ring-primary' : ''}`}
     >
       <button
         type="button"
@@ -134,6 +136,9 @@ function SortableImageCard({ image, disabled, onEdit, onDelete, t }: SortableIma
           <span className="truncate text-sm font-medium">
             {image.alt || image.caption || `#${image.display_order}`}
           </span>
+          {isCover ? (
+            <Badge variant="default" className="text-xs">★ Kapak</Badge>
+          ) : null}
           {!image.is_active ? (
             <Badge variant="secondary" className="text-xs">
               {t('admin.gallery.images.inactive')}
@@ -149,6 +154,19 @@ function SortableImageCard({ image, disabled, onEdit, onDelete, t }: SortableIma
       </div>
 
       <div className="flex shrink-0 items-center gap-1">
+        {onSelectCover && !isCover && imgUrl && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="h-8 px-2 text-xs text-amber-600 hover:text-amber-700"
+            onClick={() => onSelectCover(imgUrl)}
+            disabled={disabled}
+            title="Kapak görseli yap"
+          >
+            ★ Kapak
+          </Button>
+        )}
         <Button
           type="button"
           variant="ghost"
@@ -295,9 +313,11 @@ interface GalleryImagesTabProps {
   galleryId: string;
   locale: string;
   disabled?: boolean;
+  coverUrl?: string;
+  onSelectCover?: (url: string) => void;
 }
 
-export function GalleryImagesTab({ galleryId, locale, disabled: parentDisabled = false }: GalleryImagesTabProps) {
+export function GalleryImagesTab({ galleryId, locale, disabled: parentDisabled = false, coverUrl, onSelectCover }: GalleryImagesTabProps) {
   const t = useAdminT();
 
   const { data: images, isLoading, isFetching } = useListGalleryImagesAdminQuery(
@@ -375,6 +395,31 @@ export function GalleryImagesTab({ galleryId, locale, disabled: parentDisabled =
     }
   }
 
+  async function handleAddMultipleImages(urls: string[]) {
+    let count = 0;
+    for (let i = 0; i < urls.length; i++) {
+      const url = urls[i];
+      if (!url) continue;
+      try {
+        await createImage({
+          galleryId,
+          payload: {
+            image_url: url,
+            locale,
+            display_order: sortedImages.length + i,
+            is_active: 1,
+          } as GalleryImageUpsertPayload,
+        }).unwrap();
+        count++;
+      } catch (err) {
+        toast.error(getErrMessage(err, t('admin.gallery.images.addError')));
+      }
+    }
+    if (count > 0) {
+      toast.success(count === 1 ? t('admin.gallery.images.added') : `${count} görsel eklendi.`);
+    }
+  }
+
   async function handleDelete(imageId: string) {
     if (!confirm(t('admin.gallery.images.deleteConfirm'))) return;
     try {
@@ -416,10 +461,13 @@ export function GalleryImagesTab({ galleryId, locale, disabled: parentDisabled =
         <CardContent>
           <AdminImageUploadField
             label={t('admin.gallery.images.uploadLabel')}
+            helperText="Birden fazla görsel seçebilirsiniz."
             bucket="public"
             folder="gallery"
             metadata={imageMetadata}
-            value=""
+            multiple
+            values={[]}
+            onChangeMultiple={handleAddMultipleImages}
             onChange={handleAddImage}
             disabled={disabled}
           />
@@ -477,6 +525,8 @@ export function GalleryImagesTab({ galleryId, locale, disabled: parentDisabled =
                         onEdit={setEditingImage}
                         onDelete={handleDelete}
                         t={t}
+                        isCover={!!(coverUrl && (img.image_url_resolved === coverUrl || img.image_url === coverUrl))}
+                        onSelectCover={onSelectCover}
                       />
                     );
                   })}

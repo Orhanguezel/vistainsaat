@@ -125,7 +125,7 @@ export function ProjectFeed({
         {/* Main feed */}
         <div className="space-y-10">
           {projects.map((project) => {
-            const mainImage = absoluteAssetUrl(project.image_url);
+            const mainImage = absoluteAssetUrl(project.image_url) || absoluteAssetUrl(project.images?.[0]);
             const thumbs = (project.images || []).slice(0, 5).map((img) => absoluteAssetUrl(img)).filter(Boolean) as string[];
             const extraCount = (project.images?.length || 0) - 5;
             const specs = project.specifications || {};
@@ -249,7 +249,7 @@ export function ProjectFeed({
                 </h3>
                 <div className="space-y-5">
                   {sidebarProjects.map((p) => {
-                    const img = absoluteAssetUrl(p.image_url);
+                    const img = absoluteAssetUrl(p.image_url) || absoluteAssetUrl(p.images?.[0]);
                     return (
                       <Link
                         key={p.id}

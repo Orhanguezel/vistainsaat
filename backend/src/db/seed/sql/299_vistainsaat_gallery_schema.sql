@@ -18,6 +18,8 @@ CREATE TABLE IF NOT EXISTS `galleries` (
   `is_active` tinyint(1) NOT NULL DEFAULT 1,
   `is_featured` tinyint(1) NOT NULL DEFAULT 0,
   `display_order` int(11) NOT NULL DEFAULT 0,
+  `cover_image` longtext DEFAULT NULL,
+  `cover_asset_id` varchar(64) DEFAULT NULL,
   `created_at` datetime(3) NOT NULL DEFAULT current_timestamp(3),
   `updated_at` datetime(3) NOT NULL DEFAULT current_timestamp(3) ON UPDATE current_timestamp(3),
   PRIMARY KEY (`id`),
@@ -69,6 +71,13 @@ CREATE TABLE IF NOT EXISTS `gallery_image_i18n` (
   PRIMARY KEY (`image_id`,`locale`),
   CONSTRAINT `fk_gallery_image_i18n_image` FOREIGN KEY (`image_id`) REFERENCES `gallery_images` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Mevcut tabloya cover_image sütunları ekle (yoksa)
+SET @col_exists = (SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'galleries' AND column_name = 'cover_image');
+SET @sql = IF(@col_exists = 0, 'ALTER TABLE `galleries` ADD COLUMN `cover_image` longtext DEFAULT NULL AFTER `display_order`, ADD COLUMN `cover_asset_id` varchar(64) DEFAULT NULL AFTER `cover_image`', 'SELECT 1');
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
 
 COMMIT;
 SET FOREIGN_KEY_CHECKS = 1;

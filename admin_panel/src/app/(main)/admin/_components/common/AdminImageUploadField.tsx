@@ -237,6 +237,7 @@ export const AdminImageUploadField: React.FC<AdminImageUploadFieldProps> = ({
   const handlePickClick = () => {
     if (busy) return;
     setActiveTab('upload');
+    setLibrarySelected([]);
     setIsModalOpen(true);
   };
 
@@ -244,17 +245,34 @@ export const AdminImageUploadField: React.FC<AdminImageUploadFieldProps> = ({
     fileInputRef.current?.click();
   };
 
+  // Track selected URLs in library for multi-select
+  const [librarySelected, setLibrarySelected] = useState<string[]>([]);
+
   const handleSelectFromLibrary = (url: string) => {
     if (!url) return;
 
     if (multiple && onChangeMultiple) {
-      onChangeMultiple(uniqAppend(gallery, [url]));
-      toast.success('Görsel eklendi.');
-    } else if (onChange) {
+      // Toggle selection in library
+      setLibrarySelected((prev) =>
+        prev.includes(url) ? prev.filter((u) => u !== url) : [...prev, url],
+      );
+      return; // Don't close modal — user confirms with button
+    }
+
+    if (onChange) {
       onChange(url);
       toast.success('Görsel seçildi.');
     }
+    setIsModalOpen(false);
+  };
 
+  const handleConfirmLibrarySelection = () => {
+    if (librarySelected.length === 0) return;
+    if (onChangeMultiple) {
+      onChangeMultiple(uniqAppend(gallery, librarySelected));
+      toast.success(`${librarySelected.length} görsel eklendi.`);
+    }
+    setLibrarySelected([]);
     setIsModalOpen(false);
   };
 
@@ -307,52 +325,57 @@ export const AdminImageUploadField: React.FC<AdminImageUploadFieldProps> = ({
       return;
     }
 
-    const uploadedUrls: string[] = [];
-    let successCount = 0;
-
-    for (const file of files) {
-      // SVG dosya için MIME type düzeltmesi
-      let uploadFile: File = file;
+    // Prepare files (fix SVG MIME types)
+    const prepared = files.map((file) => {
       if (
         file.name.toLowerCase().endsWith('.svg') &&
         file.type !== 'image/svg+xml'
       ) {
-        uploadFile = new File([file], file.name, { type: 'image/svg+xml' });
+        return new File([file], file.name, { type: 'image/svg+xml' });
       }
+      return file;
+    });
 
-      try {
-        const res = await createAssetAdmin({
+    // Upload all files in parallel
+    const results = await Promise.allSettled(
+      prepared.map((uploadFile) =>
+        createAssetAdmin({
           file: uploadFile,
           bucket,
           folder,
           metadata: meta,
-        } as any).unwrap();
-        const url = norm((res as any)?.url);
-        if (url) {
-          uploadedUrls.push(url);
-          successCount += 1;
-        }
-      } catch (err: any) {
-        console.error('[AdminImageUpload] bulk upload failed:', JSON.stringify(err, null, 2), err);
-        const emsg =
-          err?.data?.error?.message ||
-          err?.data?.message ||
-          err?.error ||
-          err?.message ||
-          'Bazı görseller yüklenirken hata oluştu.';
-        toast.error(
-          typeof emsg === 'string' ? emsg : 'Bazı görseller yüklenirken hata oluştu.',
-        );
+        } as any).unwrap(),
+      ),
+    );
+
+    const uploadedUrls: string[] = [];
+    let failCount = 0;
+
+    for (const result of results) {
+      if (result.status === 'fulfilled') {
+        const url = norm((result.value as any)?.url);
+        if (url) uploadedUrls.push(url);
+      } else {
+        failCount += 1;
+        console.error('[AdminImageUpload] bulk upload failed:', result.reason);
       }
     }
 
-    if (successCount > 0) {
+    if (failCount > 0) {
+      toast.error(`${failCount} görsel yüklenemedi.`);
+    }
+
+    if (uploadedUrls.length > 0) {
       if (onChangeMultiple) {
         onChangeMultiple(uniqAppend(gallery, uploadedUrls));
       } else {
         onChange?.(uploadedUrls[0]);
       }
-      toast.success(successCount === 1 ? 'Görsel yüklendi.' : `${successCount} görsel yüklendi.`);
+      toast.success(
+        uploadedUrls.length === 1
+          ? 'Görsel yüklendi.'
+          : `${uploadedUrls.length} görsel yüklendi.`,
+      );
       setIsModalOpen(false);
     }
   };
@@ -673,12 +696,25 @@ export const AdminImageUploadField: React.FC<AdminImageUploadFieldProps> = ({
                   </div>
                 ) : (
                   <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+                    {multiple && librarySelected.length > 0 && (
+                      <div className="mb-4 flex items-center justify-between rounded-lg border border-primary/30 bg-primary/5 p-3">
+                        <span className="text-sm font-medium">{librarySelected.length} görsel seçildi</span>
+                        <div className="flex gap-2">
+                          <Button type="button" variant="outline" size="sm" onClick={() => setLibrarySelected([])}>
+                            Temizle
+                          </Button>
+                          <Button type="button" size="sm" onClick={handleConfirmLibrarySelection}>
+                            Seçilenleri Ekle
+                          </Button>
+                        </div>
+                      </div>
+                    )}
                     {assetsData.items.map((asset) => {
                       const url = asset.url || '';
                       const name = asset.name || '';
                       const lower = (url + name).toLowerCase();
                       const isSelected = multiple
-                        ? gallery.includes(url)
+                        ? gallery.includes(url) || librarySelected.includes(url)
                         : value === url;
                       const isVideo = /\.(mp4|webm|ogg|mov)(\?|$)/i.test(lower);
                       const isSvg = isSvgUrl(url);

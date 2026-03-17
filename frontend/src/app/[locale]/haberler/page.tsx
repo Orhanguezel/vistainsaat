@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { API_BASE_URL, SITE_URL, absoluteAssetUrl } from '@/lib/utils';
 import { JsonLd, buildPageMetadata, jsonld, localizedPath, localizedUrl } from '@/seo';
 import { OptimizedImage } from '@/components/ui/OptimizedImage';
-import { getFallbackBlogPosts } from '@/lib/content-fallbacks';
+
 import { buildMediaAlt } from '@/lib/media-seo';
 import { SeoIssueBeacon } from '@/components/monitoring/SeoIssueBeacon';
 import { fetchSetting } from '@/i18n/server';
@@ -133,8 +133,7 @@ export default async function NewsPage({
   const companyProfile = (profile?.value as any) ?? {};
   const companyName = companyProfile.company_name || 'Vista İnşaat';
 
-  const fallbackPosts = getFallbackBlogPosts(locale);
-  const visiblePosts = posts.length > 0 ? posts : fallbackPosts;
+  const visiblePosts = posts;
   const featured = visiblePosts[0];
   const rest = visiblePosts.slice(1);
 

@@ -40,6 +40,10 @@ export const galleries = mysqlTable(
     is_featured: tinyint('is_featured').notNull().default(0).$type<boolean>(),
     display_order: int('display_order').notNull().default(0),
 
+    /** Kapak görseli URL — admin panelden seçilir */
+    cover_image: longtext('cover_image'),
+    cover_asset_id: varchar('cover_asset_id', { length: 64 }),
+
     created_at: datetime('created_at', { fsp: 3 })
       .notNull()
       .default(sql`CURRENT_TIMESTAMP(3)`),

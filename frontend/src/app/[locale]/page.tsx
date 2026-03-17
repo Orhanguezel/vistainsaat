@@ -12,7 +12,7 @@ import { SectionHeader } from '@/components/patterns/SectionHeader';
 import { Reveal } from '@/components/motion/Reveal';
 import { OptimizedImage } from '@/components/ui/OptimizedImage';
 import { HeroVideoPlayer } from '@/components/ui/HeroVideoPlayer';
-import { getFallbackBlogPosts, getFallbackBrands, getFallbackProjects } from '@/lib/content-fallbacks';
+
 import { buildMediaAlt } from '@/lib/media-seo';
 import { BrandCarousel } from '@/components/sections/BrandCarousel';
 import { ProjectFeed } from '@/components/sections/ProjectFeed';
@@ -128,12 +128,12 @@ export default async function HomePage({
   const ctaText = locale === 'tr' ? asStr(h.cta_text_tr) : asStr(h.cta_text_en);
 
   const siteUrl = siteUrlBase();
-  const visibleBrands = (references.length > 0 ? references : getFallbackBrands()).map((r: any) => ({
+  const visibleBrands = references.map((r: any) => ({
     ...r,
     logo_url: resolveImageUrl(r.featured_image || r.logo_url || r.image_url),
   }));
-  const visibleProducts = products.length > 0 ? products.slice(0, 8) : getFallbackProjects(locale);
-  const visibleBlogPosts = blogPosts.length > 0 ? blogPosts.slice(0, 3) : getFallbackBlogPosts(locale);
+  const visibleProducts = products.slice(0, 8);
+  const visibleBlogPosts = blogPosts.slice(0, 3);
   const featuredBlogPost = visibleBlogPosts[0];
 
   return (

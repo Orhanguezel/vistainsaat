@@ -23,6 +23,10 @@ export const galleryCreateSchema = z.object({
   is_active: boolLike.optional(),
   is_featured: boolLike.optional(),
   display_order: z.coerce.number().int().min(0).optional().default(0),
+
+  cover_image: emptyToNull(z.string().optional().nullable()),
+  cover_asset_id: emptyToNull(z.string().max(64).optional().nullable()),
+  cover_image_alt: emptyToNull(z.string().max(255).optional().nullable()),
 });
 
 export const galleryUpdateSchema = galleryCreateSchema.partial();
@@ -33,7 +37,7 @@ export type GalleryUpdateInput = z.infer<typeof galleryUpdateSchema>;
 /* ----------------- GALLERY IMAGE ----------------- */
 export const galleryImageCreateSchema = z.object({
   id: z.string().uuid().optional(),
-  gallery_id: z.string().uuid(),
+  gallery_id: z.string().min(1),
   storage_asset_id: emptyToNull(z.string().max(64).optional().nullable()),
   image_url: emptyToNull(z.string().min(1).optional().nullable()),
   display_order: z.coerce.number().int().min(0).optional().default(0),
@@ -52,7 +56,7 @@ export type GalleryImageUpdateInput = z.infer<typeof galleryImageUpdateSchema>;
 
 /* ----------------- BULK IMAGE ADD ----------------- */
 export const galleryBulkImagesSchema = z.object({
-  gallery_id: z.string().uuid(),
+  gallery_id: z.string().min(1),
   images: z.array(
     z.object({
       storage_asset_id: z.string().max(64),

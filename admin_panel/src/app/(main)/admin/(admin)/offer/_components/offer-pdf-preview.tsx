@@ -9,6 +9,8 @@ import * as React from 'react';
 
 interface OfferPdfPreviewProps {
   pdfUrl: string | null;
+  /** Change this value to force iframe reload (e.g. Date.now()) */
+  cacheBust?: string | number;
   emptyMessage?: string;
   fallbackLabel?: string;
 }
@@ -84,8 +86,13 @@ function buildIframeSrc(pdfUrl: string | null): string | null {
   return `${base}${normalized.startsWith('/') ? '' : '/'}${normalized}`;
 }
 
-export function OfferPdfPreview({ pdfUrl, emptyMessage, fallbackLabel }: OfferPdfPreviewProps) {
-  const iframeSrc = React.useMemo(() => buildIframeSrc(pdfUrl), [pdfUrl]);
+export function OfferPdfPreview({ pdfUrl, cacheBust, emptyMessage, fallbackLabel }: OfferPdfPreviewProps) {
+  const iframeSrc = React.useMemo(() => {
+    const base = buildIframeSrc(pdfUrl);
+    if (!base || !cacheBust) return base;
+    const sep = base.includes('?') ? '&' : '?';
+    return `${base}${sep}v=${cacheBust}`;
+  }, [pdfUrl, cacheBust]);
 
   if (!iframeSrc) {
     return (

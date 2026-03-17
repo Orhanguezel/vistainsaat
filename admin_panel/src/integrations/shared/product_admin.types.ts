@@ -59,14 +59,14 @@ export interface AdminProductCreatePayload {
   locale: string;
   title: string;
   slug: string;
-  price: number;
+  price?: number;
   stock_quantity?: number;
   product_code?: string;
   description?: string;
   alt?: string;
   tags?: string[];
   specifications?: Record<string, string> | null;
-  category_id: string;
+  category_id?: string | null;
   sub_category_id?: string | null;
   image_url?: string | null;
   storage_asset_id?: string | null;

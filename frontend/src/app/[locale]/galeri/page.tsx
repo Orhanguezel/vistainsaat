@@ -8,7 +8,7 @@ import { JsonLd, buildPageMetadata, jsonld, localizedPath, localizedUrl } from '
 import { OptimizedImage } from '@/components/ui/OptimizedImage';
 import { buildMediaAlt } from '@/lib/media-seo';
 import { SeoIssueBeacon } from '@/components/monitoring/SeoIssueBeacon';
-import { getFallbackGalleries } from '@/lib/content-fallbacks';
+
 import { fetchSetting } from '@/i18n/server';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs';
 
@@ -65,7 +65,7 @@ export default async function GalleryPage({
   const companyProfile = (profile?.value as any) ?? {};
   const companyName = companyProfile.company_name || 'Vista İnşaat';
 
-  const visibleGalleries = galleries.length > 0 ? galleries : getFallbackGalleries(locale);
+  const visibleGalleries = galleries;
   const featured = visibleGalleries[0];
   const rest = visibleGalleries.slice(1);
 

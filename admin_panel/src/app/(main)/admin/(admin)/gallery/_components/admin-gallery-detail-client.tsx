@@ -631,6 +631,8 @@ export default function AdminGalleryDetailClient({ id }: { id: string }) {
                 galleryId={String((gallery as any)?.id ?? id)}
                 locale={queryLocale || 'tr'}
                 disabled={disabled}
+                coverUrl={norm(values.cover_image)}
+                onSelectCover={(url) => setValues((p) => ({ ...p, cover_image: norm(url) }))}
               />
             </TabsContent>
           )}

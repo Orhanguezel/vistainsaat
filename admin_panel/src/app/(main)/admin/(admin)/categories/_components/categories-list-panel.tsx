@@ -65,7 +65,7 @@ export default function CategoriesListPanel({ initialModuleKey }: { initialModul
 
   // Filters
   const [search, setSearch] = React.useState('');
-  const [locale, setLocale] = React.useState('');
+  const [locale, setLocale] = React.useState('tr');
   const [moduleKey, setModuleKey] = React.useState(initialModuleKey || '');
   const [showOnlyActive, setShowOnlyActive] = React.useState(false);
   const [showOnlyFeatured, setShowOnlyFeatured] = React.useState(false);

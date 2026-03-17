@@ -5,7 +5,7 @@ import { getTranslations } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { API_BASE_URL, absoluteAssetUrl } from '@/lib/utils';
 import { JsonLd, buildPageMetadata, jsonld, localizedPath, localizedUrl } from '@/seo';
-import { getFallbackProjects } from '@/lib/content-fallbacks';
+
 import { buildMediaAlt } from '@/lib/media-seo';
 import { SeoIssueBeacon } from '@/components/monitoring/SeoIssueBeacon';
 import { ProjectsView } from '@/components/projects/ProjectsView';
@@ -17,13 +17,13 @@ const PROJECT_PLACEHOLDER = '/media/gallery-placeholder.svg';
 
 async function fetchProjects(locale: string) {
   const params = new URLSearchParams({
-    module_key: 'vistainsaat',
+    item_type: 'vistainsaat',
     is_active: '1',
     locale,
     limit: '50',
   });
   try {
-    const res = await fetch(`${API_BASE_URL}/projects?${params}`, {
+    const res = await fetch(`${API_BASE_URL}/products?${params}`, {
       next: { revalidate: 300 },
     });
     if (!res.ok) return [];
@@ -64,7 +64,7 @@ function toViewItem(p: any, locale: string): ProjectViewItem {
     href: p.slug
       ? localizedPath(locale, `/projeler/${p.slug}`)
       : `${localizedPath(locale, '/teklif')}?proje=${encodeURIComponent(p.title)}`,
-    imageSrc: absoluteAssetUrl(p.image_url) || PROJECT_PLACEHOLDER,
+    imageSrc: absoluteAssetUrl(p.image_url) || absoluteAssetUrl(p.images?.[0]) || PROJECT_PLACEHOLDER,
     alt: buildMediaAlt({
       locale,
       kind: 'project',
@@ -102,10 +102,8 @@ export default async function ProjectsPage({
   const companyProfile = (profile?.value as any) ?? {};
   const companyName = companyProfile.company_name || 'Vista İnşaat';
 
-  const fallbackProjects = getFallbackProjects(locale);
-  const visibleProjects = projects.length > 0 ? projects : fallbackProjects;
-  const totalCount = visibleProjects.length;
-  const viewItems = visibleProjects.map((p: any) => toViewItem(p, locale));
+  const totalCount = projects.length;
+  const viewItems = projects.map((p: any) => toViewItem(p, locale));
 
   return (
     <div style={{ background: 'var(--color-bg)' }}>
@@ -121,7 +119,7 @@ export default async function ProjectsPage({
               description: t('projects.description'),
               url: localizedUrl(locale, '/projeler'),
               mainEntity: jsonld.itemList(
-                visibleProjects.slice(0, 12).map((item: any) => ({
+                projects.slice(0, 12).map((item: any) => ({
                   name: item.title,
                   url: item.slug
                     ? localizedUrl(locale, `/projeler/${item.slug}`)

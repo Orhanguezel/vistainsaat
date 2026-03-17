@@ -148,8 +148,7 @@ function pickFirstString(...vals: unknown[]): string | null {
 // app_locales + default_locale → dinamik locale çözümü
 // -------------------------------------------------------------
 
-let cachedAppLocales: string[] | null = null;
-let cachedDefaultLocale: string | null = null;
+// No module-level cache — always fetch fresh from DB for PDF generation
 
 function normalizeLocaleShort(input?: string | null): string | null {
   const s = String(input || '')
@@ -161,40 +160,28 @@ function normalizeLocaleShort(input?: string | null): string | null {
 }
 
 async function ensureAppLocales(): Promise<string[]> {
-  if (cachedAppLocales && cachedAppLocales.length) return cachedAppLocales;
-
   try {
-    const list = await getAppLocales(); // expected: string[] (already normalized ideally)
+    const list = await getAppLocales();
     if (Array.isArray(list) && list.length) {
       const uniq: string[] = [];
       for (const x of list) {
         const n = normalizeLocaleShort(x);
         if (n && !uniq.includes(n)) uniq.push(n);
       }
-      if (uniq.length) {
-        cachedAppLocales = uniq;
-        return uniq;
-      }
+      if (uniq.length) return uniq;
     }
   } catch (err) {
     console.error('offer_pdf:getAppLocales_failed', err);
   }
 
-  // fallback
-  cachedAppLocales = ['de', 'en', 'tr'];
-  return cachedAppLocales;
+  return ['de', 'en', 'tr'];
 }
 
 async function ensureDefaultLocale(): Promise<string | null> {
-  if (cachedDefaultLocale) return cachedDefaultLocale;
-
   try {
-    const v = await getDefaultLocale(); // expected: string like "de"
+    const v = await getDefaultLocale();
     const n = normalizeLocaleShort(v);
-    if (n) {
-      cachedDefaultLocale = n;
-      return n;
-    }
+    if (n) return n;
   } catch (err) {
     console.error('offer_pdf:getDefaultLocale_failed', err);
   }
@@ -243,7 +230,7 @@ function toLabelLocale(runtimeLocale: string): LabelLocale {
 }
 
 // -------------------------------------------------------------
-// Firma bilgisi (company_brand) – site_settings’den
+// Firma bilgisi (company_brand) – site_settings'den
 // -------------------------------------------------------------
 
 type CompanyBrandSettings = {
@@ -255,11 +242,7 @@ type CompanyBrandSettings = {
   logoHeight: number | null;
 };
 
-const companyBrandCache = new Map<string, CompanyBrandSettings>();
-
 async function getCompanyBrandSettings(runtimeLocale: string): Promise<CompanyBrandSettings> {
-  const cached = companyBrandCache.get(runtimeLocale);
-  if (cached) return cached;
 
   const langPart = runtimeLocale.split('-')[0].toLowerCase();
   const candidateLocales = Array.from(new Set<string>([runtimeLocale, langPart, 'en', 'de', 'tr']));
@@ -315,7 +298,6 @@ async function getCompanyBrandSettings(runtimeLocale: string): Promise<CompanyBr
     console.error('offer_pdf:load_company_brand_failed', err);
   }
 
-  companyBrandCache.set(runtimeLocale, brand);
   return brand;
 }
 
@@ -569,186 +551,180 @@ export async function renderOfferPdfHtml(ctx: PdfTemplateContext): Promise<strin
     : '';
   const formLangDisplay = runtimeLocale || '';
 
-  // Aşağısı: senin HTML template’in (dokunmadım; sadece runtimeLocale/labelLocale değişkenleri fix)
+  let websiteDisplay = '';
+  if (companyBrand.website) {
+    websiteDisplay = String(companyBrand.website).trim();
+    if (websiteDisplay.startsWith('https://')) websiteDisplay = websiteDisplay.slice(8);
+    else if (websiteDisplay.startsWith('http://')) websiteDisplay = websiteDisplay.slice(7);
+    if (websiteDisplay.endsWith('/')) websiteDisplay = websiteDisplay.slice(0, -1);
+  }
+
   return `<!DOCTYPE html>
 <html lang="${safeText(runtimeLocale)}">
 <head>
   <meta charset="UTF-8" />
   <title>${safeText(siteName)} – ${safeText(t.title)} ${safeText(offerNo)}</title>
   <style>
-    * { box-sizing: border-box; }
-    html, body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 12px; color: #222; }
-    body { padding: 24mm 18mm 20mm 18mm; background: #fff; }
-    .page { width: 100%; }
-    .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; border-bottom: 2px solid #0b5ed7; padding-bottom: 8px; }
-    .header-left { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
-    .header-logo { max-height: 40px; max-width: 180px; display: block; }
-    .header-left-title { font-size: 18px; font-weight: 700; color: #0b5ed7; }
-    .header-left-sub { font-size: 12px; font-weight: 400; color: #444; }
-    .header-right { text-align: right; font-size: 11px; line-height: 1.4; }
-    .section-title { font-size: 13px; font-weight: 600; margin: 16px 0 6px; text-transform: uppercase; letter-spacing: 0.06em; color: #555; }
-    .details-grid { display: grid; grid-template-columns: 1.2fr 1.2fr; gap: 8px 32px; font-size: 11px; }
-    .details-grid div { line-height: 1.4; }
-    .label { font-weight: 600; color: #555; display: inline-block; min-width: 110px; }
-    .muted { color: #777; }
-    .box { border: 1px solid #e0e0e0; border-radius: 4px; padding: 10px 12px; margin-top: 4px; background: #fafafa; }
-    .amounts { margin-top: 12px; width: 280px; margin-left: auto; font-size: 11px; }
-    .amounts table { width: 100%; border-collapse: collapse; }
-    .amounts td { padding: 4px 0; vertical-align: top; }
-    .amounts td.label { text-align: left; }
-    .amounts td.value { text-align: right; font-weight: 600; white-space: nowrap; }
-    .amounts tr.total-row td { border-top: 1px solid #ccc; padding-top: 6px; font-size: 12px; }
-    .text-block { font-size: 11px; line-height: 1.5; margin-top: 8px; white-space: pre-wrap; }
-    .footer { margin-top: 24px; font-size: 9px; color: #888; border-top: 1px solid #e0e0e0; padding-top: 6px; display: flex; justify-content: space-between; }
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap');
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 11px; color: #1e1c1a; background: #fff; }
+    body { padding: 0; }
+    .page { width: 100%; min-height: 100vh; display: flex; flex-direction: column; }
+
+    /* ── Header ── */
+    .header { padding: 32px 48px 24px; display: flex; justify-content: space-between; align-items: flex-start; }
+    .header-brand { display: flex; align-items: center; gap: 14px; }
+    .header-logo { height: 48px; width: auto; display: block; }
+    .brand-text { display: flex; flex-direction: column; }
+    .brand-name { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; color: #1e1c1a; letter-spacing: 0.02em; }
+    .brand-sub { font-size: 10px; font-weight: 500; color: #b8a98a; text-transform: uppercase; letter-spacing: 0.15em; margin-top: 2px; }
+    .header-meta { text-align: right; font-size: 10px; line-height: 1.6; color: #666; }
+    .header-meta strong { color: #1e1c1a; font-weight: 600; }
+
+    /* ── Gold divider ── */
+    .divider { height: 2px; background: linear-gradient(90deg, #b8a98a 0%, #d4c9b0 60%, transparent 100%); margin: 0 48px; }
+    .divider-thin { height: 1px; background: #e8e3db; margin: 0 48px; }
+
+    /* ── Document title bar ── */
+    .title-bar { padding: 16px 48px; display: flex; justify-content: space-between; align-items: center; }
+    .title-bar h1 { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #b8a98a; }
+    .title-bar .ref { font-size: 10px; color: #999; }
+
+    /* ── Content ── */
+    .content { padding: 0 48px; flex: 1; }
+
+    /* ── Section ── */
+    .section { margin-bottom: 20px; }
+    .section-head { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: #b8a98a; margin-bottom: 10px; padding-bottom: 4px; border-bottom: 1px solid #e8e3db; }
+
+    /* ── Info table ── */
+    .info-table { width: 100%; border-collapse: collapse; font-size: 10.5px; }
+    .info-table td { padding: 4px 0; vertical-align: top; }
+    .info-table .lbl { width: 120px; font-weight: 600; color: #888; text-transform: uppercase; font-size: 9px; letter-spacing: 0.06em; }
+    .info-table .val { color: #1e1c1a; }
+
+    /* ── Two column layout ── */
+    .two-col { display: flex; gap: 40px; }
+    .two-col .col { flex: 1; }
+
+    /* ── Message box ── */
+    .msg-box { background: #faf9f7; border-left: 3px solid #b8a98a; padding: 12px 16px; font-size: 10.5px; line-height: 1.6; color: #333; }
+    .msg-box .subject-line { font-weight: 600; color: #1e1c1a; margin-bottom: 6px; }
+    .msg-box .body-text { white-space: pre-wrap; }
+    .msg-muted { color: #aaa; font-style: italic; font-size: 10px; }
+
+    /* ── Pricing table ── */
+    .pricing-table { width: 320px; margin-left: auto; border-collapse: collapse; font-size: 11px; }
+    .pricing-table td { padding: 6px 0; }
+    .pricing-table .p-label { color: #666; font-weight: 500; }
+    .pricing-table .p-value { text-align: right; font-weight: 600; color: #1e1c1a; font-variant-numeric: tabular-nums; }
+    .pricing-table .total-row td { border-top: 2px solid #b8a98a; padding-top: 10px; }
+    .pricing-table .total-row .p-label { font-weight: 700; color: #1e1c1a; font-size: 12px; }
+    .pricing-table .total-row .p-value { font-weight: 700; color: #1e1c1a; font-size: 13px; }
+    .pricing-empty { color: #aaa; font-style: italic; font-size: 10px; text-align: right; }
+
+    /* ── Notes ── */
+    .notes-box { background: #faf9f7; border-radius: 4px; padding: 12px 16px; font-size: 9.5px; line-height: 1.5; color: #888; }
+
+    /* ── Footer ── */
+    .footer { margin-top: auto; padding: 16px 48px 24px; }
+    .footer-line { height: 1px; background: linear-gradient(90deg, #b8a98a 0%, #d4c9b0 40%, transparent 100%); margin-bottom: 10px; }
+    .footer-content { display: flex; justify-content: space-between; align-items: center; font-size: 8.5px; color: #aaa; }
+    .footer-content .left { }
+    .footer-content .right { text-align: right; }
   </style>
 </head>
 <body>
   <div class="page">
+
+    <!-- Header -->
     <div class="header">
-      <div class="header-left">
-        ${
-          logoUrl
-            ? `<img src="${safeText(logoUrl)}" alt="${safeText(
-                siteName,
-              )}" class="header-logo" width="${Number(logoWidth)}" height="${Number(
-                logoHeight,
-              )}" />`
-            : ''
-        }
-        <div>
-          <div class="header-left-title">${safeText(siteName)}</div>
-          <div class="header-left-sub">${safeText(t.title)}</div>
+      <div class="header-brand">
+        ${logoUrl ? `<img src="${safeText(logoUrl)}" alt="${safeText(siteName)}" class="header-logo" />` : ''}
+        <div class="brand-text">
+          <div class="brand-name">${safeText(siteName)}</div>
+          <div class="brand-sub">${safeText(websiteDisplay)}</div>
         </div>
       </div>
-      <div class="header-right">
-        <div><span class="label">${safeText(t.quoteNo)}:</span> ${safeText(offerNo)}</div>
-        <div><span class="label">${safeText(t.date)}:</span> ${safeText(createdAtStr)}</div>
-        ${
-          validUntilStr
-            ? `<div><span class="label">${safeText(t.validity)}:</span> ${safeText(
-                validUntilStr,
-              )}</div>`
-            : ''
-        }
+      <div class="header-meta">
+        <div><strong>${safeText(t.quoteNo)}:</strong> ${safeText(offerNo)}</div>
+        <div><strong>${safeText(t.date)}:</strong> ${safeText(createdAtStr)}</div>
+        ${validUntilStr ? `<div><strong>${safeText(t.validity)}:</strong> ${safeText(validUntilStr)}</div>` : ''}
       </div>
     </div>
+    <div class="divider"></div>
 
-    <div class="section-title">${safeText(t.customerInfo)}</div>
-    <div class="details-grid">
-      <div>
-        <div><span class="label">${safeText(t.name)}:</span> ${safeText(
-    (ctx as any).customer_name,
-  )}</div>
-        ${
-          (ctx as any).company_name
-            ? `<div><span class="label">${safeText(t.company)}:</span> ${safeText(
-                (ctx as any).company_name,
-              )}</div>`
-            : ''
-        }
-        <div><span class="label">${safeText(t.email)}:</span> ${safeText((ctx as any).email)}</div>
-        ${
-          (ctx as any).phone
-            ? `<div><span class="label">${safeText(t.phone)}:</span> ${safeText(
-                (ctx as any).phone,
-              )}</div>`
-            : ''
-        }
-        ${
-          countryDisplay
-            ? `<div><span class="label">${safeText(t.country)}:</span> ${safeText(
-                countryDisplay,
-              )}</div>`
-            : ''
-        }
-        ${
-          formLangDisplay
-            ? `<div><span class="label">${safeText(t.formLanguage)}:</span> ${safeText(
-                formLangDisplay,
-              )}</div>`
-            : ''
-        }
+    <!-- Title bar -->
+    <div class="title-bar">
+      <h1>${safeText(t.title)}</h1>
+    </div>
+
+    <div class="content">
+
+      <!-- Customer Info -->
+      <div class="section">
+        <div class="section-head">${safeText(t.customerInfo)}</div>
+        <div class="two-col">
+          <div class="col">
+            <table class="info-table">
+              <tr><td class="lbl">${safeText(t.name)}</td><td class="val">${safeText((ctx as any).customer_name)}</td></tr>
+              ${(ctx as any).company_name ? `<tr><td class="lbl">${safeText(t.company)}</td><td class="val">${safeText((ctx as any).company_name)}</td></tr>` : ''}
+              <tr><td class="lbl">${safeText(t.email)}</td><td class="val">${safeText((ctx as any).email)}</td></tr>
+              ${(ctx as any).phone ? `<tr><td class="lbl">${safeText(t.phone)}</td><td class="val">${safeText((ctx as any).phone)}</td></tr>` : ''}
+              ${countryDisplay ? `<tr><td class="lbl">${safeText(t.country)}</td><td class="val">${safeText(countryDisplay)}</td></tr>` : ''}
+            </table>
+          </div>
+          <div class="col">
+            <table class="info-table">
+              ${productDisplay ? `<tr><td class="lbl">${safeText(t.product)}</td><td class="val">${safeText(productDisplay)}</td></tr>` : ''}
+              ${serviceDisplay ? `<tr><td class="lbl">${safeText(t.service)}</td><td class="val">${safeText(serviceDisplay)}</td></tr>` : ''}
+            </table>
+          </div>
+        </div>
       </div>
 
-      <div>
-        ${
-          productDisplay
-            ? `<div><span class="label">${safeText(t.product)}:</span> ${safeText(
-                productDisplay,
-              )}</div>`
-            : ''
-        }
-        ${
-          serviceDisplay
-            ? `<div><span class="label">${safeText(t.service)}:</span> ${safeText(
-                serviceDisplay,
-              )}</div>`
-            : ''
-        }
+      <!-- Summary -->
+      <div class="section">
+        <div class="section-head">${safeText(t.summary)}</div>
+        <div class="msg-box">
+          ${(ctx as any).subject ? `<div class="subject-line">${safeText((ctx as any).subject)}</div>` : ''}
+          ${(ctx as any).message
+            ? `<div class="body-text">${safeText((ctx as any).message)}</div>`
+            : `<div class="msg-muted">${safeText(t.noMessage)}</div>`}
+        </div>
       </div>
-    </div>
 
-    <div class="section-title">${safeText(t.summary)}</div>
-    <div class="box">
-      ${
-        (ctx as any).subject
-          ? `<div><span class="label">${safeText(t.subject)}:</span> ${safeText(
-              (ctx as any).subject,
-            )}</div>`
-          : ''
-      }
-      ${
-        (ctx as any).message
-          ? `<div class="text-block">${safeText((ctx as any).message)}</div>`
-          : `<div class="muted">${safeText(t.noMessage)}</div>`
-      }
-    </div>
-
-    <div class="section-title">${safeText(t.pricing)}</div>
-    <div class="amounts">
-      <table>
-        <tbody>
-          ${
-            netStr
-              ? `<tr><td class="label">${safeText(t.net)}:</td><td class="value">${safeText(
-                  netStr,
-                )}</td></tr>`
-              : ''
-          }
-          ${
-            vatStr
-              ? `<tr><td class="label">${safeText(vatLabel)}:</td><td class="value">${safeText(
-                  vatStr,
-                )}</td></tr>`
-              : ''
-          }
-          ${
-            grossStr
-              ? `<tr class="total-row"><td class="label">${safeText(
-                  t.total,
-                )}:</td><td class="value">${safeText(grossStr)}</td></tr>`
-              : ''
-          }
-          ${
-            !netStr && !vatStr && !grossStr
-              ? `<tr><td colspan="2" class="muted">${safeText(t.pricingEmpty)}</td></tr>`
-              : ''
-          }
-        </tbody>
-      </table>
-    </div>
-
-    <div class="section-title">${safeText(t.notes)}</div>
-    <div class="box">
-      <div class="muted" style="font-size: 10px; line-height: 1.4;">
-        ${safeText(t.notesLegal(validUntilStr))}
+      <!-- Pricing -->
+      <div class="section">
+        <div class="section-head">${safeText(t.pricing)}</div>
+        ${netStr || vatStr || grossStr ? `
+        <table class="pricing-table">
+          <tbody>
+            ${netStr ? `<tr><td class="p-label">${safeText(t.net)}</td><td class="p-value">${safeText(netStr)}</td></tr>` : ''}
+            ${vatStr ? `<tr><td class="p-label">${safeText(vatLabel)}</td><td class="p-value">${safeText(vatStr)}</td></tr>` : ''}
+            ${grossStr ? `<tr class="total-row"><td class="p-label">${safeText(t.total)}</td><td class="p-value">${safeText(grossStr)}</td></tr>` : ''}
+          </tbody>
+        </table>` : `<div class="pricing-empty">${safeText(t.pricingEmpty)}</div>`}
       </div>
+
+      <!-- Notes -->
+      ${validUntilStr ? `
+      <div class="section">
+        <div class="section-head">${safeText(t.notes)}</div>
+        <div class="notes-box">${safeText(t.notesLegal(validUntilStr))}</div>
+      </div>` : ''}
+
     </div>
 
+    <!-- Footer -->
     <div class="footer">
-      <div>${safeText(t.footerLeft(siteName))}</div>
-      <div>${safeText(t.footerRight)}</div>
+      <div class="footer-line"></div>
+      <div class="footer-content">
+        <div class="left">${safeText(t.footerLeft(siteName))}</div>
+        <div class="right">${safeText(t.footerRight)}</div>
+      </div>
     </div>
+
   </div>
 </body>
 </html>`;

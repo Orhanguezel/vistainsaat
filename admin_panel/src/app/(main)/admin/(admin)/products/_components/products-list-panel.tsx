@@ -87,7 +87,7 @@ export default function ProductsListPanel({ itemType }: Props) {
 
   // Filters
   const [search, setSearch] = React.useState('');
-  const [locale, setLocale] = React.useState('');
+  const [locale, setLocale] = React.useState('tr');
   const [categoryFilter, setCategoryFilter] = React.useState('');
   const [showOnlyActive, setShowOnlyActive] = React.useState(false);
   const [showOnlyFeatured, setShowOnlyFeatured] = React.useState(false);

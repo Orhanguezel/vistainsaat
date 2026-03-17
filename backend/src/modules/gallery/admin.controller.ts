@@ -24,78 +24,100 @@ import {
 
 /** GET /admin/galleries */
 export const adminListGalleries: RouteHandler = async (req, reply) => {
-  const q = (req.query || {}) as Record<string, string | undefined>;
+  try {
+    const q = (req.query || {}) as Record<string, string | undefined>;
 
-  const params: GalleryListParams = {
-    module_key: q.module_key,
-    source_type: q.source_type,
-    source_id: q.source_id,
-    locale: q.locale || 'tr',
-    is_active: q.is_active !== undefined
-      ? (q.is_active === '1' || q.is_active === 'true')
-      : undefined,
-    is_featured: q.is_featured !== undefined
-      ? (q.is_featured === '1' || q.is_featured === 'true')
-      : undefined,
-    q: q.q,
-    limit: q.limit ? Math.min(Number(q.limit) || 50, 100) : 50,
-    offset: q.offset ? Math.max(Number(q.offset) || 0, 0) : 0,
-    sort: q.sort === 'created_at' ? 'created_at' : 'display_order',
-    order: q.order === 'desc' ? 'desc' : 'asc',
-  };
+    const params: GalleryListParams = {
+      module_key: q.module_key,
+      source_type: q.source_type,
+      source_id: q.source_id,
+      locale: q.locale || 'tr',
+      is_active: q.is_active !== undefined
+        ? (q.is_active === '1' || q.is_active === 'true')
+        : undefined,
+      is_featured: q.is_featured !== undefined
+        ? (q.is_featured === '1' || q.is_featured === 'true')
+        : undefined,
+      q: q.q,
+      limit: q.limit ? Math.min(Number(q.limit) || 50, 100) : 50,
+      offset: q.offset ? Math.max(Number(q.offset) || 0, 0) : 0,
+      sort: q.sort === 'created_at' ? 'created_at' : 'display_order',
+      order: q.order === 'desc' ? 'desc' : 'asc',
+    };
 
-  const result = await listGalleries(params);
+    const result = await listGalleries(params);
 
-  reply.header('x-total-count', String(result.total));
-  reply.header('content-range', `*/${result.total}`);
-  reply.header('access-control-expose-headers', 'x-total-count, content-range');
+    reply.header('x-total-count', String(result.total));
+    reply.header('content-range', `*/${result.total}`);
+    reply.header('access-control-expose-headers', 'x-total-count, content-range');
 
-  return reply.send(result.items);
+    return reply.send(result.items);
+  } catch (e: any) {
+    req.log.error({ err: e }, 'adminListGalleries failed');
+    const detail = e?.sqlMessage || e?.message || 'unknown';
+    return reply.code(500).send({ error: { message: 'internal_error', detail } });
+  }
 };
 
 /** GET /admin/galleries/:id */
 export const adminGetGallery: RouteHandler = async (req, reply) => {
-  const { id } = req.params as { id: string };
-  const { locale } = (req.query || {}) as { locale?: string };
+  try {
+    const { id } = req.params as { id: string };
+    const { locale } = (req.query || {}) as { locale?: string };
 
-  const gallery = await getGalleryById(id, locale || 'tr');
-  if (!gallery) return reply.status(404).send({ error: 'Gallery not found' });
+    const gallery = await getGalleryById(id, locale || 'tr');
+    if (!gallery) return reply.status(404).send({ error: { message: 'not_found' } });
 
-  return reply.send(gallery);
+    return reply.send(gallery);
+  } catch (e: any) {
+    req.log.error({ err: e }, 'adminGetGallery failed');
+    return reply.code(500).send({ error: { message: 'internal_error', detail: e?.sqlMessage || e?.message } });
+  }
 };
 
 /** POST /admin/galleries */
 export const adminCreateGallery: RouteHandler = async (req, reply) => {
-  const body = galleryCreateSchema.parse(req.body);
-  const id = body.id || randomUUID();
-  const locale = body.locale || 'tr';
+  try {
+    const body = galleryCreateSchema.parse(req.body);
+    const id = body.id || randomUUID();
+    const locale = body.locale || 'tr';
 
-  await db.insert(galleries).values({
-    id,
-    module_key: body.module_key,
-    source_id: body.source_id ?? null,
-    source_type: body.source_type,
-    is_active: toBool(body.is_active) as any,
-    is_featured: toBool(body.is_featured) as any,
-    display_order: body.display_order ?? 0,
-  });
+    await db.insert(galleries).values({
+      id,
+      module_key: body.module_key,
+      source_id: body.source_id ?? null,
+      source_type: body.source_type,
+      is_active: toBool(body.is_active) as any,
+      is_featured: toBool(body.is_featured) as any,
+      display_order: body.display_order ?? 0,
+      cover_image: body.cover_image ?? null,
+      cover_asset_id: body.cover_asset_id ?? null,
+    });
 
-  await db.insert(galleryI18n).values({
-    gallery_id: id,
-    locale,
-    title: body.title,
-    slug: body.slug,
-    description: body.description ?? null,
-    meta_title: body.meta_title ?? null,
-    meta_description: body.meta_description ?? null,
-  });
+    await db.insert(galleryI18n).values({
+      gallery_id: id,
+      locale,
+      title: body.title,
+      slug: body.slug,
+      description: body.description ?? null,
+      meta_title: body.meta_title ?? null,
+      meta_description: body.meta_description ?? null,
+    });
 
-  const created = await getGalleryById(id, locale);
-  return reply.status(201).send(created);
+    const created = await getGalleryById(id, locale);
+    return reply.status(201).send(created);
+  } catch (e: any) {
+    if (e?.name === 'ZodError') {
+      return reply.code(422).send({ error: { message: 'validation_error', details: e.issues } });
+    }
+    req.log.error({ err: e }, 'adminCreateGallery failed');
+    return reply.code(500).send({ error: { message: 'internal_error', detail: e?.sqlMessage || e?.message } });
+  }
 };
 
 /** PATCH /admin/galleries/:id */
 export const adminUpdateGallery: RouteHandler = async (req, reply) => {
+  try {
   const { id } = req.params as { id: string };
   const body = galleryUpdateSchema.parse(req.body);
   const locale = body.locale || 'tr';
@@ -108,6 +130,8 @@ export const adminUpdateGallery: RouteHandler = async (req, reply) => {
   if (body.is_active !== undefined) baseFields.is_active = toBool(body.is_active);
   if (body.is_featured !== undefined) baseFields.is_featured = toBool(body.is_featured);
   if (body.display_order !== undefined) baseFields.display_order = body.display_order;
+  if (body.cover_image !== undefined) baseFields.cover_image = body.cover_image;
+  if (body.cover_asset_id !== undefined) baseFields.cover_asset_id = body.cover_asset_id;
 
   if (Object.keys(baseFields).length) {
     await db.update(galleries).set(baseFields).where(eq(galleries.id, id));
@@ -147,6 +171,13 @@ export const adminUpdateGallery: RouteHandler = async (req, reply) => {
 
   const updated = await getGalleryById(id, locale);
   return reply.send(updated);
+  } catch (e: any) {
+    if (e?.name === 'ZodError') {
+      return reply.code(422).send({ error: { message: 'validation_error', details: e.issues } });
+    }
+    req.log.error({ err: e }, 'adminUpdateGallery failed');
+    return reply.code(500).send({ error: { message: 'internal_error', detail: e?.sqlMessage || e?.message } });
+  }
 };
 
 /** DELETE /admin/galleries/:id */

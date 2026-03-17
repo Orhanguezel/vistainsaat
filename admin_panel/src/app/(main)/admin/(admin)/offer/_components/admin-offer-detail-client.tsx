@@ -242,6 +242,7 @@ export default function AdminOfferDetailClient({ id }: { id: string }) {
 
   const [form, setForm] = React.useState<FormState>(EMPTY_FORM);
   const [editTab, setEditTab] = React.useState<string>('form');
+  const [pdfCacheBust, setPdfCacheBust] = React.useState(() => Date.now());
 
   const saving = createState.isLoading || updateState.isLoading;
   const loading = offerQ.isFetching || saving;
@@ -365,8 +366,9 @@ export default function AdminOfferDetailClient({ id }: { id: string }) {
   async function onGeneratePdf() {
     if (!form.id) return;
     try {
-      const res = await generatePdf({ id: form.id }).unwrap();
+      const res = await generatePdf({ id: form.id, force: true }).unwrap();
       setForm(mapDtoToForm(res as OfferView));
+      setPdfCacheBust(Date.now());
       toast.success(form.pdf_url ? t('messages.pdfRegenerated') : t('messages.pdfGenerated'));
     } catch (err: any) {
       toast.error(err?.data?.error?.message || err?.message || t('messages.pdfError'));
@@ -475,6 +477,7 @@ export default function AdminOfferDetailClient({ id }: { id: string }) {
           <CardContent className="space-y-4">
             <OfferPdfPreview
               pdfUrl={pdfHref}
+              cacheBust={pdfCacheBust}
               emptyMessage={t('detail.pdfEmpty')}
               fallbackLabel={t('detail.pdfFallback')}
             />

@@ -22,6 +22,20 @@ import { normalizeProduct, normalizeItemType, type ItemType } from './helpers.sh
 // ✅ single source locale helpers
 import { getEffectiveLocale, getLocalesForCreate, normalizeLocale } from './i18n';
 
+/* ----------------- helpers ----------------- */
+async function getDefaultCategoryId(itemType: string): Promise<string> {
+  const moduleKey = itemType === 'vistainsaat' ? 'vistainsaat' : 'default';
+  const [row] = await db
+    .select({ id: categories.id })
+    .from(categories)
+    .where(eq(categories.module_key, moduleKey))
+    .limit(1);
+  if (row) return row.id;
+  // fallback: any category
+  const [any] = await db.select({ id: categories.id }).from(categories).limit(1);
+  return any?.id ?? '00000000-0000-0000-0000-000000000000';
+}
+
 /* ----------------- types ----------------- */
 type AdminListQuery = {
   q?: string;
@@ -168,7 +182,24 @@ export const adminCreateProduct: RouteHandler = async (req, reply) => {
     const productId: string = input.id ?? randomUUID();
     const itemType: ItemType = normalizeItemType(input.item_type, 'product');
 
-    const coverId = input.storage_asset_id ?? null;
+    // Auto-generate product_code for vistainsaat projects
+    let productCode = input.product_code || null;
+    if (!productCode && itemType === 'vistainsaat') {
+      const [maxRow] = await db
+        .select({ code: products.product_code })
+        .from(products)
+        .where(and(eq(products.item_type, 'vistainsaat' as any), sql`${products.product_code} LIKE 'VIS-%'`))
+        .orderBy(desc(products.product_code))
+        .limit(1);
+      let nextNum = 1;
+      if (maxRow?.code) {
+        const match = maxRow.code.match(/(\d+)$/);
+        if (match) nextNum = parseInt(match[1], 10) + 1;
+      }
+      productCode = `VIS-${String(nextNum).padStart(3, '0')}`;
+    }
+
+    const coverId = input.storage_asset_id || null;
     const galleryIds: string[] = input.storage_image_ids ?? [];
     const urlMap = await urlsForAssets([...(coverId ? [coverId] : []), ...galleryIds]);
 
@@ -182,8 +213,8 @@ export const adminCreateProduct: RouteHandler = async (req, reply) => {
     const baseRow: any = {
       id: productId,
       item_type: itemType,
-      category_id: input.category_id,
-      price: input.price,
+      category_id: input.category_id ?? await getDefaultCategoryId(itemType),
+      price: input.price ?? 0,
 
       image_url,
       storage_asset_id: coverId,
@@ -192,26 +223,26 @@ export const adminCreateProduct: RouteHandler = async (req, reply) => {
 
       is_active:
         input.is_active === undefined
-          ? true
-          : !!(
-              input.is_active === true ||
+          ? 1
+          : (input.is_active === true ||
               input.is_active === 1 ||
               input.is_active === '1' ||
-              input.is_active === 'true'
-            ),
+              input.is_active === 'true')
+            ? 1
+            : 0,
 
       is_featured:
         input.is_featured === undefined
-          ? false
-          : !!(
-              input.is_featured === true ||
+          ? 0
+          : (input.is_featured === true ||
               input.is_featured === 1 ||
               input.is_featured === '1' ||
-              input.is_featured === 'true'
-            ),
+              input.is_featured === 'true')
+            ? 1
+            : 0,
 
       order_num: input.order_num ?? 0,
-      product_code: input.product_code ?? null,
+      product_code: productCode,
       stock_quantity: input.stock_quantity ?? 0,
       rating: input.rating ?? 5,
       review_count: input.review_count ?? 0,
@@ -252,10 +283,12 @@ export const adminCreateProduct: RouteHandler = async (req, reply) => {
     return reply.code(201).send(normalizeProduct({ ...(row?.p ?? {}), ...(row?.i ?? {}) }));
   } catch (e: any) {
     if (e?.name === 'ZodError') {
+      req.log.warn({ zodIssues: e.issues, body: req.body }, 'adminCreateProduct validation failed');
       return reply.code(422).send({ error: { message: 'validation_error', details: e.issues } });
     }
-    req.log.error(e);
-    return reply.code(500).send({ error: { message: 'internal_error' } });
+    req.log.error({ err: e }, 'adminCreateProduct failed');
+    const detail = e?.sqlMessage || e?.message || 'unknown';
+    return reply.code(500).send({ error: { message: 'internal_error', detail } });
   }
 };
 
@@ -358,7 +391,8 @@ export const adminUpdateProduct: RouteHandler = async (req, reply) => {
         .set(i18nPatch)
         .where(and(eq(productI18n.product_id, id), eq(productI18n.locale, baseLocale)));
 
-      if ((updated as any).rowsAffected === 0) {
+      const affectedRows = (updated as any)?.[0]?.affectedRows ?? (updated as any)?.rowsAffected ?? 0;
+      if (affectedRows === 0) {
         await db.insert(productI18n).values({
           product_id: id,
           locale: baseLocale,
@@ -391,10 +425,13 @@ export const adminUpdateProduct: RouteHandler = async (req, reply) => {
     if (e?.name === 'ZodError') {
       return reply.code(422).send({ error: { message: 'validation_error', details: e.issues } });
     }
-    req.log.error(e);
-    return reply.code(500).send({ error: { message: 'internal_error' } });
+    req.log.error({ err: e, productId: id }, 'adminUpdateProduct failed');
+    const detail = e?.sqlMessage || e?.message || 'unknown';
+    return reply.code(500).send({ error: { message: 'internal_error', detail } });
   }
 };
+
+
 
 export const adminDeleteProduct: RouteHandler = async (req, reply) => {
   const { id } = req.params as { id: string };

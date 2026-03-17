@@ -163,8 +163,8 @@ export default async function ProjectDetailPage({
     location && { icon: 'location', label: isEn ? 'Location:' : 'Lokasyon:', value: location },
   ].filter(Boolean) as SpecItem[];
 
-  const heroImage = absoluteAssetUrl(project.image_url) || PROJECT_PLACEHOLDER;
   const rawGalleryImages: string[] = Array.isArray(project.images) ? project.images : [];
+  const heroImage = absoluteAssetUrl(project.image_url) || absoluteAssetUrl(rawGalleryImages[0]) || PROJECT_PLACEHOLDER;
 
   // Build serializable gallery images array for the client component
   const galleryImages: GalleryImage[] = [

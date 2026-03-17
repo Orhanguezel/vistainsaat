@@ -51,11 +51,11 @@ export const productCreateSchema = z.object({
   ]).optional().default([]),
 
   // Teknik özellikler: serbest key/value
-  specifications: z.record(z.string(), z.string()).optional(),
+  specifications: z.record(z.string(), z.string()).optional().nullable(),
 
   // Base alanlar
-  price: z.coerce.number().nonnegative(),
-  category_id: z.string().uuid(),
+  price: z.coerce.number().nonnegative().optional().default(0),
+  category_id: emptyToNull(z.string().uuid().optional().nullable()),
   image_url: emptyToNull(z.string().refine(
     (v) => !v || v.startsWith('/') || v.startsWith('http://') || v.startsWith('https://') || v.startsWith('data:'),
     { message: 'Geçersiz URL' },

@@ -58,7 +58,7 @@ type TabKey = 'general' | 'images' | 'specs' | 'seo' | 'faqs' | 'reviews' | 'jso
 // İnşaat projesi için önerilen özellik şablonları
 const PROJECT_SPEC_SUGGESTIONS = [
   'lokasyon', 'yıl', 'alan', 'tip', 'durum',
-  'mimarlar', 'baş_mimar', 'fotoğraflar', 'üreticiler',
+  'mimarlar', 'baş_mimar', 'üreticiler',
   'kat_sayısı', 'arsa_alanı', 'yapı_türü', 'müteahhit',
 ] as const;
 
@@ -179,16 +179,27 @@ function ImagesEditor({
   images,
   onChange,
   disabled,
+  coverUrl,
+  onSelectCover,
 }: {
   images: string[];
   onChange: (v: string[]) => void;
   disabled?: boolean;
+  coverUrl?: string;
+  onSelectCover?: (url: string) => void;
 }) {
+  const [showUrlInput, setShowUrlInput] = React.useState(false);
+  const [urlValue, setUrlValue] = React.useState('');
+
   const handleRemove = (idx: number) => onChange(images.filter((_, i) => i !== idx));
 
-  const handleAdd = () => {
-    const url = prompt('Resim URL giriniz:');
-    if (url?.trim()) onChange([...images, url.trim()]);
+  const handleAddUrl = () => {
+    const trimmed = urlValue.trim();
+    if (trimmed) {
+      onChange([...images, trimmed]);
+      setUrlValue('');
+      setShowUrlInput(false);
+    }
   };
 
   const handleReorder = (from: number, to: number) => {
@@ -200,6 +211,23 @@ function ImagesEditor({
 
   return (
     <div className="space-y-4">
+      {/* Upload area */}
+      <AdminImageUploadField
+        label="Galeri Görselleri Yükle"
+        helperText="Birden fazla görsel seçebilirsiniz. İlk eklenen görsel kapak olarak ayarlanır."
+        multiple
+        values={images}
+        onChangeMultiple={(urls) => {
+          onChange(urls);
+          // İlk eklenen görseli kapak yap (kapak boşsa)
+          if (onSelectCover && !coverUrl && urls.length > 0) {
+            onSelectCover(urls[0]);
+          }
+        }}
+        disabled={disabled}
+        folder="uploads/gallery"
+      />
+
       {images.length === 0 ? (
         <div className="flex items-center justify-center rounded-lg border border-dashed p-12 text-muted-foreground">
           <div className="text-center">
@@ -210,7 +238,7 @@ function ImagesEditor({
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           {images.map((url, idx) => (
-            <div key={idx} className="group relative rounded-lg border overflow-hidden bg-muted">
+            <div key={idx} className={`group relative rounded-lg border overflow-hidden bg-muted ${coverUrl && coverUrl === url ? 'ring-2 ring-primary' : ''}`}>
               <Image
                 src={url}
                 alt={`Resim ${idx + 1}`}
@@ -221,6 +249,17 @@ function ImagesEditor({
               />
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors" />
               <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                {onSelectCover && coverUrl !== url && (
+                  <button
+                    type="button"
+                    className="rounded-full bg-amber-500/90 px-2 py-1 text-[10px] text-white font-medium"
+                    onClick={() => onSelectCover(url)}
+                    disabled={disabled}
+                    title="Kapak görseli yap"
+                  >
+                    ★ Kapak
+                  </button>
+                )}
                 {idx > 0 && (
                   <button
                     type="button"
@@ -252,16 +291,41 @@ function ImagesEditor({
               </div>
               <div className="px-2 py-1.5 text-[11px] text-muted-foreground flex items-center justify-between">
                 <span>{idx + 1}. resim</span>
-                {idx === 0 && <Badge variant="outline" className="text-[9px] px-1.5">Kapak</Badge>}
+                {coverUrl && coverUrl === url
+                  ? <Badge variant="default" className="text-[9px] px-1.5">★ Kapak</Badge>
+                  : null}
               </div>
             </div>
           ))}
         </div>
       )}
-      <Button type="button" variant="outline" size="sm" onClick={handleAdd} disabled={disabled}>
-        <Plus className="h-3.5 w-3.5 mr-1" />
-        Resim Ekle
-      </Button>
+
+      {/* URL ile ekleme */}
+      <div className="flex items-center gap-2">
+        {showUrlInput ? (
+          <>
+            <Input
+              value={urlValue}
+              onChange={(e) => setUrlValue(e.target.value)}
+              placeholder="https://... görsel URL'si"
+              className="flex-1"
+              disabled={disabled}
+              onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddUrl(); } }}
+            />
+            <Button type="button" variant="default" size="sm" onClick={handleAddUrl} disabled={disabled || !urlValue.trim()}>
+              Ekle
+            </Button>
+            <Button type="button" variant="ghost" size="sm" onClick={() => { setShowUrlInput(false); setUrlValue(''); }}>
+              <X className="h-3.5 w-3.5" />
+            </Button>
+          </>
+        ) : (
+          <Button type="button" variant="outline" size="sm" onClick={() => setShowUrlInput(true)} disabled={disabled}>
+            <Plus className="h-3.5 w-3.5 mr-1" />
+            URL ile Ekle
+          </Button>
+        )}
+      </div>
     </div>
   );
 }
@@ -398,8 +462,29 @@ export default function ProductDetailClient({ id, itemType }: Props) {
     setFormData((prev) => ({ ...prev, locale: next }));
   };
 
-  const handleChange = (field: string, value: unknown) =>
-    setFormData((prev) => ({ ...prev, [field]: value }));
+  const [slugManuallyEdited, setSlugManuallyEdited] = React.useState(!isNew);
+
+  const toSlug = (str: string) =>
+    str
+      .toLowerCase()
+      .replace(/ğ/g, 'g').replace(/ü/g, 'u').replace(/ş/g, 's')
+      .replace(/ı/g, 'i').replace(/ö/g, 'o').replace(/ç/g, 'c')
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '');
+
+  const handleChange = (field: string, value: unknown) => {
+    if (field === 'slug') setSlugManuallyEdited(true);
+    setFormData((prev) => {
+      const next = { ...prev, [field]: value };
+      // Auto-generate slug from title (only for new items, unless manually edited)
+      if (field === 'title' && !slugManuallyEdited) {
+        next.slug = toSlug(String(value));
+      }
+      return next;
+    });
+  };
 
   const handleJsonChange = (json: Record<string, any>) =>
     setFormData((prev) => ({ ...prev, ...json }));
@@ -496,8 +581,7 @@ export default function ProductDetailClient({ id, itemType }: Props) {
       alt: formData.image_alt || undefined,
       tags: tagsArray,
       specifications: specsToSend,
-      category_id: formData.category_id || '',
-      sub_category_id: formData.sub_category_id || null,
+      category_id: formData.category_id || undefined,
       image_url: formData.image_url || null,
       storage_asset_id: formData.image_asset_id || null,
       images: formData.images,
@@ -510,7 +594,7 @@ export default function ProductDetailClient({ id, itemType }: Props) {
 
     try {
       if (isNew) {
-        const result = await createProduct(payload).unwrap();
+        const result = await createProduct({ ...payload, category_id: formData.category_id || undefined }).unwrap();
         toast.success(isProject ? 'Proje oluşturuldu' : 'Ürün oluşturuldu');
         if (result?.id) {
           const typeParam = itemType ? `?type=${itemType}` : '';
@@ -521,7 +605,8 @@ export default function ProductDetailClient({ id, itemType }: Props) {
         toast.success(isProject ? 'Proje güncellendi' : 'Ürün güncellendi');
       }
     } catch (error: any) {
-      const msg = error?.data?.error?.message || error?.message || 'Hata oluştu';
+      const errObj = error?.data?.error;
+      const msg = errObj?.detail || errObj?.message || error?.message || 'Hata oluştu';
       toast.error(`Hata: ${msg}`);
     }
   };
@@ -893,6 +978,8 @@ export default function ProductDetailClient({ id, itemType }: Props) {
                   images={formData.images}
                   onChange={(v) => handleChange('images', v)}
                   disabled={isLoading}
+                  coverUrl={formData.image_url}
+                  onSelectCover={handleImageChange}
                 />
               </CardContent>
             </Card>
