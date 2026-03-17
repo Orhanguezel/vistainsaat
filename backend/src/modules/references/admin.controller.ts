@@ -233,7 +233,7 @@ export const updateReferenceAdmin: RouteHandler = async (req, reply) => {
 
   const parsed = patchReferenceBodySchema.safeParse(req.body ?? {});
   if (!parsed.success) {
-    req.log.warn({ zodIssues: parsed.error.flatten(), body: req.body }, 'updateReferenceAdmin validation failed');
+    console.error('[REFERENCES] updateReferenceAdmin validation failed:', JSON.stringify(parsed.error.flatten()), 'body:', JSON.stringify(req.body));
     return reply.code(400).send({
       error: { message: 'invalid_body', issues: parsed.error.flatten() },
     });
@@ -301,8 +301,9 @@ export const updateReferenceAdmin: RouteHandler = async (req, reply) => {
       if (!exists) {
         // Yeni translation eklemek için minimum alanlar gerekir
         if (!b.title || !b.slug || !b.content) {
+          console.error('[REFERENCES] missing_required_translation_fields — locale:', locale, 'id:', id, 'hasI18nFields:', hasI18nFields, 'body:', JSON.stringify(req.body));
           return reply.code(400).send({
-            error: { message: 'missing_required_translation_fields' },
+            error: { message: 'missing_required_translation_fields', detail: `locale=${locale}, i18n row not found, title/slug/content required` },
           });
         }
         await upsertReferenceI18n(id, locale, {
