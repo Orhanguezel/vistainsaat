@@ -264,6 +264,7 @@ export const updatePageAdmin: RouteHandler<{
 }> = async (req, reply) => {
   const parsed = patchCustomPageBodySchema.safeParse(req.body ?? {});
   if (!parsed.success) {
+    console.error('[CUSTOM_PAGES] updatePageAdmin validation failed:', JSON.stringify(parsed.error.flatten()), 'body:', JSON.stringify(req.body));
     return reply.code(400).send({
       error: { message: 'invalid_body', issues: parsed.error.issues },
     });
@@ -329,9 +330,10 @@ export const updatePageAdmin: RouteHandler<{
 
       if (!existing) {
         if (!b.title || !b.slug || !b.content) {
+          console.error('[CUSTOM_PAGES] missing_required_translation_fields — locale:', locale, 'id:', req.params.id, 'body:', JSON.stringify(req.body));
           return reply
             .code(400)
-            .send({ error: { message: 'missing_required_translation_fields' } });
+            .send({ error: { message: 'missing_required_translation_fields', detail: `locale=${locale}, i18n row not found` } });
         }
 
         await upsertCustomPageI18n(req.params.id, locale, {

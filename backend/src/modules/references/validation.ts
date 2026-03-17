@@ -65,12 +65,12 @@ export const upsertReferenceParentBodySchema = z.object({
   is_featured: boolLike.optional().default(false),
   display_order: z.coerce.number().int().min(0).optional(),
 
-  featured_image: z.string().url().nullable().optional(),
-  featured_image_asset_id: z.string().length(36).nullable().optional(),
+  featured_image: z.string().nullable().optional(),
+  featured_image_asset_id: z.string().max(64).nullable().optional(),
 
-  website_url: z.string().max(500).url().nullable().optional(),
+  website_url: z.string().max(500).nullable().optional(),
 
-  category_id: z.string().uuid().nullable().optional(),
+  category_id: z.string().nullable().optional(),
 });
 
 export type UpsertReferenceParentBody = z.infer<typeof upsertReferenceParentBodySchema>;
