@@ -121,24 +121,36 @@ export default async function ProjectDetailPage({
         : Promise.resolve([]),
     ]);
 
-  const specs = project.specifications || {};
+  const specs = (project.specifications || {}) as Record<string, string>;
   const isEn = locale.startsWith('en');
 
-  const location = specs.lokasyon || specs.location || null;
-  const year = specs.yıl || specs.year || null;
-  const area = specs.alan || specs.area || null;
-  const projectType = specs.tip || specs.type || project.category_name || null;
-  const status = specs.durum || specs.status || null;
-  const architects = specs.mimarlar || specs.architects || null;
-  const leadArchitect = specs.baş_mimar || specs.lead_architect || null;
-  const manufacturers = specs.üreticiler || specs.manufacturers || null;
-  const projectTeam = specs.proje_ekibi || specs.project_team || null;
-  const landscapeArch = specs.peyzaj_mimarlığı || specs.landscape_architecture || null;
-  const interiorDesign = specs.iç_tasarım || specs.interior_design || null;
-  const engineering = specs.mühendislik || specs.engineering || null;
-  const generalConstruction = specs.genel_inşaat || specs.general_construction || null;
-  const city = specs.şehir || specs.city || null;
-  const country = specs.ülke || specs.country || null;
+  /** Case-insensitive spec lookup — keys may be "Tip", "Baş Mimar", "baş_mimar" etc. */
+  function sv(...keys: string[]): string | null {
+    for (const k of keys) {
+      const norm = k.toLowerCase().replace(/[\s_]+/g, '');
+      for (const [sk, val] of Object.entries(specs)) {
+        if (sk.toLowerCase().replace(/[\s_]+/g, '') === norm && val) return val;
+      }
+    }
+    return null;
+  }
+
+  const location = sv('lokasyon', 'location');
+  const year = sv('yıl', 'yil', 'year');
+  const area = sv('alan', 'area');
+  const projectType = sv('tip', 'type') || project.category_name || null;
+  const status = sv('durum', 'status');
+  const architects = sv('mimarlar', 'architects');
+  const leadArchitect = sv('baş mimar', 'baş_mimar', 'lead_architect');
+  const manufacturers = sv('üreticiler', 'manufacturers');
+  const projectTeam = sv('proje ekibi', 'proje_ekibi', 'project_team');
+  const landscapeArch = sv('peyzaj mimarlığı', 'peyzaj_mimarlığı', 'landscape_architecture');
+  const interiorDesign = sv('iç tasarım', 'iç_tasarım', 'interior_design');
+  const engineering = sv('mühendislik', 'engineering');
+  const generalConstruction = sv('genel inşaat', 'genel_inşaat', 'general_construction');
+  const city = sv('şehir', 'city');
+  const country = sv('ülke', 'country');
+  const contractor = sv('müteahhit', 'müteahhit firma', 'contractor');
   const tags = projectTags;
 
   // Build spec items for the expandable component
@@ -161,6 +173,7 @@ export default async function ProjectDetailPage({
     city && { icon: 'city', label: isEn ? 'City:' : 'Şehir:', value: city },
     country && { icon: 'country', label: isEn ? 'Country:' : 'Ülke:', value: country },
     location && { icon: 'location', label: isEn ? 'Location:' : 'Lokasyon:', value: location },
+    contractor && { icon: 'default', label: isEn ? 'Contractor:' : 'Müteahhit:', value: contractor },
   ].filter(Boolean) as SpecItem[];
 
   const rawGalleryImages: string[] = Array.isArray(project.images) ? project.images : [];
@@ -209,7 +222,7 @@ export default async function ProjectDetailPage({
             description: project.meta_description || project.description,
             image: heroImage,
             url: localizedUrl(locale, `/projeler/${slug}`),
-            locationCreated: location,
+            locationCreated: location ?? undefined,
             dateCreated: year ? String(year) : undefined,
           }),
           jsonld.breadcrumb(

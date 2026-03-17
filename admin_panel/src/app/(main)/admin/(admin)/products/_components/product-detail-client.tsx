@@ -23,7 +23,7 @@ import {
 } from '@/components/ui/select';
 import {
   ArrowLeft, Save, FileJson, ListChecks, HelpCircle, Star,
-  Images, Plus, Trash2, X, ImageOff, Search, FileText,
+  Images, Plus, Trash2, X, ImageOff, Search, FileText, ChevronDown,
 } from 'lucide-react';
 import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
 import { usePreferencesStore } from '@/stores/preferences/preferences-provider';
@@ -56,11 +56,39 @@ type TabKey = 'general' | 'images' | 'specs' | 'seo' | 'faqs' | 'reviews' | 'jso
 // ─── Specifications Key-Value Editor ─────────────────────────
 
 // İnşaat projesi için önerilen özellik şablonları
-const PROJECT_SPEC_SUGGESTIONS = [
-  'lokasyon', 'yıl', 'alan', 'tip', 'durum',
-  'mimarlar', 'baş_mimar', 'üreticiler',
-  'kat_sayısı', 'arsa_alanı', 'yapı_türü', 'müteahhit',
-] as const;
+/** Standart proje özellik key'leri — frontend bu key'leri bekler */
+const PROJECT_SPEC_OPTIONS: { key: string; label: string }[] = [
+  { key: 'lokasyon', label: 'Lokasyon' },
+  { key: 'yıl', label: 'Yıl' },
+  { key: 'alan', label: 'Alan' },
+  { key: 'tip', label: 'Tip / Kategori' },
+  { key: 'durum', label: 'Durum' },
+  { key: 'mimarlar', label: 'Mimarlar' },
+  { key: 'baş_mimar', label: 'Baş Mimar' },
+  { key: 'üreticiler', label: 'Üreticiler' },
+  { key: 'müteahhit', label: 'Müteahhit' },
+  { key: 'kat_sayısı', label: 'Kat Sayısı' },
+  { key: 'arsa_alanı', label: 'Arsa Alanı' },
+  { key: 'yapı_türü', label: 'Yapı Türü' },
+  { key: 'malzeme', label: 'Malzeme' },
+  { key: 'işveren', label: 'İşveren' },
+  { key: 'şehir', label: 'Şehir' },
+  { key: 'ülke', label: 'Ülke' },
+  { key: 'proje_ekibi', label: 'Proje Ekibi' },
+  { key: 'peyzaj_mimarlığı', label: 'Peyzaj Mimarlığı' },
+  { key: 'iç_tasarım', label: 'İç Tasarım' },
+  { key: 'mühendislik', label: 'Mühendislik' },
+  { key: 'genel_inşaat', label: 'Genel İnşaat' },
+];
+
+
+/** Resolve display label for a spec key */
+function specKeyLabel(key: string): string {
+  const found = PROJECT_SPEC_OPTIONS.find(
+    (o) => o.key.toLowerCase().replace(/[\s_]+/g, '') === key.toLowerCase().replace(/[\s_]+/g, ''),
+  );
+  return found?.label ?? key;
+}
 
 function SpecificationsEditor({
   value,
@@ -74,6 +102,16 @@ function SpecificationsEditor({
   isProject?: boolean;
 }) {
   const entries = Object.entries(value);
+  const [customKeyInputs, setCustomKeyInputs] = React.useState<Record<number, boolean>>({});
+
+  /** Normalize existing non-standard keys to standard format */
+  const normalizeKey = (key: string): string => {
+    const norm = key.toLowerCase().replace(/[\s_]+/g, '');
+    const match = PROJECT_SPEC_OPTIONS.find(
+      (o) => o.key.toLowerCase().replace(/[\s_]+/g, '') === norm,
+    );
+    return match?.key ?? key;
+  };
 
   const handleKeyChange = (oldKey: string, newKey: string) => {
     if (newKey === oldKey) return;
@@ -94,80 +132,131 @@ function SpecificationsEditor({
     onChange(next);
   };
 
-  const handleAdd = () => {
-    let key = 'yeni_alan';
-    let i = 1;
-    while (value[key] !== undefined) key = `yeni_alan_${i++}`;
-    onChange({ ...value, [key]: '' });
-  };
-
   const handleAddSuggested = (key: string) => {
     if (value[key] !== undefined) return;
     onChange({ ...value, [key]: '' });
   };
 
-  // Henüz eklenmemiş öneriler
-  const availableSuggestions = isProject
-    ? PROJECT_SPEC_SUGGESTIONS.filter((s) => value[s] === undefined)
+  // Henüz eklenmemiş standart özellikler
+  const usedKeys = new Set(entries.map(([k]) => normalizeKey(k)));
+  const availableOptions = isProject
+    ? PROJECT_SPEC_OPTIONS.filter((o) => !usedKeys.has(o.key))
     : [];
+
+  const isStandardKey = (key: string) =>
+    PROJECT_SPEC_OPTIONS.some(
+      (o) => o.key.toLowerCase().replace(/[\s_]+/g, '') === key.toLowerCase().replace(/[\s_]+/g, ''),
+    );
 
   return (
     <div className="space-y-3">
       {entries.length === 0 && (
         <p className="text-sm text-muted-foreground">Henüz özellik eklenmemiş.</p>
       )}
-      {entries.map(([k, v], idx) => (
-        <div key={idx} className="flex items-center gap-2">
-          <Input
-            className="w-[200px] shrink-0"
-            value={k}
-            onChange={(e) => handleKeyChange(k, e.target.value)}
-            disabled={disabled}
-            placeholder="Özellik adı"
-          />
-          <Input
-            className="flex-1"
-            value={v}
-            onChange={(e) => handleValueChange(k, e.target.value)}
-            disabled={disabled}
-            placeholder="Değer"
-          />
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            onClick={() => handleRemove(k)}
-            disabled={disabled}
-            className="shrink-0"
-          >
-            <X className="h-4 w-4 text-destructive" />
-          </Button>
-        </div>
-      ))}
-
-      <div className="flex items-center gap-2 flex-wrap">
-        <Button type="button" variant="outline" size="sm" onClick={handleAdd} disabled={disabled}>
-          <Plus className="h-3.5 w-3.5 mr-1" />
-          Özellik Ekle
-        </Button>
-
-        {/* Hızlı ekleme önerileri */}
-        {availableSuggestions.length > 0 && (
-          <>
-            <span className="text-[11px] text-muted-foreground ml-2">Hızlı ekle:</span>
-            {availableSuggestions.slice(0, 6).map((s) => (
-              <button
-                key={s}
-                type="button"
-                className="rounded-full border px-2.5 py-0.5 text-[11px] text-muted-foreground hover:bg-muted transition-colors disabled:opacity-50"
-                onClick={() => handleAddSuggested(s)}
+      {entries.map(([k, v], idx) => {
+        const isCustom = customKeyInputs[idx] || !isStandardKey(k);
+        return (
+          <div key={idx} className="flex items-center gap-2">
+            {isProject && !isCustom ? (
+              <select
+                className="w-50 shrink-0 h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs focus:outline-none focus:ring-1 focus:ring-ring"
+                value={normalizeKey(k)}
+                onChange={(e) => {
+                  if (e.target.value === '__custom__') {
+                    setCustomKeyInputs((p) => ({ ...p, [idx]: true }));
+                    return;
+                  }
+                  handleKeyChange(k, e.target.value);
+                }}
                 disabled={disabled}
               >
-                + {s}
+                <option value={normalizeKey(k)}>{specKeyLabel(k)}</option>
+                {availableOptions
+                  .filter((o) => o.key !== normalizeKey(k))
+                  .map((o) => (
+                    <option key={o.key} value={o.key}>{o.label}</option>
+                  ))}
+                <option value="__custom__">— Özel alan —</option>
+              </select>
+            ) : (
+              <div className="flex items-center gap-1 w-50 shrink-0">
+                <Input
+                  className="flex-1"
+                  value={k}
+                  onChange={(e) => handleKeyChange(k, e.target.value)}
+                  disabled={disabled}
+                  placeholder="Özellik adı"
+                />
+                {isProject && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 shrink-0"
+                    onClick={() => setCustomKeyInputs((p) => ({ ...p, [idx]: false }))}
+                    title="Listeden seç"
+                  >
+                    <ChevronDown className="h-3.5 w-3.5" />
+                  </Button>
+                )}
+              </div>
+            )}
+            <Input
+              className="flex-1"
+              value={v}
+              onChange={(e) => handleValueChange(k, e.target.value)}
+              disabled={disabled}
+              placeholder="Değer"
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={() => handleRemove(k)}
+              disabled={disabled}
+              className="shrink-0"
+            >
+              <X className="h-4 w-4 text-destructive" />
+            </Button>
+          </div>
+        );
+      })}
+
+      <div className="flex items-center gap-2 flex-wrap">
+        {/* Hızlı ekleme önerileri */}
+        {availableOptions.length > 0 && (
+          <>
+            <span className="text-[11px] text-muted-foreground">Hızlı ekle:</span>
+            {availableOptions.slice(0, 8).map((o) => (
+              <button
+                key={o.key}
+                type="button"
+                className="rounded-full border px-2.5 py-0.5 text-[11px] text-muted-foreground hover:bg-muted transition-colors disabled:opacity-50"
+                onClick={() => handleAddSuggested(o.key)}
+                disabled={disabled}
+              >
+                + {o.label}
               </button>
             ))}
           </>
         )}
+
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            let key = 'özel_alan';
+            let i = 1;
+            while (value[key] !== undefined) key = `özel_alan_${i++}`;
+            onChange({ ...value, [key]: '' });
+            setCustomKeyInputs((p) => ({ ...p, [entries.length]: true }));
+          }}
+          disabled={disabled}
+        >
+          <Plus className="h-3.5 w-3.5 mr-1" />
+          Özel Alan Ekle
+        </Button>
       </div>
     </div>
   );

@@ -55,6 +55,18 @@ export async function generateMetadata({
   });
 }
 
+/** Case-insensitive spec lookup — keys may be "Tip", "tip", "TIP" etc. */
+function specVal(specs: Record<string, string> | undefined, ...keys: string[]): string | undefined {
+  if (!specs) return undefined;
+  for (const k of keys) {
+    const lower = k.toLowerCase().replace(/[\s_]+/g, '');
+    for (const [sk, sv] of Object.entries(specs)) {
+      if (sk.toLowerCase().replace(/[\s_]+/g, '') === lower && sv) return sv;
+    }
+  }
+  return undefined;
+}
+
 function toViewItem(p: any, locale: string): ProjectViewItem {
   const specs = p.specifications as Record<string, string> | undefined;
   const isEn = locale.startsWith('en');
@@ -64,7 +76,7 @@ function toViewItem(p: any, locale: string): ProjectViewItem {
     href: p.slug
       ? localizedPath(locale, `/projeler/${p.slug}`)
       : `${localizedPath(locale, '/teklif')}?proje=${encodeURIComponent(p.title)}`,
-    imageSrc: absoluteAssetUrl(p.image_url) || absoluteAssetUrl(p.images?.[0]) || PROJECT_PLACEHOLDER,
+    imageSrc: absoluteAssetUrl(p.featured_image) || absoluteAssetUrl(p.image_url) || absoluteAssetUrl(p.images?.[0]) || PROJECT_PLACEHOLDER,
     alt: buildMediaAlt({
       locale,
       kind: 'project',
@@ -73,15 +85,15 @@ function toViewItem(p: any, locale: string): ProjectViewItem {
       caption: p.caption,
       description: p.description,
     }),
-    category: p.category_name || p.type || (isEn ? specs?.type : specs?.tip) || undefined,
-    location: (isEn ? specs?.location : specs?.lokasyon) || specs?.lokasyon || specs?.location || undefined,
-    architects: (isEn ? specs?.architects : specs?.mimarlar) || specs?.mimarlar || specs?.architects || undefined,
-    year: specs?.yil || specs?.year || undefined,
-    area: specs?.alan || specs?.area || undefined,
-    status: (isEn ? specs?.status : specs?.durum) || specs?.durum || specs?.status || undefined,
-    materials: (isEn ? specs?.materials : specs?.malzeme) || specs?.malzeme || specs?.materials || undefined,
-    floors: (isEn ? specs?.floors : specs?.kat) || specs?.kat || specs?.floors || undefined,
-    client: (isEn ? specs?.client : specs?.isveren) || specs?.isveren || specs?.client || undefined,
+    category: p.category_name || p.type || specVal(specs, isEn ? 'type' : 'tip', 'tip', 'type') || undefined,
+    location: specVal(specs, isEn ? 'location' : 'lokasyon', 'lokasyon', 'location') || undefined,
+    architects: specVal(specs, isEn ? 'architects' : 'mimarlar', 'mimarlar', 'architects', 'baş mimar', 'bas_mimar') || undefined,
+    year: specVal(specs, 'yil', 'year', 'yıl') || undefined,
+    area: specVal(specs, 'alan', 'area') || undefined,
+    status: specVal(specs, isEn ? 'status' : 'durum', 'durum', 'status') || undefined,
+    materials: specVal(specs, isEn ? 'materials' : 'malzeme', 'malzeme', 'materials') || undefined,
+    floors: specVal(specs, isEn ? 'floors' : 'kat', 'kat', 'floors') || undefined,
+    client: specVal(specs, isEn ? 'client' : 'isveren', 'isveren', 'client', 'müteahhit', 'müteahhit firma') || undefined,
   };
 }
 
