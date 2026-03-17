@@ -233,6 +233,7 @@ export const updateReferenceAdmin: RouteHandler = async (req, reply) => {
 
   const parsed = patchReferenceBodySchema.safeParse(req.body ?? {});
   if (!parsed.success) {
+    req.log.warn({ zodIssues: parsed.error.flatten(), body: req.body }, 'updateReferenceAdmin validation failed');
     return reply.code(400).send({
       error: { message: 'invalid_body', issues: parsed.error.flatten() },
     });

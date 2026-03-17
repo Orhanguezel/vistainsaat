@@ -177,7 +177,7 @@ export default function AdminReferencesClient() {
     if (!isValidId(id)) return;
 
     try {
-      await updateReference({ id, patch: { is_published: next ? 1 : 0 } } as any).unwrap();
+      await updateReference({ id, patch: { is_published: next ? 1 : 0, locale: effectiveLocale || 'tr' } } as any).unwrap();
       toast.success(t('admin.references.list.statusUpdated'));
       listQ.refetch();
     } catch (err: any) {
@@ -192,7 +192,7 @@ export default function AdminReferencesClient() {
     if (!isValidId(id)) return;
 
     try {
-      await updateReference({ id, patch: { is_featured: next ? 1 : 0 } } as any).unwrap();
+      await updateReference({ id, patch: { is_featured: next ? 1 : 0, locale: effectiveLocale || 'tr' } } as any).unwrap();
       toast.success(t('admin.references.list.featuredUpdated'));
       listQ.refetch();
     } catch (err: any) {
