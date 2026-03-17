@@ -359,13 +359,13 @@ export const normalizeService = (row: ApiServiceBase): ServiceDto => ({
   id: row.id,
   type: row.type,
 
-  featured: row.featured === 1,
-  is_active: row.is_active === 1,
-  display_order: row.display_order,
+  featured: row.featured === 1 || (row as any).is_featured === 1 || (row as any).is_featured === true,
+  is_active: row.is_active === 1 || (row as any).is_active === true,
+  display_order: row.display_order ?? 0,
 
-  featured_image: row.featured_image,
+  featured_image: row.featured_image || (row as any).image_url,
   image_url: row.image_url,
-  image_asset_id: row.image_asset_id,
+  image_asset_id: row.image_asset_id || (row as any).storage_asset_id,
 
   cover_url: row.cover_url,
 
@@ -373,11 +373,11 @@ export const normalizeService = (row: ApiServiceBase): ServiceDto => ({
   updated_at: row.updated_at,
 
   slug: row.slug,
-  name: row.name,
-  summary: row.summary,
+  name: row.name || (row as any).title,
+  summary: row.summary || (row as any).description,
   content: row.content,
   description: row.description,
-  image_alt: row.image_alt,
+  image_alt: row.image_alt || (row as any).alt,
 
   // Service-specific fields
   material: row.material,
