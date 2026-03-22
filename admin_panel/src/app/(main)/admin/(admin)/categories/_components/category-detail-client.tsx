@@ -1,395 +1,367 @@
 // =============================================================
-// FILE: src/app/(main)/admin/(admin)/categories/[id]/CategoryDetailClient.tsx
-// Category Detail/Edit Form — JSON + i18n Support
-// Ensotek
+// FILE: src/app/(main)/admin/(admin)/categories/_components/category-detail-client.tsx
+// Category Detail/Edit — Standard tabs: Form + JSON
+// Vista İnşaat
 // =============================================================
 
 'use client';
 
 import * as React from 'react';
-import { useRouter } from 'next/navigation';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { toast } from 'sonner';
+import { ArrowLeft, Save, FileJson } from 'lucide-react';
+
+import { useAdminLocales } from '@/app/(main)/admin/_components/common/useAdminLocales';
+import { resolveAdminApiLocale } from '@/i18n/adminLocale';
+import { localeShortClient, localeShortClientOr } from '@/i18n/localeShortClient';
+
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Separator } from '@/components/ui/separator';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
-import { ArrowLeft, Save, FileJson } from 'lucide-react';
-import { useAdminT } from '@/app/(main)/admin/_components/common/useAdminT';
-import { usePreferencesStore } from '@/stores/preferences/preferences-provider';
-import { AdminLocaleSelect } from '@/app/(main)/admin/_components/common/AdminLocaleSelect';
+
 import { AdminJsonEditor } from '@/app/(main)/admin/_components/common/AdminJsonEditor';
 import { AdminImageUploadField } from '@/app/(main)/admin/_components/common/AdminImageUploadField';
-import { useAdminLocales } from '@/app/(main)/admin/_components/common/useAdminLocales';
-import { toast } from 'sonner';
+
 import {
   useGetCategoryAdminQuery,
   useCreateCategoryAdminMutation,
   useUpdateCategoryAdminMutation,
 } from '@/integrations/endpoints/admin/categories_admin.endpoints';
 
-interface Props {
-  id: string;
+function isValidId(v?: string) {
+  if (!v || v === 'new') return false;
+  return v.length >= 10 && v.includes('-');
 }
 
-export default function CategoryDetailClient({ id }: Props) {
-  const t = useAdminT('admin.categories');
+const norm = (v: unknown) => String(v ?? '').trim();
+const toNull = (v: unknown) => { const s = norm(v); return s || null; };
+
+function slugify(text: string) {
+  return text.toLowerCase()
+    .replace(/ğ/g, 'g').replace(/ü/g, 'u').replace(/ş/g, 's')
+    .replace(/ı/g, 'i').replace(/ö/g, 'o').replace(/ç/g, 'c')
+    .replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+}
+
+type FormValues = {
+  locale: string;
+  name: string;
+  slug: string;
+  description: string;
+  module_key: string;
+  image_url: string;
+  alt: string;
+  icon: string;
+  is_active: boolean;
+  is_featured: boolean;
+  display_order: string;
+  meta_title: string;
+  meta_description: string;
+  replicate_all_locales: boolean;
+};
+
+const emptyForm = (locale: string): FormValues => ({
+  locale,
+  name: '', slug: '', description: '',
+  module_key: 'vistainsaat',
+  image_url: '', alt: '', icon: '',
+  is_active: true, is_featured: false, display_order: '0',
+  meta_title: '', meta_description: '',
+  replicate_all_locales: false,
+});
+
+export default function CategoryDetailClient({ id }: { id: string }) {
   const router = useRouter();
-  const adminLocale = usePreferencesStore((s) => s.adminLocale);
+  const sp = useSearchParams();
   const isNew = id === 'new';
 
-  // Locale management
-  const { localeOptions } = useAdminLocales();
-  const [activeLocale, setActiveLocale] = React.useState<string>(adminLocale || 'tr');
-  const [activeTab, setActiveTab] = React.useState<'form' | 'json'>('form');
+  const { localeOptions, defaultLocaleFromDb, loading: localesLoading } = useAdminLocales();
+  const apiLocale = React.useMemo(
+    () => resolveAdminApiLocale(localeOptions as any, defaultLocaleFromDb, 'tr'),
+    [localeOptions, defaultLocaleFromDb],
+  );
+  const urlLocale = localeShortClient(sp?.get('locale')) || '';
 
-  // RTK Query
-  const { data: category, isFetching, refetch } = useGetCategoryAdminQuery(
-    { id, locale: activeLocale },
-    { skip: isNew }
+  const [activeLocale, setActiveLocale] = React.useState('');
+  const [slugTouched, setSlugTouched] = React.useState(!isNew);
+
+  React.useEffect(() => {
+    if (!localeOptions?.length) return;
+    setActiveLocale((prev) => {
+      const p = localeShortClient(prev);
+      const u = localeShortClient(urlLocale);
+      const d = localeShortClientOr(apiLocale, 'tr');
+      const canUse = (l: string) => !!l && (localeOptions ?? []).some((x: any) => localeShortClient(x.value) === l);
+      if (p && canUse(p)) return p;
+      if (u && canUse(u)) return u;
+      if (d && canUse(d)) return d;
+      return localeShortClient((localeOptions as any)?.[0]?.value) || 'tr';
+    });
+  }, [localeOptions, urlLocale, apiLocale]);
+
+  const queryLocale = localeShortClient(activeLocale) || apiLocale;
+
+  const { data: category, isLoading, isFetching } = useGetCategoryAdminQuery(
+    { id, locale: queryLocale },
+    { skip: isNew || !isValidId(id) || !queryLocale },
   );
 
-  const [createCategory, { isLoading: isCreating }] = useCreateCategoryAdminMutation();
-  const [updateCategory, { isLoading: isUpdating }] = useUpdateCategoryAdminMutation();
+  const [createCategory, createState] = useCreateCategoryAdminMutation();
+  const [updateCategory, updateState] = useUpdateCategoryAdminMutation();
 
-  // Form state
-  const [formData, setFormData] = React.useState({
-    name: '',
-    slug: '',
-    locale: activeLocale,
-    module_key: 'product' as string,
-    description: '',
-    alt: '',
-    image_url: '',
-    storage_asset_id: '',
-    icon: '',
-    is_active: true,
-    is_featured: false,
-    display_order: 0,
-    i18n_data: {} as Record<string, any>,
-  });
-
-  // Load data when editing/locale changes
-  React.useEffect(() => {
-    if (category && !isNew) {
-      setFormData({
-        name: category.name || '',
-        slug: category.slug || '',
-        locale: category.locale || activeLocale,
-        module_key: category.module_key || 'product',
-        description: category.description || '',
-        alt: category.alt || '',
-        image_url: category.image_url || '',
-        storage_asset_id: category.storage_asset_id || '',
-        icon: category.icon || '',
-        is_active: category.is_active ?? true,
-        is_featured: category.is_featured ?? false,
-        display_order: category.display_order || 0,
-        i18n_data: (category as any).i18n_data || {},
-      });
-    }
-  }, [category, isNew, activeLocale]);
+  const [values, setValues] = React.useState<FormValues>(() => emptyForm(queryLocale || 'tr'));
+  const busy = isLoading || isFetching || localesLoading || createState.isLoading || updateState.isLoading;
 
   React.useEffect(() => {
-    if (!isNew && id) {
-      refetch();
-    }
-  }, [activeLocale, id, isNew, refetch]);
+    if (isNew) { setValues(emptyForm(queryLocale || 'tr')); return; }
+    if (!category) return;
+    const c = category as any;
+    const i18n = c.i18n_data && typeof c.i18n_data === 'object' ? c.i18n_data : {};
+    setValues({
+      locale: queryLocale || 'tr',
+      name: norm(c.name),
+      slug: norm(c.slug),
+      description: norm(c.description),
+      module_key: norm(c.module_key) || 'vistainsaat',
+      image_url: norm(c.image_url),
+      alt: norm(c.alt),
+      icon: norm(c.icon),
+      is_active: c.is_active === 1 || c.is_active === true,
+      is_featured: c.is_featured === 1 || c.is_featured === true,
+      display_order: String(c.display_order ?? 0),
+      meta_title: norm(i18n.meta_title || c.meta_title),
+      meta_description: norm(i18n.meta_description || c.meta_description),
+      replicate_all_locales: false,
+    });
+    setSlugTouched(false);
+  }, [category, isNew, queryLocale]);
 
-  const handleBack = () => router.push('/admin/categories');
-
-  const handleLocaleChange = (nextLocale: string) => {
-    setActiveLocale(nextLocale);
-    setFormData((prev) => ({ ...prev, locale: nextLocale }));
+  const handleChange = (field: string, value: unknown) => {
+    if (field === 'slug') setSlugTouched(true);
+    setValues((prev) => {
+      const next = { ...prev, [field]: value };
+      if (field === 'name' && !slugTouched) next.slug = slugify(String(value));
+      return next;
+    });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  async function handleSubmit(e?: React.FormEvent) {
+    e?.preventDefault();
+    if (busy) return;
+    if (!values.name.trim()) { toast.error('Kategori adı zorunlu'); return; }
 
-    if (!formData.name || !formData.slug) {
-      toast.error('Name ve Slug zorunludur');
-      return;
-    }
+    const payload: any = {
+      locale: queryLocale,
+      name: values.name.trim(),
+      slug: values.slug.trim() || slugify(values.name),
+      description: toNull(values.description),
+      module_key: values.module_key || 'vistainsaat',
+      image_url: toNull(values.image_url),
+      alt: toNull(values.alt),
+      icon: toNull(values.icon),
+      is_active: values.is_active,
+      is_featured: values.is_featured,
+      display_order: Number(values.display_order) || 0,
+      seo_title: toNull(values.meta_title),
+      seo_description: toNull(values.meta_description),
+      i18n_data: {
+        meta_title: toNull(values.meta_title),
+        meta_description: toNull(values.meta_description),
+      },
+    };
 
     try {
-      const payload = { ...formData, locale: activeLocale };
-
       if (isNew) {
-        await createCategory(payload).unwrap();
+        payload.replicate_all_locales = values.replicate_all_locales;
+        const result = await createCategory(payload).unwrap();
+        const newId = String((result as any)?.id ?? '');
         toast.success('Kategori oluşturuldu');
+        if (isValidId(newId)) router.replace(`/admin/categories/${newId}?locale=${queryLocale}`);
+        else router.push('/admin/categories');
       } else {
         await updateCategory({ id, patch: payload }).unwrap();
         toast.success('Kategori güncellendi');
       }
-      router.push('/admin/categories');
-    } catch (error: any) {
-      const errMsg = error?.data?.error?.message || error?.message || 'Hata oluştu';
-      toast.error(`Hata: ${errMsg}`);
+    } catch (err: any) {
+      toast.error(err?.data?.error?.message || err?.data?.error?.detail || 'Hata oluştu');
     }
-  };
+  }
 
-  const handleChange = (field: string, value: unknown) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleJsonChange = (jsonData: Record<string, any>) => {
-    setFormData((prev) => ({ ...prev, ...jsonData }));
-  };
-
-  const handleImageChange = (url: string) => {
-    setFormData((prev) => ({ ...prev, image_url: url }));
-  };
-
-  const isLoading = isFetching || isCreating || isUpdating;
-
-  const localesForSelect = React.useMemo(() => {
-    return (localeOptions || []).map((l: any) => ({
-      value: String(l.value || ''),
-      label: String(l.label || l.value || ''),
-    }));
-  }, [localeOptions]);
+  const pageTitle = isNew ? 'Yeni Kategori' : (values.name || 'Kategori Düzenle');
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Button variant="ghost" size="icon" onClick={handleBack}>
-                <ArrowLeft className="h-4 w-4" />
-              </Button>
-              <div>
-                <CardTitle className="text-base">
-                  {isNew ? t('actions.create') : t('actions.edit')}
-                </CardTitle>
-                <CardDescription>
-                  {isNew ? 'Yeni kategori oluştur' : `${category?.name || ''} düzenle`}
-                </CardDescription>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <AdminLocaleSelect
-                options={localesForSelect}
-                value={activeLocale}
-                onChange={handleLocaleChange}
-                disabled={isLoading}
-              />
-            </div>
-          </div>
-        </CardHeader>
-      </Card>
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-wrap items-center gap-2">
+          <Button variant="outline" onClick={() => router.back()} disabled={busy}>
+            <ArrowLeft className="mr-2 size-4" />Geri
+          </Button>
+          <h1 className="text-lg font-semibold">{pageTitle}</h1>
+          <Badge variant="secondary">{queryLocale}</Badge>
+          {isNew ? <Badge>YENİ</Badge> : <Badge variant="secondary">DÜZENLE</Badge>}
+        </div>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" onClick={() => router.push(`/admin/categories?locale=${queryLocale}`)} disabled={busy}>İptal</Button>
+          <Button onClick={() => handleSubmit()} disabled={busy}><Save className="mr-2 size-4" />Kaydet</Button>
+        </div>
+      </div>
 
       {/* Tabs */}
-      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'form' | 'json')}>
+      <Tabs defaultValue="form">
         <TabsList>
           <TabsTrigger value="form">Form</TabsTrigger>
-          <TabsTrigger value="json">
-            <FileJson className="h-4 w-4 mr-2" />
-            JSON
-          </TabsTrigger>
+          <TabsTrigger value="json"><FileJson className="h-4 w-4 mr-1.5" />JSON</TabsTrigger>
         </TabsList>
 
-        {/* Form Tab */}
-        <TabsContent value="form">
+        {/* ── Form Tab ── */}
+        <TabsContent value="form" className="mt-4">
           <form onSubmit={handleSubmit}>
             <Card>
-              <CardContent className="pt-6 space-y-6">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                  {/* Main Column */}
-                  <div className="lg:col-span-2 space-y-6">
-                    {/* Name */}
-                    <div className="space-y-2">
-                      <Label htmlFor="name">{t('table.name')} *</Label>
-                      <Input
-                        id="name"
-                        value={formData.name}
-                        onChange={(e) => handleChange('name', e.target.value)}
-                        disabled={isLoading}
-                        placeholder="Örn: İndustrial Coolers"
-                      />
+              <CardHeader>
+                <CardTitle className="text-sm">Kategori Bilgileri</CardTitle>
+                <CardDescription>Kategori adı, açıklaması, modülü ve görseli.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid gap-6 lg:grid-cols-12">
+                  {/* Left column */}
+                  <div className="space-y-4 lg:col-span-8">
+                    {/* Locale + Toggles */}
+                    <div className="grid gap-4 md:grid-cols-3">
+                      <div className="space-y-2">
+                        <Label>Dil</Label>
+                        <Select value={activeLocale || ''} onValueChange={(v) => setActiveLocale(v)} disabled={busy || !localeOptions?.length}>
+                          <SelectTrigger><SelectValue placeholder="Dil seç" /></SelectTrigger>
+                          <SelectContent>
+                            {(localeOptions ?? []).map((l: any) => (
+                              <SelectItem key={l.value} value={String(l.value)}>{String(l.label ?? l.value)}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="flex items-end gap-4 md:col-span-2">
+                        <div className="flex items-center gap-2">
+                          <Checkbox id="cat_active" checked={values.is_active} onCheckedChange={(v) => handleChange('is_active', v === true)} disabled={busy} />
+                          <Label htmlFor="cat_active">Aktif</Label>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Checkbox id="cat_featured" checked={values.is_featured} onCheckedChange={(v) => handleChange('is_featured', v === true)} disabled={busy} />
+                          <Label htmlFor="cat_featured">Öne Çıkan</Label>
+                        </div>
+                      </div>
                     </div>
 
-                    {/* Slug */}
-                    <div className="space-y-2">
-                      <Label htmlFor="slug">{t('table.slug')} *</Label>
-                      <Input
-                        id="slug"
-                        value={formData.slug}
-                        onChange={(e) => handleChange('slug', e.target.value)}
-                        disabled={isLoading}
-                        placeholder="Örn: industrial-coolers"
-                      />
-                    </div>
+                    <Separator />
 
-                    {/* Description */}
-                    <div className="space-y-2">
-                      <Label htmlFor="description">Açıklama</Label>
-                      <Textarea
-                        id="description"
-                        value={formData.description}
-                        onChange={(e) => handleChange('description', e.target.value)}
-                        disabled={isLoading}
-                        rows={4}
-                        placeholder="Kategori açıklaması"
-                      />
+                    {/* Name + Slug */}
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <div className="space-y-2">
+                        <Label>Kategori Adı *</Label>
+                        <Input value={values.name} onChange={(e) => handleChange('name', e.target.value)} disabled={busy} placeholder="Kategori adı" />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Slug</Label>
+                        <Input value={values.slug} onFocus={() => setSlugTouched(true)} onChange={(e) => handleChange('slug', e.target.value)} disabled={busy} placeholder="otomatik-olusturulur" />
+                      </div>
                     </div>
 
                     {/* Module */}
                     <div className="space-y-2">
-                      <Label htmlFor="module">{t('table.module')}</Label>
-                      <Select
-                        value={formData.module_key}
-                        onValueChange={(v) => handleChange('module_key', v)}
-                        disabled={isLoading}
-                      >
-                        <SelectTrigger id="module">
-                          <SelectValue />
-                        </SelectTrigger>
+                      <Label>Modül</Label>
+                      <Select value={values.module_key || 'vistainsaat'} onValueChange={(v) => handleChange('module_key', v)} disabled={busy}>
+                        <SelectTrigger><SelectValue /></SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="product">{t('modules.product')}</SelectItem>
-                          <SelectItem value="services">{t('modules.services')}</SelectItem>
-                          <SelectItem value="news">{t('modules.news')}</SelectItem>
-                          <SelectItem value="library">{t('modules.library')}</SelectItem>
-                          <SelectItem value="about">{t('modules.about')}</SelectItem>
-                          <SelectItem value="sparepart">{t('modules.sparepart')}</SelectItem>
-                          <SelectItem value="references">{t('modules.references')}</SelectItem>
+                          <SelectItem value="vistainsaat">Vista İnşaat</SelectItem>
+                          <SelectItem value="product">Ürünler</SelectItem>
+                          <SelectItem value="services">Hizmetler</SelectItem>
+                          <SelectItem value="news">Haberler</SelectItem>
+                          <SelectItem value="library">Kütüphane</SelectItem>
+                          <SelectItem value="about">Hakkımızda</SelectItem>
+                          <SelectItem value="references">Referanslar</SelectItem>
+                          <SelectItem value="general">Genel</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
 
-                    {/* Icon & Alt */}
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="icon">Icon</Label>
-                        <Input
-                          id="icon"
-                          value={formData.icon}
-                          onChange={(e) => handleChange('icon', e.target.value)}
-                          disabled={isLoading}
-                          placeholder="fa-cube"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="alt">Alt Text</Label>
-                        <Input
-                          id="alt"
-                          value={formData.alt}
-                          onChange={(e) => handleChange('alt', e.target.value)}
-                          disabled={isLoading}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Display Order */}
+                    {/* Description */}
                     <div className="space-y-2">
-                      <Label htmlFor="display_order">Sıralama</Label>
-                      <Input
-                        id="display_order"
-                        type="number"
-                        value={formData.display_order}
-                        onChange={(e) => handleChange('display_order', Number(e.target.value))}
-                        disabled={isLoading}
-                      />
+                      <Label>Açıklama</Label>
+                      <Textarea rows={3} value={values.description} onChange={(e) => handleChange('description', e.target.value)} disabled={busy} placeholder="Kategori açıklaması..." />
                     </div>
 
-                    {/* Toggles */}
-                    <div className="flex gap-6">
-                      <div className="flex items-center gap-2">
-                        <Switch
-                          id="is_active"
-                          checked={formData.is_active}
-                          onCheckedChange={(v) => handleChange('is_active', v)}
-                          disabled={isLoading}
-                        />
-                        <Label htmlFor="is_active" className="cursor-pointer">
-                          {t('table.active')}
-                        </Label>
+                    {/* Icon */}
+                    <div className="space-y-2">
+                      <Label>Icon</Label>
+                      <Input value={values.icon} onChange={(e) => handleChange('icon', e.target.value)} disabled={busy} placeholder="fa-cube veya lucide icon adı" />
+                    </div>
+
+                    <Separator />
+
+                    {/* SEO */}
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <div className="space-y-2">
+                        <Label>Meta Başlık</Label>
+                        <Input value={values.meta_title} onChange={(e) => handleChange('meta_title', e.target.value)} disabled={busy} />
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Switch
-                          id="is_featured"
-                          checked={formData.is_featured}
-                          onCheckedChange={(v) => handleChange('is_featured', v)}
-                          disabled={isLoading}
-                        />
-                        <Label htmlFor="is_featured" className="cursor-pointer">
-                          {t('table.featured')}
-                        </Label>
+                      <div className="space-y-2">
+                        <Label>Alt Text</Label>
+                        <Input value={values.alt} onChange={(e) => handleChange('alt', e.target.value)} disabled={busy} />
                       </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Meta Açıklama</Label>
+                      <Textarea rows={2} value={values.meta_description} onChange={(e) => handleChange('meta_description', e.target.value)} disabled={busy} />
                     </div>
                   </div>
 
-                  {/* Sidebar - Image */}
-                  <div className="space-y-6">
-                    <AdminImageUploadField
-                      label="Kategori Görseli"
-                      value={formData.image_url}
-                      onChange={handleImageChange}
-                      disabled={isLoading}
-                    />
+                  {/* Right sidebar */}
+                  <div className="space-y-4 lg:col-span-4">
+                    <div className="space-y-2">
+                      <Label>Sıralama</Label>
+                      <Input type="number" min={0} value={values.display_order} onChange={(e) => handleChange('display_order', e.target.value)} disabled={busy} />
+                    </div>
+
+                    <AdminImageUploadField label="Kategori Görseli" bucket="public" folder="categories" value={norm(values.image_url)} onChange={(url) => handleChange('image_url', norm(url))} disabled={busy} />
+
+                    {isNew && (
+                      <>
+                        <Separator />
+                        <div className="flex items-start gap-2">
+                          <Checkbox id="cat_replicate" checked={values.replicate_all_locales} onCheckedChange={(v) => handleChange('replicate_all_locales', v === true)} disabled={busy} />
+                          <Label htmlFor="cat_replicate" className="leading-none">Tüm dillere kopyala</Label>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
 
-                {/* Actions */}
                 <div className="flex justify-end gap-3 pt-4 border-t">
-                  <Button type="button" variant="outline" onClick={handleBack} disabled={isLoading}>
-                    {t('actions.cancel')}
-                  </Button>
-                  <Button type="submit" disabled={isLoading}>
-                    <Save className="h-4 w-4 mr-2" />
-                    {t('actions.save')}
-                  </Button>
+                  <Button type="button" variant="outline" onClick={() => router.back()} disabled={busy}>İptal</Button>
+                  <Button type="submit" disabled={busy}><Save className="mr-2 size-4" />Kaydet</Button>
                 </div>
               </CardContent>
             </Card>
           </form>
         </TabsContent>
 
-        {/* JSON Tab */}
-        <TabsContent value="json">
+        {/* ── JSON Tab ── */}
+        <TabsContent value="json" className="mt-4">
           <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Kategori Verisi (JSON)</CardTitle>
-              <CardDescription>
-                Tüm kategori alanlarını JSON olarak düzenleyebilirsiniz.
-              </CardDescription>
-            </CardHeader>
+            <CardHeader><CardTitle className="text-sm">JSON Veri</CardTitle></CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2">
-                  <AdminJsonEditor
-                    value={formData}
-                    onChange={handleJsonChange}
-                    disabled={isLoading}
-                    height={500}
-                  />
-                </div>
-                <div className="space-y-4">
-                  <AdminImageUploadField
-                    label="Kategori Görseli"
-                    value={formData.image_url}
-                    onChange={handleImageChange}
-                    disabled={isLoading}
-                  />
-                </div>
-              </div>
+              <AdminJsonEditor value={values} onChange={(next) => setValues(next as FormValues)} disabled={busy} height={500} />
               <div className="flex justify-end gap-3 pt-4 border-t">
-                <Button type="button" variant="outline" onClick={handleBack} disabled={isLoading}>
-                  {t('actions.cancel')}
-                </Button>
-                <Button onClick={handleSubmit} disabled={isLoading}>
-                  <Save className="h-4 w-4 mr-2" />
-                  {t('actions.save')}
-                </Button>
+                <Button type="button" variant="outline" onClick={() => router.back()} disabled={busy}>İptal</Button>
+                <Button onClick={() => handleSubmit()} disabled={busy}><Save className="mr-2 size-4" />Kaydet</Button>
               </div>
             </CardContent>
           </Card>
