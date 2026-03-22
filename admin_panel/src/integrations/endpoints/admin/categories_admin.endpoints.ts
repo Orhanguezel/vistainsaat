@@ -49,6 +49,13 @@ export const categoriesAdminApi = baseApi.injectEndpoints({
         method: 'GET',
         params: cleanParams(params as Record<string, unknown> | undefined),
       }),
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map((c) => ({ type: 'Category' as const, id: c.id })),
+              { type: 'Category' as const, id: 'LIST' },
+            ]
+          : [{ type: 'Category' as const, id: 'LIST' }],
     }),
 
     /* --------------------------------------------------------- */
@@ -60,6 +67,7 @@ export const categoriesAdminApi = baseApi.injectEndpoints({
         method: 'GET',
         params: cleanParams(locale ? { locale } : undefined),
       }),
+      providesTags: (_result, _error, { id }) => [{ type: 'Category' as const, id }],
     }),
 
     /* --------------------------------------------------------- */
@@ -71,6 +79,7 @@ export const categoriesAdminApi = baseApi.injectEndpoints({
         method: 'POST',
         body,
       }),
+      invalidatesTags: [{ type: 'Category', id: 'LIST' }],
     }),
 
     /* --------------------------------------------------------- */
@@ -82,6 +91,10 @@ export const categoriesAdminApi = baseApi.injectEndpoints({
         method: 'PATCH',
         body: patch,
       }),
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: 'Category', id },
+        { type: 'Category', id: 'LIST' },
+      ],
     }),
 
     /* --------------------------------------------------------- */
@@ -92,6 +105,10 @@ export const categoriesAdminApi = baseApi.injectEndpoints({
         url: `/admin/categories/${encodeURIComponent(id)}`,
         method: 'DELETE',
       }),
+      invalidatesTags: (_result, _error, id) => [
+        { type: 'Category', id },
+        { type: 'Category', id: 'LIST' },
+      ],
     }),
 
     /* --------------------------------------------------------- */
@@ -103,6 +120,7 @@ export const categoriesAdminApi = baseApi.injectEndpoints({
         method: 'POST',
         body: payload,
       }),
+      invalidatesTags: [{ type: 'Category', id: 'LIST' }],
     }),
 
     /* --------------------------------------------------------- */
@@ -114,6 +132,10 @@ export const categoriesAdminApi = baseApi.injectEndpoints({
         method: 'PATCH',
         body: { is_active },
       }),
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: 'Category', id },
+        { type: 'Category', id: 'LIST' },
+      ],
     }),
 
     /* --------------------------------------------------------- */
@@ -125,6 +147,10 @@ export const categoriesAdminApi = baseApi.injectEndpoints({
         method: 'PATCH',
         body: { is_featured },
       }),
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: 'Category', id },
+        { type: 'Category', id: 'LIST' },
+      ],
     }),
 
     /* --------------------------------------------------------- */
@@ -139,6 +165,10 @@ export const categoriesAdminApi = baseApi.injectEndpoints({
           alt: alt ?? null,
         },
       }),
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: 'Category', id },
+        { type: 'Category', id: 'LIST' },
+      ],
     }),
   }),
 

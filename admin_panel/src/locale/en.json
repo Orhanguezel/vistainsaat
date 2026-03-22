@@ -3529,6 +3529,7 @@
       },
       "filters": {
         "searchPlaceholder": "Search by name or slug...",
+        "locale": "Language",
         "allLocales": "All Languages",
         "allModules": "All Modules",
         "onlyActive": "Only active",
@@ -3565,6 +3566,7 @@
         "unfeatured": "Removed from featured"
       },
       "table": {
+        "image": "Image",
         "name": "Name",
         "slug": "Slug",
         "locale": "Language",

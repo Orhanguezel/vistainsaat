@@ -3628,6 +3628,7 @@
       },
       "filters": {
         "searchPlaceholder": "İsim veya slug ile ara...",
+        "locale": "Dil",
         "allLocales": "Tüm Diller",
         "allModules": "Tüm Modüller",
         "onlyActive": "Sadece aktif",
@@ -3664,6 +3665,7 @@
         "unfeatured": "Öne çıkarmaktan kaldırıldı"
       },
       "table": {
+        "image": "Görsel",
         "name": "Ad",
         "slug": "Slug",
         "locale": "Dil",

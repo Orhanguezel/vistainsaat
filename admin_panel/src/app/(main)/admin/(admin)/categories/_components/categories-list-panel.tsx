@@ -286,6 +286,7 @@ export default function CategoriesListPanel({ initialModuleKey }: { initialModul
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-12.5">#</TableHead>
+                    <TableHead className="w-16">{t('table.image')}</TableHead>
                     <TableHead>{t('table.name')}</TableHead>
                     <TableHead>{t('table.slug')}</TableHead>
                     <TableHead className="w-25">{t('table.locale')}</TableHead>
@@ -300,6 +301,18 @@ export default function CategoriesListPanel({ initialModuleKey }: { initialModul
                     <TableRow key={item.id}>
                       <TableCell className="text-muted-foreground text-sm">
                         {index + 1}
+                      </TableCell>
+
+                      <TableCell>
+                        {item.image_url ? (
+                          <img
+                            src={item.image_url}
+                            alt={item.name || ''}
+                            className="size-10 rounded object-cover"
+                          />
+                        ) : (
+                          <div className="size-10 rounded bg-muted flex items-center justify-center text-muted-foreground text-xs">—</div>
+                        )}
                       </TableCell>
 
                       <TableCell>
