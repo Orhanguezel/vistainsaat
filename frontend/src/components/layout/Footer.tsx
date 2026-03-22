@@ -139,6 +139,12 @@ export function Footer({
             >
               {t('terms')}
             </Link>
+            <span className="surface-dark-text inline-flex min-h-9 items-center py-1 text-xs ml-2 sm:ml-4 border-l border-gray-700 pl-4 sm:pl-6">
+              Design by{' '}
+              <a href="https://guezelwebdesign.com" target="_blank" rel="nofollow noopener noreferrer" className="ml-1 text-(--color-brand-light) hover:text-white transition-colors hover:underline font-medium tracking-wide">
+                GWD
+              </a>
+            </span>
           </div>
         </div>
       </div>
