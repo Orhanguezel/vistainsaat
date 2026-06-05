@@ -19,9 +19,11 @@ export function HeroVideoPlayer({ src, mobileSrc, poster, badge, title, descript
   const fullVideoRef = useRef<HTMLVideoElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   // Detect mobile device
   useEffect(() => {
+    setMounted(true);
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 1024); // Use 1024 to match LG break
     };
@@ -29,6 +31,11 @@ export function HeroVideoPlayer({ src, mobileSrc, poster, badge, title, descript
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  // Arka plan videosunu yalnızca masaüstünde ve hidrasyondan sonra otomatik oynat.
+  // Mobilde poster gösterilir → ağır hero mp4'ü sayfa açılışında indirilmez (499 abort'larını önler).
+  // Video, herkes için tıklayınca tam ekranda talep üzerine yüklenir.
+  const showBgVideo = mounted && !isMobile;
 
   const openFullscreen = useCallback(() => {
     setIsFullscreen(true);
@@ -56,21 +63,34 @@ export function HeroVideoPlayer({ src, mobileSrc, poster, badge, title, descript
     <>
       {/* Background auto-playing video */}
       <div
-        className="group relative flex cursor-pointer flex-col overflow-hidden aspect-9/16 sm:aspect-4/3 lg:aspect-auto lg:flex-1 min-h-[520px] lg:min-h-0"
+        className="group relative flex cursor-pointer flex-col overflow-hidden aspect-9/16 sm:aspect-4/3 lg:aspect-auto lg:flex-1 min-h-130 lg:min-h-0"
         onClick={openFullscreen}
       >
         <div className="relative flex-1 overflow-hidden">
-          <video
-            ref={bgVideoRef}
-            autoPlay
-            muted
-            loop
-            playsInline
-            className="absolute inset-0 h-full w-full object-cover"
-            poster={poster}
-          >
-            <source src={currentSrc} type="video/mp4" />
-          </video>
+          {showBgVideo ? (
+            <video
+              ref={bgVideoRef}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              className="absolute inset-0 h-full w-full object-cover"
+              poster={poster}
+            >
+              <source src={currentSrc} type="video/mp4" />
+            </video>
+          ) : poster ? (
+            // Mobil + ilk paint: yalnızca poster (video indirilmez)
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={poster}
+              alt={title}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          ) : (
+            <div className="absolute inset-0 h-full w-full bg-(--color-bg-muted)" />
+          )}
           {/* Video badge — top left */}
           <div className="absolute left-4 top-4 z-10 flex items-center gap-1.5 rounded-sm bg-white px-3 py-1.5 text-xs font-semibold text-(--color-text-primary)">
             <Play className="size-3 fill-current" />

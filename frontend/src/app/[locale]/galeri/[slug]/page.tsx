@@ -15,7 +15,19 @@ import { GalleryImageGrid } from '@/components/gallery/GalleryImageGrid';
 
 const GALLERY_PLACEHOLDER_SRC = '/media/gallery-placeholder.svg';
 
+// Geçersiz slug'lar ("null", "undefined", boş) için API'yi hiç çağırma; doğrudan 404.
+// `/galeri/null` gibi eski/önbellekli URL'lerin tarayıcı tarafından çekilmesini ucuza karşılar.
+function isValidSlug(slug: string | undefined): slug is string {
+  return (
+    typeof slug === 'string' &&
+    slug.trim().length > 0 &&
+    slug !== 'null' &&
+    slug !== 'undefined'
+  );
+}
+
 async function fetchGallery(slug: string, locale: string) {
+  if (!isValidSlug(slug)) return null;
   try {
     const res = await fetch(
       `${API_BASE_URL}/galleries/${encodeURIComponent(slug)}?locale=${locale}`,

@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"/>
+<title>Vista İnşaat — Ziyaretçi ve Trafik Analizi (22 May – 5 Haz 2026)</title>
+<style>
+  @page { size:A4; margin:17mm 15mm; }
+  * { box-sizing:border-box; }
+  body { margin:0; color:#1e1c1a; font-family:'DejaVu Sans',Arial,Helvetica,sans-serif;
+         font-size:11.5px; line-height:1.46; background:#fff; }
+  .cover { border-bottom:3px solid #b8a98a; padding-bottom:16px; margin-bottom:18px; }
+  .eyebrow { color:#8a7a5c; font-size:10.5px; font-weight:700; letter-spacing:.10em;
+             text-transform:uppercase; margin-bottom:7px; }
+  h1 { margin:0 0 9px; font-size:25px; line-height:1.14; color:#1e1c1a; letter-spacing:-.01em; }
+  h2 { margin:21px 0 9px; font-size:16px; color:#1e1c1a; border-bottom:1px solid #e7e0d2;
+       padding-bottom:5px; }
+  h3 { margin:13px 0 7px; font-size:12.5px; color:#6b5d3f; }
+  .meta { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; margin-top:13px; }
+  .meta div, .note, .metric, .callout { border:1px solid #e7e0d2; border-radius:8px;
+       padding:9px 11px; background:#faf8f3; }
+  .meta strong, .metric strong { display:block; color:#8a7a5c; font-size:9.5px;
+       text-transform:uppercase; margin-bottom:3px; letter-spacing:.04em; }
+  .summary { display:grid; grid-template-columns:repeat(4,1fr); gap:9px; margin:11px 0 16px; }
+  .metric span { display:block; font-size:21px; color:#1e1c1a; font-weight:700; }
+  .metric small { color:#8a7a5c; font-size:9.5px; }
+  table { width:100%; border-collapse:collapse; margin:9px 0 13px; }
+  th,td { border:1px solid #ece5d7; padding:6px 8px; text-align:left; vertical-align:top; }
+  th { background:#f3eee2; color:#5b4f37; font-size:10.5px; }
+  tr:nth-child(even) td { background:#fbf9f5; }
+  tr.tot td { font-weight:700; background:#f3eee2; }
+  code { background:#f3eee2; padding:1px 4px; border-radius:4px; font-size:10.5px; color:#6b5d3f; }
+  .chart { margin:9px 0 16px; border:1px solid #e7e0d2; border-radius:8px; padding:11px 13px; }
+  .bar-row { display:grid; grid-template-columns:120px 1fr 40px; gap:9px; align-items:center; margin:5px 0; }
+  .hbar-row { display:grid; grid-template-columns:26px 1fr 34px; gap:7px; align-items:center; margin:3px 0; }
+  .bar-row strong, .hbar-row strong { font-size:10px; color:#5b4f37; font-weight:600; }
+  .bar-track { height:13px; background:#f1ece0; border-radius:999px; overflow:hidden; }
+  .bar { height:100%; background:linear-gradient(90deg,#b8a98a,#d8c9a6); border-radius:999px; }
+  .bar.gold2 { background:linear-gradient(90deg,#a9986f,#cdbb92); }
+  .bar.bot { background:linear-gradient(90deg,#9a5b3a,#c98a57); }
+  .muted { color:#8a7d68; }
+  .good { color:#3f7a4a; font-weight:700; }
+  .warn { color:#a46200; font-weight:700; }
+  .bad { color:#9a3b2a; font-weight:700; }
+  ul { margin:7px 0 11px 17px; padding:0; }
+  li { margin:4px 0; }
+  .callout { background:#fbf6e9; border-color:#e6d6a8; margin:11px 0; }
+  .callout.gold { background:#faf6ec; border-color:#d8c08a; }
+  .callout.red { background:#fbefe9; border-color:#e6b69e; }
+  .two-col { display:grid; grid-template-columns:1fr 1fr; gap:13px; }
+  .footer { margin-top:22px; padding-top:9px; border-top:1px solid #e7e0d2; color:#8a7d68; font-size:9.5px; }
+  .pill { display:inline-block; background:#1e1c1a; color:#d8c9a6; font-size:9px; padding:2px 7px;
+          border-radius:999px; letter-spacing:.05em; }
+</style></head><body>
+
+<section class="cover">
+  <div class="eyebrow">Vista İnşaat · Dijital Performans Raporu</div>
+  <h1>Ziyaretçi ve Site Trafiği Analizi</h1>
+  <p class="muted">
+    Bu rapor <strong>www.vistainsaat.com</strong> canlı sunucusunun nginx erişim loglarına dayanır.
+    Sunucu logları yalnızca <strong>14 günlük</strong> tutulduğundan (logrotate: rotate 14), istenen
+    "son 1 ay" yerine <strong>logların kapsadığı tüm dönem olan 22 Mayıs – 5 Haziran 2026 (15 gün)</strong>
+    analiz edilmiştir. Rakamlar; arama motoru botları, datacenter tarayıcıları, headless bot-farm ve
+    yurt dışı referrer-spam trafiği <strong>titizlikle ayıklandıktan sonraki gerçek insan trafiğini</strong> yansıtır.
+  </p>
+  <div class="meta">
+    <div><strong>Rapor tarihi</strong>5 Haziran 2026</div>
+    <div><strong>Kapsam</strong>22 May – 5 Haz 2026 (15 gün)</div>
+    <div><strong>Alan adı</strong>www.vistainsaat.com</div>
+  </div>
+</section>
+
+<section>
+  <h2>Yönetici Özeti</h2>
+  <div class="summary">
+    <div class="metric"><strong>Gerçek tekil insan ziyaretçi</strong><span>39</span><small>15 gün · gerçek tarayıcı IP</small></div>
+    <div class="metric"><strong>Tam sayfa render (insan)</strong><span>63</span><small>bot-temizlenmiş</small></div>
+    <div class="metric"><strong>Ham bot/crawler isteği</strong><span>~4,230</span><small>UA ile işaretli</small></div>
+    <div class="metric"><strong>Ayıklanan bot/spam IP</strong><span>64</span><small>datacenter + farm</small></div>
+  </div>
+
+  <div class="callout gold">
+    <strong class="warn">Ana bulgu: Sitenin ham trafiğinin büyük çoğunluğu bot/crawler kaynaklıdır.</strong>
+    Vista İnşaat'a atfedilen <strong>10,087 istek satırının</strong> yalnızca küçük bir bölümü
+    gerçek insandır. 15 gün boyunca yaklaşık <strong>39 tekil gerçek ziyaretçi</strong> ve
+    <strong>63 tam sayfa görüntüleme</strong> tespit edildi (günlük ortalama ~4.2 render).
+    Geri kalan trafik; Ahrefs/GPTBot/Bingbot/Googlebot gibi crawler'lar, bir <strong>headless bot-farm
+    (69.12.x)</strong> ve <strong>58 adet yurt dışı (Vietnam) referrer-spam IP'sidir</strong>.
+  </div>
+
+  <p>Öne çıkan tespitler:</p>
+  <ul>
+    <li>Gerçek ziyaretçilerin <strong>%75'i Türkçe (TR)</strong> içeriğe,
+        kalanı EN/DE/PL dillerine yöneldi — hedef kitle ağırlıklı <strong>Türkiye</strong> kaynaklı (Türk Telekom/Turkcell).</li>
+    <li>En çok görüntülenen sayfa <code>/tr/projeler/vista-lagoon</code> (13 render) —
+        aynı zamanda <strong>Google organik inişlerinin 7'sini</strong> tek başına çekti.</li>
+    <li>Trafik kaynağı olarak <strong>Google organik arama</strong> (17 render / 13 IP) başı çekiyor;
+        ücretli reklam (gclid) trafiği <strong>tespit edilmedi</strong>.</li>
+    <li>Cihaz dağılımı <strong>%70 mobil</strong> / %30 masaüstü.</li>
+    <li>Sunucu sağlığı <strong>mükemmel</strong>: 5xx oranı <strong>%0.0</strong>, 2xx oranı <strong>97.0%</strong>.</li>
+    <li>Sitede <strong>hiçbir client-side analitik (GA4/Plausible) kurulu değil</strong> — gerçek
+        dönüşüm/etkileşim ancak bu rapordaki log analiziyle ölçülebiliyor.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Günlük Gerçek Ziyaretçi Grafiği (22 May – 5 Haz)</h2>
+  <div class="chart">
+    <div class="bar-row"><strong>22 May</strong><div class="bar-track"><div class="bar" style="width:8.3%"></div></div><span>1</span></div>
+<div class="bar-row"><strong>23 May</strong><div class="bar-track"><div class="bar" style="width:8.3%"></div></div><span>1</span></div>
+<div class="bar-row"><strong>24 May</strong><div class="bar-track"><div class="bar" style="width:8.3%"></div></div><span>1</span></div>
+<div class="bar-row"><strong>25 May</strong><div class="bar-track"><div class="bar" style="width:100.0%"></div></div><span>12</span></div>
+<div class="bar-row"><strong>26 May</strong><div class="bar-track"><div class="bar" style="width:16.7%"></div></div><span>2</span></div>
+<div class="bar-row"><strong>27 May</strong><div class="bar-track"><div class="bar" style="width:16.7%"></div></div><span>2</span></div>
+<div class="bar-row"><strong>28 May</strong><div class="bar-track"><div class="bar" style="width:75.0%"></div></div><span>9</span></div>
+<div class="bar-row"><strong>29 May</strong><div class="bar-track"><div class="bar" style="width:50.0%"></div></div><span>6</span></div>
+<div class="bar-row"><strong>30 May</strong><div class="bar-track"><div class="bar" style="width:16.7%"></div></div><span>2</span></div>
+<div class="bar-row"><strong>31 May</strong><div class="bar-track"><div class="bar" style="width:0.0%"></div></div><span>0</span></div>
+<div class="bar-row"><strong>01 Haz</strong><div class="bar-track"><div class="bar" style="width:33.3%"></div></div><span>4</span></div>
+<div class="bar-row"><strong>02 Haz</strong><div class="bar-track"><div class="bar" style="width:25.0%"></div></div><span>3</span></div>
+<div class="bar-row"><strong>03 Haz</strong><div class="bar-track"><div class="bar" style="width:83.3%"></div></div><span>10</span></div>
+<div class="bar-row"><strong>04 Haz</strong><div class="bar-track"><div class="bar" style="width:0.0%"></div></div><span>0</span></div>
+<div class="bar-row"><strong>05 Haz</strong><div class="bar-track"><div class="bar" style="width:83.3%"></div></div><span>10</span></div>
+  </div>
+  <table>
+    <thead><tr><th>Tarih</th><th>Tam sayfa render</th><th>Tekil IP</th><th>En aktif IP payı</th></tr></thead>
+    <tbody>
+    <tr><td>22 May 2026</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>23 May 2026</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>24 May 2026</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>25 May 2026</td><td>12</td><td>6</td><td>5</td></tr>
+<tr><td>26 May 2026</td><td>2</td><td>2</td><td>1</td></tr>
+<tr><td>27 May 2026</td><td>2</td><td>1</td><td>2</td></tr>
+<tr><td>28 May 2026</td><td>9</td><td>1</td><td>9</td></tr>
+<tr><td>29 May 2026</td><td>6</td><td>1</td><td>6</td></tr>
+<tr><td>30 May 2026</td><td>2</td><td>2</td><td>1</td></tr>
+<tr><td>31 May 2026</td><td>0</td><td>0</td><td>0</td></tr>
+<tr><td>01 Haz 2026</td><td>4</td><td>3</td><td>2</td></tr>
+<tr><td>02 Haz 2026</td><td>3</td><td>1</td><td>3</td></tr>
+<tr><td>03 Haz 2026</td><td>10</td><td>3</td><td>5</td></tr>
+<tr><td>04 Haz 2026</td><td>0</td><td>0</td><td>0</td></tr>
+<tr><td>05 Haz 2026</td><td>10</td><td>4</td><td>5</td></tr><tr class="tot"><td>15 gün toplam</td><td>63</td><td>25*</td><td>—</td></tr>
+    </tbody>
+  </table>
+  <p class="muted" style="font-size:10px;">
+    * 15 günlük benzersiz tekil insan IP sayısıdır (gün-içi tekrar edenler tek sayılır).
+    "Tam sayfa render" = tarayıcının sayfayı gerçekten yüklediği (JS/CSS/font asset'lerini çektiği) olaylar;
+    Next.js'in arka planda yaptığı <code>_rsc</code> prefetch istekleri sayılmaz (referans rapor metodolojisiyle uyumlu).
+    Bu nedenle rakam, SPA içi gezinmeleri dışarıda bırakan <strong>muhafazakâr (alt sınır)</strong> bir ölçümdür.
+  </p>
+  <div class="callout">
+    <strong>28–29 Mayıs:</strong> Tek bir Türk Telekom ziyaretçisi (<code>78.180.78.222</code>) iki gün boyunca
+    haber + proje sayfalarını yoğun gezdi, yorumları okudu ve siteye bir kez <code>chatgpt.com</code>
+    referrer'ı ile geldi — <strong>AI-arama (ChatGPT) kaynaklı erken referral</strong> sinyali.
+  </div>
+</section>
+
+<section>
+  <h2>En Çok Görüntülenen Sayfalar</h2>
+  <div class="two-col">
+    <div>
+      <table>
+        <thead><tr><th>#</th><th>Sayfa</th><th>Render</th></tr></thead>
+        <tbody><tr><td>1</td><td><code>/tr/projeler/vista-lagoon</code></td><td><strong>13</strong></td></tr>
+<tr><td>2</td><td><code>/tr</code></td><td><strong>8</strong></td></tr>
+<tr><td>3</td><td><code>/tr/projeler</code></td><td><strong>6</strong></td></tr>
+<tr><td>4</td><td><code>/tr/projeler/vista-sunset</code></td><td><strong>4</strong></td></tr>
+<tr><td>5</td><td><code>/en</code></td><td><strong>3</strong></td></tr>
+<tr><td>6</td><td><code>/tr/projeler/vista-prestige-altintas</code></td><td><strong>2</strong></td></tr>
+<tr><td>7</td><td><code>/</code></td><td><strong>2</strong></td></tr>
+<tr><td>8</td><td><code>/tr/hizmetler</code></td><td><strong>2</strong></td></tr>
+<tr><td>9</td><td><code>/tr/galeri/vista-sunset-projesi</code></td><td><strong>2</strong></td></tr>
+<tr><td>10</td><td><code>/en/hizmetler/residential-construction</code></td><td><strong>2</strong></td></tr>
+<tr><td>11</td><td><code>/tr/haberler/istanbul-levent-ofis-kulesi-projesi</code></td><td><strong>2</strong></td></tr>
+<tr><td>12</td><td><code>/tr/haberler</code></td><td><strong>1</strong></td></tr>
+<tr><td>13</td><td><code>/tr/projeler/vista-lara-villalari</code></td><td><strong>1</strong></td></tr>
+<tr><td>14</td><td><code>/tr/projeler/vista-construction</code></td><td><strong>1</strong></td></tr></tbody>
+      </table>
+    </div>
+    <div>
+      <h3>Google organik iniş sayfaları</h3>
+      <table>
+        <thead><tr><th>#</th><th>Sayfa</th><th>İniş</th></tr></thead>
+        <tbody><tr><td>1</td><td><code>/tr/projeler/vista-lagoon</code></td><td>7</td></tr>
+<tr><td>2</td><td><code>/tr/projeler/vista-prestige-altintas</code></td><td>2</td></tr>
+<tr><td>3</td><td><code>/tr</code></td><td>2</td></tr>
+<tr><td>4</td><td><code>/tr/galeri/vista-sunset-projesi</code></td><td>2</td></tr>
+<tr><td>5</td><td><code>/tr/projeler/vista-construction</code></td><td>1</td></tr>
+<tr><td>6</td><td><code>/tr/projeler</code></td><td>1</td></tr>
+<tr><td>7</td><td><code>/en</code></td><td>1</td></tr>
+<tr><td>8</td><td><code>/tr/haberler/istanbul-levent-ofis-kulesi-projesi</code></td><td>1</td></tr></tbody>
+      </table>
+      <div class="callout gold" style="margin-top:8px;">
+        <strong>Vista Lagoon</strong> projesi sitenin <strong>yıldız sayfasıdır</strong>:
+        hem en çok görüntülenen hem de Google'dan en çok iniş alan içerik. Benzer kalitede
+        proje detay sayfaları üretmek organik trafiği büyütür.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Trafik Kaynakları, Dil ve Cihaz</h2>
+  <div class="two-col">
+    <div>
+      <h3>Trafik kaynakları (insan)</h3>
+      <table>
+        <thead><tr><th>Kaynak</th><th>Render</th><th>Tekil IP</th><th>Pay</th></tr></thead>
+        <tbody><tr><td>Google (organik/arama)</td><td>17</td><td>13</td><td>53%</td></tr>
+<tr><td>Direkt / boş referrer</td><td>11</td><td>5</td><td>34%</td></tr>
+<tr><td>Diğer referrer</td><td>3</td><td>1</td><td>9%</td></tr>
+<tr><td>Facebook</td><td>1</td><td>1</td><td>3%</td></tr></tbody>
+      </table>
+      <p class="muted" style="font-size:10px;">Ücretli reklam (Google Ads / gclid) trafiği bu dönemde görülmedi.</p>
+    </div>
+    <div>
+      <h3>Dil (locale) dağılımı</h3>
+      <table>
+        <thead><tr><th>Dil</th><th>Render</th><th>Pay</th></tr></thead>
+        <tbody><tr><td>TR</td><td>47</td><td>75%</td></tr>
+<tr><td>EN</td><td>9</td><td>14%</td></tr>
+<tr><td>DE</td><td>4</td><td>6%</td></tr>
+<tr><td>PL</td><td>3</td><td>5%</td></tr></tbody>
+      </table>
+      <h3>Cihaz</h3>
+      <table>
+        <thead><tr><th>Cihaz</th><th>Render</th><th>Pay</th></tr></thead>
+        <tbody>
+          <tr><td>Mobil</td><td>44</td><td>70%</td></tr>
+          <tr><td>Masaüstü</td><td>19</td><td>30%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <h3>Saatlik dağılım (UTC) — gerçek ziyaretçi render'ları</h3>
+  <div class="chart">
+    <div class="hbar-row"><strong>00</strong><div class="bar-track"><div class="bar gold2" style="width:0.0%"></div></div><span>0</span></div>
+<div class="hbar-row"><strong>01</strong><div class="bar-track"><div class="bar gold2" style="width:0.0%"></div></div><span>0</span></div>
+<div class="hbar-row"><strong>02</strong><div class="bar-track"><div class="bar gold2" style="width:0.0%"></div></div><span>0</span></div>
+<div class="hbar-row"><strong>03</strong><div class="bar-track"><div class="bar gold2" style="width:0.0%"></div></div><span>0</span></div>
+<div class="hbar-row"><strong>04</strong><div class="bar-track"><div class="bar gold2" style="width:0.0%"></div></div><span>0</span></div>
+<div class="hbar-row"><strong>05</strong><div class="bar-track"><div class="bar gold2" style="width:45.5%"></div></div><span>5</span></div>
+<div class="hbar-row"><strong>06</strong><div class="bar-track"><div class="bar gold2" style="width:9.1%"></div></div><span>1</span></div>
+<div class="hbar-row"><strong>07</strong><div class="bar-track"><div class="bar gold2" style="width:36.4%"></div></div><span>4</span></div>
+<div class="hbar-row"><strong>08</strong><div class="bar-track"><div class="bar gold2" style="width:0.0%"></div></div><span>0</span></div>
+<div class="hbar-row"><strong>09</strong><div class="bar-track"><div class="bar gold2" style="width:18.2%"></div></div><span>2</span></div>
+<div class="hbar-row"><strong>10</strong><div class="bar-track"><div class="bar gold2" style="width:9.1%"></div></div><span>1</span></div>
+<div class="hbar-row"><strong>11</strong><div class="bar-track"><div class="bar gold2" style="width:18.2%"></div></div><span>2</span></div>
+<div class="hbar-row"><strong>12</strong><div class="bar-track"><div class="bar gold2" style="width:100.0%"></div></div><span>11</span></div>
+<div class="hbar-row"><strong>13</strong><div class="bar-track"><div class="bar gold2" style="width:9.1%"></div></div><span>1</span></div>
+<div class="hbar-row"><strong>14</strong><div class="bar-track"><div class="bar gold2" style="width:9.1%"></div></div><span>1</span></div>
+<div class="hbar-row"><strong>15</strong><div class="bar-track"><div class="bar gold2" style="width:81.8%"></div></div><span>9</span></div>
+<div class="hbar-row"><strong>16</strong><div class="bar-track"><div class="bar gold2" style="width:63.6%"></div></div><span>7</span></div>
+<div class="hbar-row"><strong>17</strong><div class="bar-track"><div class="bar gold2" style="width:0.0%"></div></div><span>0</span></div>
+<div class="hbar-row"><strong>18</strong><div class="bar-track"><div class="bar gold2" style="width:18.2%"></div></div><span>2</span></div>
+<div class="hbar-row"><strong>19</strong><div class="bar-track"><div class="bar gold2" style="width:9.1%"></div></div><span>1</span></div>
+<div class="hbar-row"><strong>20</strong><div class="bar-track"><div class="bar gold2" style="width:36.4%"></div></div><span>4</span></div>
+<div class="hbar-row"><strong>21</strong><div class="bar-track"><div class="bar gold2" style="width:90.9%"></div></div><span>10</span></div>
+<div class="hbar-row"><strong>22</strong><div class="bar-track"><div class="bar gold2" style="width:9.1%"></div></div><span>1</span></div>
+<div class="hbar-row"><strong>23</strong><div class="bar-track"><div class="bar gold2" style="width:9.1%"></div></div><span>1</span></div>
+  </div>
+  <p class="muted" style="font-size:10px;">Yoğunluk öğlen 12:00 ve akşam 15:00–16:00 (UTC) saatlerinde — Türkiye saatiyle 15:00 ve 18:00–19:00.</p>
+</section>
+
+<section>
+  <h2>Bot / Crawler Manzarası <span class="pill">ham trafiğin çoğu</span></h2>
+  <p>
+    Aşağıdaki crawler ve bot kategorileri, log hacminin büyük kısmını oluşturur. Bunlar gerçek ziyaretçi
+    <em>değildir</em> ve yukarıdaki insan metriklerinden ayıklanmıştır — ancak SEO/AI görünürlüğü açısından
+    anlamlı sinyallerdir.
+  </p>
+  <div class="chart">
+    <div class="bar-row"><strong>Ahrefs</strong><div class="bar-track"><div class="bar gold2" style="width:100.0%"></div></div><span>479</span></div>
+<div class="bar-row"><strong>GPTBot</strong><div class="bar-track"><div class="bar gold2" style="width:75.2%"></div></div><span>360</span></div>
+<div class="bar-row"><strong>Headless bot-farm</strong><div class="bar-track"><div class="bar bot" style="width:60.3%"></div></div><span>289</span></div>
+<div class="bar-row"><strong>Applebot</strong><div class="bar-track"><div class="bar gold2" style="width:60.1%"></div></div><span>288</span></div>
+<div class="bar-row"><strong>Bingbot</strong><div class="bar-track"><div class="bar gold2" style="width:53.4%"></div></div><span>256</span></div>
+<div class="bar-row"><strong>Googlebot</strong><div class="bar-track"><div class="bar gold2" style="width:48.6%"></div></div><span>233</span></div>
+<div class="bar-row"><strong>FacebookExternalHit</strong><div class="bar-track"><div class="bar gold2" style="width:9.2%"></div></div><span>44</span></div>
+<div class="bar-row"><strong>ClaudeBot</strong><div class="bar-track"><div class="bar gold2" style="width:0.4%"></div></div><span>2</span></div>
+  </div>
+  <table>
+    <thead><tr><th>Bot / Crawler</th><th>Sahip</th><th>İstek satırı</th></tr></thead>
+    <tbody><tr><td>Ahrefs</td><td>SEO crawler</td><td>479</td></tr>
+<tr><td>GPTBot</td><td>OpenAI</td><td>360</td></tr>
+<tr><td>Headless bot-farm</td><td>69.12.x</td><td>289</td></tr>
+<tr><td>Applebot</td><td>Apple</td><td>288</td></tr>
+<tr><td>Bingbot</td><td>Microsoft</td><td>256</td></tr>
+<tr><td>Googlebot</td><td>Google</td><td>233</td></tr>
+<tr><td>FacebookExternalHit</td><td></td><td>44</td></tr>
+<tr><td>ClaudeBot</td><td>Anthropic</td><td>2</td></tr></tbody>
+  </table>
+  <div class="callout gold">
+    <strong class="good">AI-arama crawler ilgisi yüksek.</strong>
+    <strong>GPTBot (OpenAI, 360)</strong>, <strong>Applebot (288)</strong> ve <strong>ClaudeBot</strong>
+    siteyi aktif tarıyor — bu, ChatGPT/Apple/Claude gibi AI arama sonuçlarında görünürlük için fırsattır.
+    <code>llms.txt</code> + yapısal veri (JSON-LD) ile bu ilgi pekiştirilmeli.
+  </div>
+  <div class="callout red">
+    <strong class="bad">Tespit edilen kötü amaçlı/spam trafik:</strong> Tek bir aralıkta yoğunlaşan
+    <strong>headless bot-farm (69.12.x, 289 istek)</strong> belirli İngilizce makaleleri tekrar tekrar render etti;
+    ayrıca <strong>58 adet Vietnam (14.x/113.x) referrer-spam IP'si</strong> (315 istek)
+    sahte referrer ile <code>/pl</code> ve <code>/en</code> sayfalarına istek attı. Hacimleri düşük ve zararsız,
+    ancak izlenmeli; gerekirse nginx seviyesinde bu aralıklar engellenebilir.
+  </div>
+</section>
+
+<section>
+  <h2>Sunucu Sağlığı (HTTP Durum Kodları)</h2>
+  <table>
+    <thead><tr><th>Kategori</th><th>İstek</th><th>Oran</th><th>Değerlendirme</th></tr></thead>
+    <tbody>
+      <tr><td>2xx (başarılı)</td><td>9,378</td><td>97.0%</td><td class="good">Mükemmel</td></tr>
+      <tr><td>3xx (yönlendirme)</td><td>72</td><td>0.7%</td><td>Normal (locale/redirect)</td></tr>
+      <tr><td>4xx (istemci hatası)</td><td>214</td><td>2.2%</td><td>Çoğu iyi huylu (401 auth)</td></tr>
+      <tr><td>5xx (sunucu hatası)</td><td>0</td><td>0.0%</td><td class="good">Sıfır — backend stabil</td></tr>
+    </tbody>
+  </table>
+  <h3>İncelenmesi gereken küçük teknik bulgular</h3>
+  <ul>
+    <li><code>GET /tr/galeri/null</code> ve <code>/en/galeri/null</code> → <strong class="warn">404</strong>:
+        galeri linklerinde <code>null</code> slug üreten bir <strong>frontend hatası</strong> var, düzeltilmeli.</li>
+    <li><code>/api/auth/user</code> → 401 (×181): kullanıcı giriş yapmamışken normaldir, <strong>iyi huylu</strong>.</li>
+    <li><code>/api/monitoring/seo-issues</code> → 404 (×4): admin/monitoring endpoint'i eksik veya yanlış yolda.</li>
+    <li>Hero video (<code>/uploads/video/hero-*.mp4</code>) → 499 (×14): kullanıcılar video tam yüklenmeden
+        sayfadan ayrılıyor; <strong>mobilde hero videoyu lazy/poster ile hafifletmek</strong> önerilir.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Sonuç ve Öneriler</h2>
+  <ul>
+    <li><strong>Analitik kur (öncelik 1):</strong> Sitede GA4 veya Plausible yok. Gerçek dönüşüm, hemen çıkma
+        oranı ve teklif formu tamamlama oranı ölçülemiyor. <strong>Plausible/GA4 + teklif formu event takibi</strong> kurulmalı.</li>
+    <li><strong>Log altyapısını düzelt:</strong> vistainsaat ayrı bir <code>access_log</code> kullanmıyor; tüm
+        siteler host alanı olmayan ortak <code>access.log</code>'a yazıyor ve loglar yalnızca 14 gün tutuluyor.
+        Öneri: vhost'a özel <code>access_log /var/log/nginx/vistainsaat.access.log</code> + <code>$host</code> içeren
+        log_format + <code>rotate 30</code>. Böylece gelecekte gerçek aylık analiz mümkün olur.</li>
+    <li><strong>İçerik stratejisi:</strong> <code>vista-lagoon</code> proje sayfası organik trafiğin lokomotifi.
+        Diğer projeler için aynı kalitede SEO içeriği (görsel + açıklama + JSON-LD CreativeWork) üretilmeli.</li>
+    <li><strong>GEO/AI görünürlük:</strong> GPTBot/Applebot/ClaudeBot ilgisi yüksek; <code>llms.txt</code>,
+        Organization/LocalBusiness JSON-LD ve net künye bilgileri AI-arama görünürlüğünü artırır.</li>
+    <li><strong>Hatalar:</strong> <code>/galeri/null</code> 404 hatası giderilmeli; mobil hero video optimize edilmeli.</li>
+    <li><strong>Trafik büyütme:</strong> Gerçek insan trafiği düşük (~39 tekil/15 gün).
+        Google Ads kampanyası + sosyal medya (Instagram bio link UTM) ile bilinçli trafik akışı başlatılmalı.</li>
+  </ul>
+</section>
+
+<div class="footer">
+  Rapor kaynağı: www.vistainsaat.com canlı nginx erişim logları (22 Mayıs – 5 Haziran 2026, 15 gün).
+  Metodoloji: Ortak/host'suz nginx logundan referrer-host ile vistainsaat trafiği ayrıştırıldı; arama motoru
+  ve crawler UA'ları, datacenter IP'leri (reverse-DNS PTR), <code>_next/static</code>/API yüklemeyen sahte-referrer
+  botları, headless bot-farm (69.12.x) ve koordineli spam dalgaları (≥10 IP / tek sayfa / aynı UA) elendi.
+  Sayfa görüntüleme = tarayıcının asset yüklediği gerçek render; <code>_rsc</code> prefetch hariç.
+  Hazırlayan: Vista İnşaat Dijital Ekibi · GüzelWebDesign.
+</div>
+</body></html>

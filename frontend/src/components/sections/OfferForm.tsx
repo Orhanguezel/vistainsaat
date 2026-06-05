@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import api from '@/lib/axios';
+import { trackLead } from '@/lib/analytics';
 
 export function OfferFormClient({
   locale,
@@ -35,6 +36,11 @@ export function OfferFormClient({
           estimated_area: fd.get('quantity'),
           preferred_deadline: fd.get('deadline'),
         },
+      });
+      trackLead({
+        form: 'offer',
+        locale,
+        project_type: String(fd.get('product_interest') || ''),
       });
       toast.success(t('success'));
       (e.target as HTMLFormElement).reset();

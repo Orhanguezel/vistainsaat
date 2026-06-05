@@ -1,0 +1,36 @@
+# Vista İnşaat
+
+> Vista İnşaat; konut, ticari ve endüstriyel yapı projelerinde kaliteli ve sürdürülebilir
+> çözümler üreten bir inşaat firmasıdır. Modern mühendislik teknikleri ve yenilikçi tasarım
+> anlayışıyla projeler hayata geçirir; teklif ve proje değerlendirme hizmeti sunar.
+> Site çok dillidir (TR/EN). Alan adı: https://www.vistainsaat.com
+
+## Hizmetler
+- [Konut İnşaatı](https://www.vistainsaat.com/tr/hizmetler/konut-insaati)
+- [Ticari İnşaat](https://www.vistainsaat.com/tr/hizmetler/ticari-insaat)
+- [Restorasyon ve Güçlendirme](https://www.vistainsaat.com/tr/hizmetler/restorasyon-guclendirme)
+- [Proje Yönetimi](https://www.vistainsaat.com/tr/hizmetler/proje-yonetimi)
+- [Mimari Tasarım](https://www.vistainsaat.com/tr/hizmetler/mimari-tasarim)
+- [İç Mimari ve Dekorasyon](https://www.vistainsaat.com/tr/hizmetler/ic-mimari-dekorasyon)
+- [Tüm hizmetler](https://www.vistainsaat.com/tr/hizmetler)
+
+## Projeler
+- [Vista Lagoon](https://www.vistainsaat.com/tr/projeler/vista-lagoon)
+- [Vista Sunset](https://www.vistainsaat.com/tr/projeler/vista-sunset)
+- [Vista Lara Villaları](https://www.vistainsaat.com/tr/projeler/vista-lara-villalari)
+- [Vista Prestige](https://www.vistainsaat.com/tr/projeler/vista-prestige-altintas)
+- [Karaşah Plaza / İş Merkezi](https://www.vistainsaat.com/tr/projeler/karasah-plaza-is-merkezi)
+- [Tüm projeler](https://www.vistainsaat.com/tr/projeler)
+
+## Kurumsal
+- [Hakkımızda](https://www.vistainsaat.com/tr/hakkimizda)
+- [Galeri](https://www.vistainsaat.com/tr/galeri)
+- [Haberler / Blog](https://www.vistainsaat.com/tr/haberler)
+- [İletişim](https://www.vistainsaat.com/tr/iletisim)
+
+## Teklif
+- [Teklif Al / Proje Değerlendirme](https://www.vistainsaat.com/tr/teklif)
+
+## Optional
+- [Sitemap](https://www.vistainsaat.com/sitemap.xml)
+- [English homepage](https://www.vistainsaat.com/en)

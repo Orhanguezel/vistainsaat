@@ -24,6 +24,13 @@ const GoogleTagManager = dynamic(
     ),
   { ssr: false },
 );
+const OutboundLinkTracker = dynamic(
+  () =>
+    import('@/components/analytics/OutboundLinkTracker').then(
+      (m) => m.OutboundLinkTracker,
+    ),
+  { ssr: false },
+);
 const WhatsAppButton = dynamic<{ number?: string }>(
   () =>
     import('@/components/widgets/WhatsAppButton').then(
@@ -55,6 +62,7 @@ export function ClientShell({
       <WebVitals />
       <GoogleAnalytics />
       <GoogleTagManager />
+      <OutboundLinkTracker />
       <WhatsAppButton number={whatsappNumber} />
     </>
   );

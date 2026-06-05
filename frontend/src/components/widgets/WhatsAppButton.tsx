@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { MessageCircle, X } from 'lucide-react';
+import { trackContactClick } from '@/lib/analytics';
 
 const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
 
@@ -25,6 +26,7 @@ export function WhatsAppButton({ number }: { number?: string }) {
       target="_blank"
       rel="noopener noreferrer"
       aria-label="WhatsApp"
+      onClick={() => trackContactClick('whatsapp')}
       className="fab-success motion-pulse fixed bottom-6 left-6 z-50 flex size-11 items-center justify-center rounded-full shadow-lg transition-transform hover:scale-110 active:scale-95"
     >
       <MessageCircle className="size-5" />

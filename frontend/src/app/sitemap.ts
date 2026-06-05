@@ -13,6 +13,20 @@ type SitemapItem = {
   image_alt?: string | null;
 };
 
+/**
+ * Geçerli bir içerik slug'ı mı? Boş/null/undefined'ın yanı sıra, backend'den string
+ * olarak gelebilen "null" / "undefined" değerlerini de eler — aksi halde sitemap'e
+ * `/galeri/null` gibi 404 üreten URL'ler sızıyordu (bkz. trafik raporu, /galeri/null 404).
+ */
+export function isValidSlug(slug: unknown): slug is string {
+  return (
+    typeof slug === 'string' &&
+    slug.trim().length > 0 &&
+    slug !== 'null' &&
+    slug !== 'undefined'
+  );
+}
+
 function withDefaultParams(endpoint: string): string {
   const joiner = endpoint.includes('?') ? '&' : '?';
   return `${API_BASE_URL}${endpoint}${joiner}is_active=1&limit=500`;
@@ -27,7 +41,7 @@ async function fetchItems(endpoint: string): Promise<SitemapItem[]> {
     const data = await res.json();
     const items = Array.isArray(data) ? data : (data as any)?.items ?? [];
     return items
-      .filter((item: any) => item?.slug)
+      .filter((item: any) => isValidSlug(item?.slug))
       .map((item: any) => ({
         slug: item.slug,
         updated_at: item.updated_at ?? null,
