@@ -24,11 +24,11 @@ export function SeoIssueBeacon({
 
     if (typeof navigator !== 'undefined' && typeof navigator.sendBeacon === 'function') {
       const blob = new Blob([payload], { type: 'application/json' });
-      navigator.sendBeacon('/api/monitoring/seo-issues', blob);
+      navigator.sendBeacon('/monitoring/seo-issues', blob);
       return;
     }
 
-    void fetch('/api/monitoring/seo-issues', {
+    void fetch('/monitoring/seo-issues', {
       method: 'POST',
       headers: {
         'content-type': 'application/json',

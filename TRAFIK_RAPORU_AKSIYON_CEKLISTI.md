@@ -45,13 +45,16 @@ string `"null"`/`"undefined"` geçebiliyordu.
 - [x] `[KOD]` `galeri/[slug]/page.tsx` — geçersiz slug'da API çağrısı yapılmadan doğrudan 404 (savunma katmanı).
 - [x] `[VERİ]` Canlı API kontrol edildi: 3 galeri, hepsi geçerli slug — temiz. (Kalıcı: backend `slug NOT NULL` constraint önerisi durur.)
 
-### 2.2 `/api/monitoring/seo-issues` 404 (×4)  `[KOD/DEPLOY]` ✅ İNCELENDİ — KOD DEĞİŞİKLİĞİ GEREKMEZ
-**Tespit:** Next route handler (`app/api/monitoring/seo-issues/route.ts`) **doğru ve commit'li**;
-build çıktısında `ƒ /api/monitoring/seo-issues` olarak görünüyor. Beacon zaten sessizce başarısız oluyor
-(`.catch(() => undefined)`). Prod'daki 404 = **eski deploy artefaktı** (route son deploy'a girmemiş).
+### 2.2 `/api/monitoring/seo-issues` 404  `[KOD]` ✅ TAMAMLANDI (gerçek kök neden bulundu)
+**Gerçek kök neden:** nginx, `www.vistainsaat.com/api/*` isteklerini **backend'e (Fastify, :8086)** yönlendiriyor
+(`GET /api/site_settings/...` → 200 backend yanıtı ile doğrulandı). Bu yüzden frontend'deki Next route handler
+(`/api/monitoring/seo-issues`) **hiçbir zaman ulaşılamıyordu** — istek backend'e gidip 404 alıyordu.
+İlk "stale deploy" tahmini yanlıştı. (WebVitals prod'da POST atmıyor — yalnızca dev log; düzeltme gerekmez.)
 
-- [ ] `[DEPLOY]` Frontend'i yeniden deploy et ve `curl -X POST https://www.vistainsaat.com/api/monitoring/seo-issues`
-  ile 200/400 döndüğünü doğrula (kod harici).
+- [x] `[KOD]` Route `/api/monitoring/seo-issues` → **`/monitoring/seo-issues`** taşındı (api dışı namespace,
+  nginx `location /` ile frontend'e gidiyor). Build: `ƒ /monitoring/seo-issues`.
+- [x] `[KOD]` `SeoIssueBeacon.tsx` yeni yola POST ediyor.
+- Not: Alternatif `[SUNUCU]` çözüm (nginx'te `/api/monitoring` hariç tutma) gerekmedi.
 
 ### 2.3 Mobil hero video 499 abort (×14)  `[KOD]` ✅ TAMAMLANDI
 **Sorun:** Ağır hero mp4 sayfa açılışında indirilirken kullanıcı ayrılıyordu (499).
