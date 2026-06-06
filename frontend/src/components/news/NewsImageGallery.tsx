@@ -32,7 +32,9 @@ export function NewsImageGallery({ heroSrc, heroAlt, images, caption }: Props) {
           src={heroSrc}
           alt={heroAlt}
           fill
-          className="object-cover"
+          // Dikey/portre kapak görsellerinde yüz genelde üst kısımda olur; 16/9 hero
+          // ortadan kırpınca yüz kesiliyordu. Kırpmayı üste sabitleyip yüzü koruyoruz.
+          className="object-cover object-top"
           sizes="(max-width: 1024px) 100vw, 800px"
           priority
         />
