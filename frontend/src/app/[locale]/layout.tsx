@@ -5,6 +5,8 @@ import type { Metadata } from 'next';
 import { DM_Sans, Syne } from 'next/font/google';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
+import { notFound } from 'next/navigation';
+import { hasLocale } from '@/i18n/locales';
 import { Toaster } from 'sonner';
 
 import { getLocaleSettings } from '@/i18n/locale-settings';
@@ -132,6 +134,8 @@ export default async function LocaleLayout({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  // Desteklenmeyen dil kodları (artık tr/en dışı) Türkçe fallback ile render edilmesin → 404.
+  if (!hasLocale(locale)) notFound();
   setRequestLocale(locale);
   const messages = await getMessages({ locale });
   const navT = await getTranslations({ locale, namespace: 'nav' });
