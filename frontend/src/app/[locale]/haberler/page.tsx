@@ -278,7 +278,7 @@ export default async function NewsPage({
                         description: featured.description,
                       })}
                       fill
-                      className="object-cover"
+                      className="object-cover object-top"
                       sizes="(max-width: 1024px) 100vw, 800px"
                       priority
                     />
@@ -298,7 +298,7 @@ export default async function NewsPage({
                           src={absoluteAssetUrl(img) || NEWS_PLACEHOLDER}
                           alt={`${featured.title} — ${i + 1}`}
                           fill
-                          className="object-cover"
+                          className="object-cover object-top"
                           sizes="100px"
                         />
                       </div>
@@ -343,7 +343,7 @@ export default async function NewsPage({
                         description: post.description,
                       })}
                       fill
-                      className="object-cover"
+                      className="object-cover object-top"
                       sizes="200px"
                     />
                   </div>
@@ -370,7 +370,7 @@ export default async function NewsPage({
                           src={absoluteAssetUrl(sp.featured_image || sp.image_url || sp.imageSrc) || NEWS_PLACEHOLDER}
                           alt={sp.title}
                           fill
-                          className="object-cover"
+                          className="object-cover object-top"
                           sizes="80px"
                         />
                       </div>
