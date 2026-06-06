@@ -78,7 +78,7 @@ html[data-theme-mode='light'],
 
   --text-strong: var(--anthracite-900);
   --text-body: var(--anthracite-600);
-  --text-muted: var(--anthracite-400);
+  --text-muted: var(--anthracite-500);
   --text-inverse: var(--anthracite-50);
   --text-soft-inverse: var(--anthracite-300);
 
@@ -115,6 +115,7 @@ html[data-theme-mode='light'],
 
   /* Brand — altın */
   --color-brand: var(--gold-500);
+  --color-brand-text: var(--gold-800);
   --color-brand-light: var(--gold-300);
   --color-brand-dark: var(--gold-700);
   --color-accent: var(--anthracite-800);
@@ -173,6 +174,7 @@ html[data-theme-mode='dark'] {
 
   /* Brand — dark'ta biraz açık altın */
   --color-brand: var(--gold-400);
+  --color-brand-text: var(--gold-300);
   --color-brand-light: var(--gold-300);
   --color-brand-dark: var(--gold-600);
   --color-accent: var(--gold-500);

@@ -41,7 +41,7 @@ export function SaveProjectButton({
       className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold transition-all ${
         isSaved 
           ? 'bg-(--gold-900) text-white' 
-          : 'bg-(--color-brand) text-white hover:opacity-90'
+          : 'bg-(--color-brand) text-(--color-on-brand) hover:opacity-90'
       }`}
     >
       {isSaved ? <BookmarkCheck className="size-3.5" /> : <Bookmark className="size-3.5" />}

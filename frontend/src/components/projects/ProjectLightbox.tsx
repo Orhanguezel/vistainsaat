@@ -79,9 +79,9 @@ export function ProjectLightbox({ images, initialIndex, onClose }: Props) {
       }}
     >
       <style>{`
-        .lb-btn{position:absolute;top:50%;transform:translateY(-50%);width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.1);border:none;color:#fff;font-size:28px;cursor:pointer;border-radius:50%;transition:background .2s}
+        .lb-btn{position:absolute;top:50%;transform:translateY(-50%);width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.1);border:none;color:var(--color-text-on-dark);font-size:28px;cursor:pointer;border-radius:50%;transition:background .2s}
         .lb-btn:hover{background:rgba(255,255,255,.25)}
-        .lb-close{position:absolute;top:16px;right:16px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:none;border:none;color:#fff;font-size:28px;cursor:pointer;opacity:.7;transition:opacity .2s}
+        .lb-close{position:absolute;top:16px;right:16px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:none;border:none;color:var(--color-text-on-dark);font-size:28px;cursor:pointer;opacity:.7;transition:opacity .2s}
         .lb-close:hover{opacity:1}
         .lb-counter{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.8);font-size:14px;font-weight:500;letter-spacing:.04em}
         .lb-img{max-width:90vw;max-height:85vh;object-fit:contain;user-select:none}

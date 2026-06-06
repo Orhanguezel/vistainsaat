@@ -10,6 +10,7 @@ import { JsonLd, buildPageMetadata, jsonld, localizedPath, localizedUrl, organiz
 import { OptimizedImage } from '@/components/ui/OptimizedImage';
 import { buildMediaAlt } from '@/lib/media-seo';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs';
+import { FaqSection } from '@/components/seo/FaqSection';
 
 async function fetchService(slug: string, locale: string) {
   try {
@@ -87,6 +88,35 @@ export default async function ServiceDetailPage({
   const content = normalizeRichContent(service.content);
   const org = organizationJsonLd(locale);
   const imageSrc = absoluteAssetUrl(service.image_url);
+  const faqItems = isEn
+    ? [
+        {
+          q: `What does the ${service.title} service include?`,
+          a: 'Vista Construction defines the scope after discovery and can coordinate planning, technical documentation, construction execution and finishing works according to the service type.',
+        },
+        {
+          q: `Is ${service.title} available in Antalya?`,
+          a: 'Yes. Vista Construction serves Antalya, with the exact district, site conditions and delivery model confirmed during project assessment.',
+        },
+        {
+          q: 'How do I request a quote for this service?',
+          a: 'You can share project details through the offer form or contact channels. The team prepares a project-specific evaluation after reviewing scope, timing and technical needs.',
+        },
+      ]
+    : [
+        {
+          q: `${service.title} hizmeti neleri kapsar?`,
+          a: 'Vista İnşaat kapsamı keşif sonrası netleştirir; hizmet tipine göre planlama, teknik dokümantasyon, uygulama ve ince iş süreçlerini koordine edebilir.',
+        },
+        {
+          q: `${service.title} Antalya’da veriliyor mu?`,
+          a: 'Evet. Vista İnşaat Antalya genelinde hizmet verir; ilçe, saha koşulları ve teslim modeli proje değerlendirmesinde netleşir.',
+        },
+        {
+          q: 'Bu hizmet için nasıl teklif alabilirim?',
+          a: 'Teklif formu veya iletişim kanalları üzerinden proje bilgilerinizi paylaşabilirsiniz. Ekip kapsam, zamanlama ve teknik ihtiyaçları inceleyerek projeye özel değerlendirme hazırlar.',
+        },
+      ];
   const [otherServices, relatedProjects] = await Promise.all([
     fetchOtherServices(locale, slug, 5),
     fetchRelatedProjects(locale, 4),
@@ -107,7 +137,7 @@ export default async function ServiceDetailPage({
         .sd-content{margin-top:24px;font-size:15px;line-height:1.8;color:var(--color-text-secondary)}
         .sd-content p{margin-bottom:16px}
         .sd-content h2,.sd-content h3{font-family:var(--font-heading);color:var(--color-text-primary);margin:28px 0 12px}
-        .sd-content a{color:var(--color-brand);text-decoration:none}
+        .sd-content a{color:var(--color-brand-text);text-decoration:none}
         .sd-content a:hover{text-decoration:underline}
         .sd-content img{max-width:100%;height:auto;margin:16px 0}
         .sd-content ul,.sd-content ol{margin:12px 0;padding-left:24px}
@@ -120,10 +150,10 @@ export default async function ServiceDetailPage({
         .sd-sidebar-project:last-child{margin-bottom:0}
         .sd-sidebar-project-thumb{position:relative;width:80px;height:60px;flex-shrink:0;overflow:hidden;background:var(--color-bg-muted)}
         .sd-sidebar-project-title{font-size:14px;font-weight:600;color:var(--color-text-primary);line-height:1.3}
-        .sd-sidebar-project:hover .sd-sidebar-project-title{color:var(--color-brand)}
+        .sd-sidebar-project:hover .sd-sidebar-project-title{color:var(--color-brand-text)}
         .sd-sidebar-item{display:block;padding:8px 0;font-size:14px;color:var(--color-text-secondary);text-decoration:none;border-bottom:1px solid var(--color-border)}
         .sd-sidebar-item:last-child{border-bottom:none}
-        .sd-sidebar-item:hover{color:var(--color-brand)}
+        .sd-sidebar-item:hover{color:var(--color-brand-text)}
         @media(min-width:1024px){.sd-layout{display:grid;grid-template-columns:1fr 340px;gap:40px}}
       `}</style>
 
@@ -135,7 +165,11 @@ export default async function ServiceDetailPage({
             description: service.description,
             url: localizedUrl(locale, `/hizmetler/${slug}`),
             image: imageSrc || undefined,
+            provider: { '@id': jsonld.ORGANIZATION_ID },
+            serviceType: service.title,
+            areaServed: 'Antalya',
           }),
+          jsonld.faq(faqItems),
           jsonld.breadcrumb(
             breadcrumbs.map((item) => ({
               name: item.label,
@@ -206,6 +240,11 @@ export default async function ServiceDetailPage({
               </div>
             )}
 
+            <FaqSection
+              title={isEn ? 'Frequently Asked Questions' : 'Sık Sorulan Sorular'}
+              items={faqItems}
+            />
+
             {/* CTA */}
             <div
               style={{
@@ -232,7 +271,7 @@ export default async function ServiceDetailPage({
                 style={{
                   padding: '10px 24px',
                   background: 'var(--color-brand)',
-                  color: '#fff',
+                  color: 'var(--color-on-brand)',
                   fontWeight: 600,
                   fontSize: 14,
                   textDecoration: 'none',
@@ -280,7 +319,7 @@ export default async function ServiceDetailPage({
                 ))}
                 <Link
                   href={localizedPath(locale, '/projeler')}
-                  style={{ fontSize: 13, color: 'var(--color-brand)', textDecoration: 'none', marginTop: 10, display: 'inline-block' }}
+                  style={{ fontSize: 13, color: 'var(--color-brand-text)', textDecoration: 'none', marginTop: 10, display: 'inline-block' }}
                 >
                   {isEn ? 'All Projects »' : 'Tüm Projeler »'}
                 </Link>
@@ -319,7 +358,7 @@ export default async function ServiceDetailPage({
                   marginTop: 12,
                   padding: '8px 20px',
                   background: 'var(--color-brand)',
-                  color: '#fff',
+                  color: 'var(--color-on-brand)',
                   fontWeight: 600,
                   fontSize: 13,
                   textDecoration: 'none',
@@ -339,7 +378,7 @@ export default async function ServiceDetailPage({
                 padding: '12px',
                 fontSize: 14,
                 fontWeight: 600,
-                color: 'var(--color-brand)',
+                color: 'var(--color-brand-text)',
                 textDecoration: 'none',
                 border: '1px solid var(--color-border)',
               }}

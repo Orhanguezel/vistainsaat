@@ -247,7 +247,7 @@ export function Header({
                   >
                     <span style={{
                       width: 28, height: 28, borderRadius: '50%',
-                      background: 'var(--color-brand)', color: '#fff',
+                      background: 'var(--color-brand)', color: 'var(--color-on-brand)',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       fontSize: 12, fontWeight: 700,
                     }}>
@@ -306,7 +306,7 @@ export function Header({
                   <Link
                     href={localizedPath(locale, '/register')}
                     style={{
-                      fontSize: 13, fontWeight: 700, color: 'var(--color-text-on-dark)',
+                      fontSize: 13, fontWeight: 700, color: 'var(--color-on-brand)',
                       background: 'var(--color-accent)', padding: '8px 20px', borderRadius: 4,
                       transition: 'opacity 0.15s',
                     }}
@@ -439,7 +439,7 @@ export function Header({
                 onClick={() => setProfileOpen(!profileOpen)}
                 style={{
                   width: 30, height: 30, borderRadius: '50%',
-                  background: 'var(--color-brand)', color: '#fff',
+                  background: 'var(--color-brand)', color: 'var(--color-on-brand)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontSize: 12, fontWeight: 700, border: 'none', cursor: 'pointer',
                 }}
@@ -452,7 +452,7 @@ export function Header({
                   {t('login')}
                 </Link>
                 <Link href={localizedPath(locale, '/register')} style={{
-                  fontSize: 12, fontWeight: 700, color: 'var(--color-text-on-dark)',
+                  fontSize: 12, fontWeight: 700, color: 'var(--color-on-brand)',
                   background: 'var(--color-accent)', padding: '6px 16px', borderRadius: 4, transition: 'opacity 0.15s',
                 }}>{t('register')}</Link>
               </>
@@ -516,7 +516,7 @@ export function Header({
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                       <span style={{
                         width: 28, height: 28, borderRadius: '50%',
-                        background: 'var(--color-brand)', color: '#fff',
+                        background: 'var(--color-brand)', color: 'var(--color-on-brand)',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         fontSize: 12, fontWeight: 700,
                       }}>
@@ -552,7 +552,7 @@ export function Header({
                       href={localizedPath(locale, '/register')}
                       onClick={() => setMenuOpen(false)}
                       style={{
-                        fontSize: 13, fontWeight: 700, color: 'var(--color-text-on-dark)',
+                        fontSize: 13, fontWeight: 700, color: 'var(--color-on-brand)',
                         background: 'var(--color-accent)', padding: '8px 20px', borderRadius: 4,
                       }}
                     >

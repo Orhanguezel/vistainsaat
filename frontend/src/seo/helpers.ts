@@ -39,6 +39,12 @@ export function localizedUrl(locale: string, pathname: string): string {
   return absoluteUrl(localizedPath(locale, pathname));
 }
 
+export function absoluteAssetLikeUrl(url?: string | null): string | undefined {
+  if (!url) return undefined;
+  if (/^https?:\/\//i.test(url)) return url;
+  return absoluteUrl(url);
+}
+
 export function localeAlternates(
   pathname: string,
   locales = AVAILABLE_LOCALES,
@@ -56,6 +62,49 @@ function absoluteMediaUrl(url?: string | null): string | undefined {
   if (!url) return undefined;
   if (/^https?:\/\//i.test(url)) return url;
   return absoluteUrl(url);
+}
+
+export function socialsToSameAs(
+  socials?: Record<string, unknown> | null,
+): string[] {
+  if (!socials) return [];
+
+  return Object.entries(socials)
+    .filter(([key]) => key !== 'whatsapp')
+    .map(([, value]) => asStr(value).trim())
+    .filter((value) => /^https?:\/\//i.test(value));
+}
+
+export function businessAddressJsonLd(info: Record<string, unknown>) {
+  // Eksik alanları hiç basma (TODO placeholder'ı schema'ya sızmasın). Veri geldikçe dolar.
+  const streetAddress = asStr(info.address);
+  const addressLocality = asStr(info.district);
+  const postalCode = asStr(info.postal_code);
+  return {
+    ...(streetAddress ? { streetAddress } : {}),
+    ...(addressLocality ? { addressLocality } : {}),
+    addressRegion: asStr(info.city) || 'Antalya',
+    ...(postalCode ? { postalCode } : {}),
+    addressCountry: 'TR',
+  };
+}
+
+export function businessOpeningHoursJsonLd(info: Record<string, unknown>) {
+  return {
+    dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+    opens: asStr(info.opens) || '08:00',
+    closes: asStr(info.closes) || '18:00',
+  };
+}
+
+export function businessGeoJsonLd(
+  info: Record<string, unknown>,
+): { latitude: string; longitude: string } | undefined {
+  const latitude = asStr(info.maps_lat || info.latitude || info.lat);
+  const longitude = asStr(info.maps_lng || info.longitude || info.lng);
+  // Koordinat yoksa geo'yu tamamen atla (builder undefined'ı omit ediyor).
+  if (!latitude || !longitude) return undefined;
+  return { latitude, longitude };
 }
 
 function stripHtml(input: string): string {

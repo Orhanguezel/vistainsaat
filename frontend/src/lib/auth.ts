@@ -55,7 +55,10 @@ export async function startGoogleOAuth(redirectTo?: string): Promise<void> {
 /** Get current user from cookie-based session */
 export async function fetchCurrentUser(): Promise<AuthUser | null> {
   try {
-    const res = await api.get('/auth/user');
+    const res = await api.get('/auth/user', {
+      validateStatus: (status) => status === 200 || status === 401,
+    });
+    if (res.status === 401) return null;
     return res.data?.user ?? res.data ?? null;
   } catch {
     return null;

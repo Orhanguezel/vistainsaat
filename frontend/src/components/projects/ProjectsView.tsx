@@ -197,7 +197,7 @@ export function ProjectsView({ projects, locale, labels, filterLabels, detailLab
         .pv-filter-btn{padding:6px 14px;border-radius:2px;border:1px solid var(--color-border);background:var(--color-bg);color:var(--color-text-primary);font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;transition:all .15s}
         .pv-filter-btn:hover{border-color:var(--color-text-muted)}
         .pv-filter-btn[data-active="true"]{border-color:var(--color-text-primary);background:var(--color-text-primary);color:var(--color-bg)}
-        .pv-filter-btn[data-open="true"]{border-color:var(--color-brand);color:var(--color-brand)}
+        .pv-filter-btn[data-open="true"]{border-color:var(--color-brand-text);color:var(--color-brand-text)}
         .pv-filter-btn svg.pv-chevron{width:10px;height:10px;flex-shrink:0;transition:transform .15s}
         .pv-filter-btn[data-open="true"] svg.pv-chevron{transform:rotate(180deg)}
         .pv-clear-btn{padding:6px 12px;border-radius:2px;border:none;background:none;color:var(--color-text-muted);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;text-decoration:underline;text-underline-offset:2px}
@@ -210,13 +210,13 @@ export function ProjectsView({ projects, locale, labels, filterLabels, detailLab
         .pv-panel-search input::placeholder{color:var(--color-text-muted)}
         .pv-panel-close{position:absolute;top:16px;right:16px;border:none;background:none;cursor:pointer;color:var(--color-text-muted);padding:4px;display:flex;align-items:center;justify-content:center}
         .pv-panel-close:hover{color:var(--color-text-primary)}
-        .pv-panel-label{font-size:13px;font-weight:600;color:var(--color-brand);margin-bottom:12px}
+        .pv-panel-label{font-size:13px;font-weight:600;color:var(--color-brand-text);margin-bottom:12px}
         .pv-panel-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0}
         @media(min-width:640px){.pv-panel-grid{grid-template-columns:repeat(3,1fr)}}
         @media(min-width:1024px){.pv-panel-grid{grid-template-columns:repeat(4,1fr)}}
         .pv-panel-option{padding:6px 0;font-size:13px;color:var(--color-text-primary);cursor:pointer;border:none;background:none;text-align:left;font-family:inherit;transition:color .1s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-        .pv-panel-option:hover{color:var(--color-brand)}
-        .pv-panel-option[data-selected="true"]{font-weight:600;color:var(--color-brand)}
+        .pv-panel-option:hover{color:var(--color-brand-text)}
+        .pv-panel-option[data-selected="true"]{font-weight:600;color:var(--color-brand-text)}
         /* ── Card shared ── */
         .pv-card{text-decoration:none;display:block}
         .pv-card-img{position:relative;overflow:hidden;background:var(--color-bg-muted)}
@@ -437,7 +437,7 @@ export function ProjectsView({ projects, locale, labels, filterLabels, detailLab
                 sizes="(max-width:640px) 100vw, (max-width:1024px) 50vw, 33vw"
               />
               <div className="pv-masonry-overlay">
-                <span style={{ fontSize: 14, fontWeight: 600, color: '#fff', lineHeight: 1.3 }}>
+                <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--color-text-on-dark)', lineHeight: 1.3 }}>
                   {p.title}
                 </span>
               </div>
@@ -489,7 +489,7 @@ function ListCard({ item, detailLabels }: { item: ProjectViewItem; detailLabels?
         {item.architects && (
           <p style={{ fontSize: 14, color: 'var(--color-text-secondary)', marginTop: 10 }}>
             <strong>{detailLabels?.architects ?? 'Mimarlar'}:</strong>{' '}
-            <span style={{ color: 'var(--color-brand)' }}>{item.architects}</span>
+            <span style={{ color: 'var(--color-brand-text)' }}>{item.architects}</span>
           </p>
         )}
         {item.location && (

@@ -94,7 +94,7 @@ export function ProfileClient({ locale }: { locale: string }) {
           href={localizedPath(locale, '/login')}
           style={{
             display: 'inline-block', padding: '12px 32px', borderRadius: 4,
-            background: 'var(--color-accent)', color: 'var(--color-text-on-dark)',
+            background: 'var(--color-accent)', color: 'var(--color-on-brand)',
             fontSize: 14, fontWeight: 700, textDecoration: 'none',
           }}
         >
@@ -145,7 +145,7 @@ export function ProfileClient({ locale }: { locale: string }) {
               height: 80,
               borderRadius: '50%',
               background: 'var(--color-brand)',
-              color: '#fff',
+              color: 'var(--color-on-brand)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -231,7 +231,7 @@ export function ProfileClient({ locale }: { locale: string }) {
               <div style={{
                 padding: '10px 14px', marginBottom: 16, borderRadius: 4,
                 background: 'rgba(34, 197, 94, 0.08)', border: '1px solid rgba(34, 197, 94, 0.2)',
-                color: '#16a34a', fontSize: 13,
+                color: 'var(--color-success-dark)', fontSize: 13,
               }}>
                 {profileSuccess}
               </div>
@@ -240,7 +240,7 @@ export function ProfileClient({ locale }: { locale: string }) {
               <div style={{
                 padding: '10px 14px', marginBottom: 16, borderRadius: 4,
                 background: 'rgba(220, 38, 38, 0.08)', border: '1px solid rgba(220, 38, 38, 0.2)',
-                color: '#dc2626', fontSize: 13,
+                color: 'var(--status-danger)', fontSize: 13,
               }}>
                 {profileError}
               </div>
@@ -303,7 +303,7 @@ export function ProfileClient({ locale }: { locale: string }) {
               disabled={saving}
               style={{
                 marginTop: 24, padding: '12px 28px', borderRadius: 4, border: 'none',
-                background: 'var(--color-accent)', color: 'var(--color-text-on-dark)',
+                background: 'var(--color-accent)', color: 'var(--color-on-brand)',
                 fontSize: 14, fontWeight: 700, cursor: saving ? 'wait' : 'pointer',
                 opacity: saving ? 0.7 : 1, transition: 'opacity 0.15s',
               }}
@@ -342,7 +342,7 @@ export function ProfileClient({ locale }: { locale: string }) {
               <div style={{
                 padding: '10px 14px', marginBottom: 16, borderRadius: 4,
                 background: 'rgba(34, 197, 94, 0.08)', border: '1px solid rgba(34, 197, 94, 0.2)',
-                color: '#16a34a', fontSize: 13,
+                color: 'var(--color-success-dark)', fontSize: 13,
               }}>
                 {pwSuccess}
               </div>
@@ -351,7 +351,7 @@ export function ProfileClient({ locale }: { locale: string }) {
               <div style={{
                 padding: '10px 14px', marginBottom: 16, borderRadius: 4,
                 background: 'rgba(220, 38, 38, 0.08)', border: '1px solid rgba(220, 38, 38, 0.2)',
-                color: '#dc2626', fontSize: 13,
+                color: 'var(--status-danger)', fontSize: 13,
               }}>
                 {pwError}
               </div>

@@ -238,7 +238,7 @@ export default async function AboutPage({
                 style={{
                   padding: '10px 24px',
                   background: 'var(--color-brand)',
-                  color: '#fff',
+                  color: 'var(--color-on-brand)',
                   fontWeight: 600,
                   fontSize: 14,
                   textDecoration: 'none',
@@ -285,7 +285,7 @@ export default async function AboutPage({
                   marginTop: 12,
                   padding: '8px 20px',
                   background: 'var(--color-brand)',
-                  color: '#fff',
+                  color: 'var(--color-on-brand)',
                   fontWeight: 600,
                   fontSize: 13,
                   textDecoration: 'none',

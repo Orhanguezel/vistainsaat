@@ -6,12 +6,28 @@ import Link from 'next/link';
 import { ArrowRight, Play, Bookmark } from 'lucide-react';
 
 import { absoluteAssetUrl, API_BASE_URL } from '@/lib/utils';
-import { JsonLd, buildPageMetadata, jsonld, localizedPath, organizationJsonLd, siteUrlBase, readSettingValue, asStr } from '@/seo';
+import {
+  JsonLd,
+  buildPageMetadata,
+  jsonld,
+  localizedPath,
+  localizedUrl,
+  organizationJsonLd,
+  siteUrlBase,
+  readSettingValue,
+  asStr,
+  socialsToSameAs,
+  businessAddressJsonLd,
+  businessOpeningHoursJsonLd,
+  businessGeoJsonLd,
+  absoluteAssetLikeUrl,
+} from '@/seo';
 import { NewsletterForm } from '@/components/sections/NewsletterForm';
 import { SectionHeader } from '@/components/patterns/SectionHeader';
 import { Reveal } from '@/components/motion/Reveal';
 import { OptimizedImage } from '@/components/ui/OptimizedImage';
 import { HeroVideoPlayer } from '@/components/ui/HeroVideoPlayer';
+import { FaqSection } from '@/components/seo/FaqSection';
 
 import { buildMediaAlt } from '@/lib/media-seo';
 import { BrandCarousel } from '@/components/sections/BrandCarousel';
@@ -114,15 +130,19 @@ export default async function HomePage({
   const { locale } = await params;
   const t = await getTranslations({ locale });
 
-  const [products, blogPosts, references, allProjects, heroSetting] = await Promise.all([
+  const [products, blogPosts, references, allProjects, heroSetting, contactSetting, socialsSetting] = await Promise.all([
     fetchFeaturedProducts(locale),
     fetchFeaturedBlogPosts(locale),
     fetchReferences(locale),
     fetchAllProjects(locale),
     fetchSetting('hero', locale),
+    fetchSetting('contact_info', locale),
+    fetchSetting('socials', locale),
   ]);
 
   const h = readSettingValue(heroSetting);
+  const contactInfo = readSettingValue(contactSetting);
+  const sameAs = socialsToSameAs(readSettingValue(socialsSetting));
   const headline = locale === 'tr' ? asStr(h.headline_tr) : asStr(h.headline_en);
   const subheadline = locale === 'tr' ? asStr(h.subheadline_tr) : asStr(h.subheadline_en);
   const ctaText = locale === 'tr' ? asStr(h.cta_text_tr) : asStr(h.cta_text_en);
@@ -135,6 +155,36 @@ export default async function HomePage({
   const visibleProducts = products.slice(0, 8);
   const visibleBlogPosts = blogPosts.slice(0, 3);
   const featuredBlogPost = visibleBlogPosts[0];
+  const isEn = locale.startsWith('en');
+  const faqItems = isEn
+    ? [
+        {
+          q: 'Which areas does Vista Construction serve in Antalya?',
+          a: 'Vista Construction provides residential, commercial and architectural project services across Antalya, with district-level scope confirmed during project discovery.',
+        },
+        {
+          q: 'How is construction cost calculated in Antalya?',
+          a: 'Cost depends on land conditions, project scale, structural system, material choices and permit requirements. Vista Construction prepares a tailored estimate after technical review.',
+        },
+        {
+          q: 'Can Vista Construction manage turnkey projects?',
+          a: 'Yes. The team can coordinate design, planning, construction and finishing stages for turnkey construction projects.',
+        },
+      ]
+    : [
+        {
+          q: 'Vista İnşaat Antalya’da hangi bölgelerde hizmet veriyor?',
+          a: 'Vista İnşaat, Antalya genelinde konut, ticari yapı ve mimari proje süreçlerinde hizmet verir; ilçe ve proje kapsamı keşif aşamasında netleştirilir.',
+        },
+        {
+          q: 'Antalya’da konut inşaatı maliyeti nasıl hesaplanır?',
+          a: 'Maliyet; arsa koşulları, proje ölçeği, taşıyıcı sistem, malzeme seçimi ve ruhsat gereksinimlerine göre belirlenir. Vista İnşaat teknik inceleme sonrası projeye özel teklif hazırlar.',
+        },
+        {
+          q: 'Vista İnşaat anahtar teslim proje yapıyor mu?',
+          a: 'Evet. Ekip; tasarım, planlama, inşaat ve ince iş teslim süreçlerini anahtar teslim proje modeliyle koordine edebilir.',
+        },
+      ];
 
   return (
     <main className="min-h-screen">
@@ -143,6 +193,10 @@ export default async function HomePage({
           jsonld.org({
             ...organizationJsonLd(locale, {
               description: t('seo.defaultDescription'),
+              email: asStr(contactInfo.email) || undefined,
+              telephone: asStr(contactInfo.phone) || undefined,
+              address: asStr(contactInfo.address) || undefined,
+              sameAs,
             }),
             url: siteUrl,
           }),
@@ -150,6 +204,21 @@ export default async function HomePage({
             name: 'Vista İnşaat',
             url: siteUrl,
           }),
+          jsonld.localBusiness({
+            name: asStr(contactInfo.company_name) || 'Vista İnşaat',
+            url: localizedUrl(locale, '/'),
+            description: t('seo.defaultDescription'),
+            email: asStr(contactInfo.email) || 'info@vistainsaat.com',
+            telephone: asStr(contactInfo.phone) || undefined,
+            address: businessAddressJsonLd(contactInfo),
+            openingHours: businessOpeningHoursJsonLd(contactInfo),
+            geo: businessGeoJsonLd(contactInfo),
+            priceRange: asStr(contactInfo.price_range) || undefined,
+            areaServed: 'Antalya',
+            image: absoluteAssetLikeUrl('/opengraph-image'),
+            sameAs,
+          }),
+          jsonld.faq(faqItems),
         ])}
       />
 
@@ -223,10 +292,10 @@ export default async function HomePage({
                     href={localizedPath(locale, '/teklif')}
                     className="flex items-center justify-center gap-3 bg-(--color-brand) px-6 py-4 text-center transition-opacity hover:opacity-90"
                   >
-                    <p className="text-sm font-bold text-white lg:text-base" style={{ fontFamily: 'var(--font-heading)' }}>
+                    <p className="text-sm font-bold text-(--color-on-brand) lg:text-base" style={{ fontFamily: 'var(--font-heading)' }}>
                       {t('home.hero.ctaSecondary')}
                     </p>
-                    <ArrowRight className="size-4 text-white" />
+                    <ArrowRight className="size-4 text-(--color-on-brand)" />
                   </Link>
                 </div>
 
@@ -246,11 +315,11 @@ export default async function HomePage({
                       />
                     </div>
                     <div className="bg-(--color-bg) pt-3 pb-1">
-                      <p className="text-xs font-medium uppercase tracking-wider text-(--color-brand)">
+                      <p className="text-xs font-medium uppercase tracking-wider text-(--color-brand-text)">
                         {t('nav.blog')}
                       </p>
                       <h2
-                        className="mt-1 text-sm font-semibold leading-snug text-(--color-brand) lg:text-base"
+                        className="mt-1 text-sm font-semibold leading-snug text-(--color-brand-text) lg:text-base"
                         style={{ fontFamily: 'var(--font-heading)' }}
                       >
                         {featuredBlogPost.title}
@@ -296,7 +365,7 @@ export default async function HomePage({
                   <article key={project.id ?? project.title} className="border-b border-(--color-border) pb-10">
                     <Link href={projectHref}>
                       <h2
-                        className="text-xl font-bold text-(--color-text-primary) hover:text-(--color-brand) lg:text-2xl"
+                        className="text-xl font-bold text-(--color-text-primary) hover:text-(--color-brand-text) lg:text-2xl"
                         style={{ fontFamily: 'var(--font-heading)' }}
                       >
                         {project.title}
@@ -318,7 +387,7 @@ export default async function HomePage({
 
                     <div className="mt-3 flex flex-wrap items-center gap-x-1.5 text-xs font-semibold uppercase tracking-wide">
                       {categoryName && (
-                        <span className="text-(--color-brand)">{categoryName}</span>
+                        <span className="text-(--color-brand-text)">{categoryName}</span>
                       )}
                       {categoryName && location && (
                         <span className="text-(--color-text-muted)">·</span>
@@ -332,7 +401,7 @@ export default async function HomePage({
                       {architects && (
                         <div className="flex items-center gap-1.5">
                           <span className="text-xs text-(--color-text-muted)">{t('projects.filters.architects')}:</span>
-                          <span className="font-medium text-(--color-brand)">{architects}</span>
+                          <span className="font-medium text-(--color-brand-text)">{architects}</span>
                         </div>
                       )}
                       {area && (
@@ -344,7 +413,7 @@ export default async function HomePage({
                       {year && (
                         <div className="flex items-center gap-1.5">
                           <span className="text-xs text-(--color-text-muted)">{t('projects.filters.year')}:</span>
-                          <span className="font-medium text-(--color-brand)">{year}</span>
+                          <span className="font-medium text-(--color-brand-text)">{year}</span>
                         </div>
                       )}
                       {manufacturers && (
@@ -362,7 +431,7 @@ export default async function HomePage({
                       />
                       <Link
                         href={projectHref}
-                        className="text-xs font-medium text-(--color-brand) hover:underline"
+                        className="text-xs font-medium text-(--color-brand-text) hover:underline"
                       >
                         {t('common.readMore')} »
                       </Link>
@@ -402,7 +471,7 @@ export default async function HomePage({
                               />
                             </div>
                           )}
-                          <h4 className="text-sm font-semibold leading-snug text-(--color-text-primary) group-hover:text-(--color-brand)">
+                          <h4 className="text-sm font-semibold leading-snug text-(--color-text-primary) group-hover:text-(--color-brand-text)">
                             {p.title}
                             {p.specifications?.mimarlar ? ` / ${p.specifications.mimarlar}` : ''}
                           </h4>
@@ -424,7 +493,7 @@ export default async function HomePage({
                   </p>
                   <Link
                     href={localizedPath(locale, '/teklif')}
-                    className="mt-3 inline-block bg-(--color-brand) px-4 py-2 text-xs font-semibold text-white transition-opacity hover:opacity-90"
+                    className="mt-3 inline-block bg-(--color-brand) px-4 py-2 text-xs font-semibold text-(--color-on-brand) transition-opacity hover:opacity-90"
                   >
                     {t('nav.offer')}
                   </Link>
@@ -450,6 +519,11 @@ export default async function HomePage({
           </div>
         </div>
       </section>
+
+      <FaqSection
+        title={isEn ? 'Frequently Asked Questions' : 'Sık Sorulan Sorular'}
+        items={faqItems}
+      />
 
       {/* All Projects — ArchDaily-style infinite feed */}
       <section className="section-py border-t border-(--color-border)">
@@ -481,7 +555,7 @@ export default async function HomePage({
             </p>
             <Link
               href={localizedPath(locale, '/teklif')}
-              className="mt-8 inline-flex items-center gap-2 bg-(--color-brand) px-8 py-3.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+              className="mt-8 inline-flex items-center gap-2 bg-(--color-brand) px-8 py-3.5 text-sm font-semibold text-(--color-on-brand) transition-opacity hover:opacity-90"
               style={{ fontFamily: 'var(--font-heading)' }}
             >
               {t('common.requestOffer')}

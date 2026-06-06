@@ -1,5 +1,54 @@
 type Thing = Record<string, unknown>;
 
+export const ORGANIZATION_ID = 'https://www.vistainsaat.com/#organization';
+export const LOCAL_BUSINESS_ID = 'https://www.vistainsaat.com/#localbusiness';
+
+type PostalAddressInput =
+  | string
+  | {
+      streetAddress?: string;
+      addressLocality?: string;
+      addressRegion?: string;
+      postalCode?: string;
+      addressCountry?: string;
+    };
+
+type OpeningHoursInput =
+  | string
+  | {
+      dayOfWeek: string[];
+      opens: string;
+      closes: string;
+    }
+  | Array<{
+      dayOfWeek: string[];
+      opens: string;
+      closes: string;
+    }>;
+
+function normalizeAddress(address?: PostalAddressInput): unknown {
+  if (!address) return undefined;
+  if (typeof address === 'string') return address;
+
+  return {
+    '@type': 'PostalAddress',
+    ...address,
+  };
+}
+
+function normalizeOpeningHours(openingHours?: OpeningHoursInput): unknown {
+  if (!openingHours) return undefined;
+  if (typeof openingHours === 'string') return openingHours;
+
+  const values = Array.isArray(openingHours) ? openingHours : [openingHours];
+  return values.map((item) => ({
+    '@type': 'OpeningHoursSpecification',
+    dayOfWeek: item.dayOfWeek,
+    opens: item.opens,
+    closes: item.closes,
+  }));
+}
+
 export function graph(items: Thing[]): Thing {
   return { '@context': 'https://schema.org', '@graph': items };
 }
@@ -16,9 +65,12 @@ export function org(input: {
 }): Thing {
   return {
     '@type': 'Organization',
+    '@id': ORGANIZATION_ID,
     name: input.name,
     url: input.url,
-    ...(input.logo ? { logo: input.logo } : {}),
+    ...(input.logo
+      ? { logo: { '@type': 'ImageObject', url: input.logo, width: 512, height: 512 } }
+      : {}),
     ...(input.description ? { description: input.description } : {}),
     ...(input.email ? { email: input.email } : {}),
     ...(input.telephone ? { telephone: input.telephone } : {}),
@@ -43,21 +95,43 @@ export function website(input: {
 export function localBusiness(input: {
   name: string;
   url: string;
+  type?: string;
   description?: string;
   email?: string;
   telephone?: string;
-  address?: string;
-  openingHours?: string;
+  address?: PostalAddressInput;
+  openingHours?: OpeningHoursInput;
+  geo?: { latitude: string | number; longitude: string | number };
+  priceRange?: string;
+  areaServed?: string;
+  image?: string;
+  sameAs?: string[];
 }): Thing {
   return {
-    '@type': 'LocalBusiness',
+    '@type': input.type || 'GeneralContractor',
+    '@id': LOCAL_BUSINESS_ID,
     name: input.name,
     url: input.url,
     ...(input.description ? { description: input.description } : {}),
     ...(input.email ? { email: input.email } : {}),
     ...(input.telephone ? { telephone: input.telephone } : {}),
-    ...(input.address ? { address: input.address } : {}),
-    ...(input.openingHours ? { openingHours: input.openingHours } : {}),
+    ...(input.address ? { address: normalizeAddress(input.address) } : {}),
+    ...(input.openingHours ? { openingHoursSpecification: normalizeOpeningHours(input.openingHours) } : {}),
+    ...(input.geo
+      ? {
+          geo: {
+            '@type': 'GeoCoordinates',
+            latitude: input.geo.latitude,
+            longitude: input.geo.longitude,
+          },
+        }
+      : {}),
+    ...(input.priceRange ? { priceRange: input.priceRange } : {}),
+    ...(input.areaServed
+      ? { areaServed: { '@type': 'AdministrativeArea', name: input.areaServed } }
+      : {}),
+    ...(input.image ? { image: input.image } : {}),
+    ...(input.sameAs?.length ? { sameAs: input.sameAs } : {}),
   };
 }
 
@@ -87,10 +161,13 @@ export function article(input: {
   datePublished?: string;
   dateModified?: string;
   author?: string;
-  publisher?: {
+  publisher?: { '@id': string } | {
     name: string;
     logo?: string;
   };
+  mainEntityOfPage?: string;
+  articleSection?: string;
+  inLanguage?: string;
 }): Thing {
   return {
     '@type': 'Article',
@@ -102,8 +179,15 @@ export function article(input: {
     ...(input.author
       ? { author: { '@type': 'Person', name: input.author } }
       : {}),
+    ...(input.mainEntityOfPage
+      ? { mainEntityOfPage: { '@type': 'WebPage', '@id': input.mainEntityOfPage } }
+      : {}),
+    ...(input.articleSection ? { articleSection: input.articleSection } : {}),
+    ...(input.inLanguage ? { inLanguage: input.inLanguage } : {}),
     ...(input.publisher
-      ? {
+      ? '@id' in input.publisher
+        ? { publisher: input.publisher }
+        : {
           publisher: {
             '@type': 'Organization',
             name: input.publisher.name,
@@ -196,7 +280,9 @@ export function service(input: {
   description?: string;
   url: string;
   image?: string;
-  provider?: string;
+  provider?: string | { '@id': string };
+  serviceType?: string;
+  areaServed?: string;
 }): Thing {
   return {
     '@type': 'Service',
@@ -204,7 +290,32 @@ export function service(input: {
     url: input.url,
     ...(input.description ? { description: input.description } : {}),
     ...(input.image ? { image: input.image } : {}),
-    ...(input.provider ? { provider: { '@type': 'Organization', name: input.provider } } : {}),
+    ...(input.provider
+      ? {
+          provider:
+            typeof input.provider === 'string'
+              ? { '@type': 'Organization', name: input.provider }
+              : input.provider,
+        }
+      : {}),
+    ...(input.serviceType ? { serviceType: input.serviceType } : {}),
+    ...(input.areaServed
+      ? { areaServed: { '@type': 'AdministrativeArea', name: input.areaServed } }
+      : {}),
+  };
+}
+
+export function faq(items: { q: string; a: string }[]): Thing {
+  return {
+    '@type': 'FAQPage',
+    mainEntity: items.map((item) => ({
+      '@type': 'Question',
+      name: item.q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.a,
+      },
+    })),
   };
 }
 

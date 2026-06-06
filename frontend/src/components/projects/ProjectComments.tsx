@@ -327,16 +327,16 @@ export function ProjectComments({ targetType, targetId, apiBaseUrl, locale, text
       <style>{`
         .pc-header{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--color-text-primary);padding-bottom:12px;margin-bottom:20px}
         .pc-title{font-family:var(--font-heading);font-size:22px;font-weight:700;color:var(--color-text-primary)}
-        .pc-viewing{display:flex;align-items:center;gap:6px;font-size:13px;color:#4caf50;font-weight:500}
+        .pc-viewing{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--color-success-dark);font-weight:500}
         .pc-guest{font-size:13px;color:var(--color-text-muted);margin-bottom:16px}
         .pc-guest b{color:var(--color-text-primary)}
         .pc-auth{font-size:13px;color:var(--color-text-muted)}
         .pc-auth a{color:var(--color-text-primary);text-decoration:none;font-weight:600}
         .pc-auth a:hover{text-decoration:underline}
         .pc-form{display:flex;gap:12px;align-items:flex-start;margin-bottom:24px}
-        .pc-avatar{width:40px;height:40px;border-radius:50%;background:#e57373;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative}
-        .pc-avatar svg{color:#fff}
-        .pc-avatar-dot{position:absolute;bottom:0;right:0;width:10px;height:10px;border-radius:50%;background:#4caf50;border:2px solid var(--color-bg)}
+        .pc-avatar{width:40px;height:40px;border-radius:50%;background:var(--status-danger);display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative}
+        .pc-avatar svg{color:var(--color-on-brand)}
+        .pc-avatar-dot{position:absolute;bottom:0;right:0;width:10px;height:10px;border-radius:50%;background:var(--color-success-dark);border:2px solid var(--color-bg)}
         .pc-input-wrap{flex:1;border:1px solid var(--color-border);border-radius:4px;transition:border-color .15s;position:relative}
         .pc-input-wrap:focus-within{border-color:var(--color-brand)}
         .pc-input{width:100%;padding:12px 14px;border:none;background:var(--color-bg);color:var(--color-text-primary);font-size:14px;font-family:inherit;resize:none;min-height:44px;outline:none}
@@ -345,7 +345,7 @@ export function ProjectComments({ targetType, targetId, apiBaseUrl, locale, text
         .pc-input-actions{display:flex;gap:4px}
         .pc-input-btn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:none;background:none;cursor:pointer;color:var(--color-text-muted);border-radius:4px;transition:all .15s}
         .pc-input-btn:hover{background:var(--color-bg-muted);color:var(--color-text-primary)}
-        .pc-submit{padding:6px 16px;background:var(--color-brand);color:#fff;border:none;border-radius:2px;font-size:13px;font-weight:600;cursor:pointer;transition:opacity .15s}
+        .pc-submit{padding:6px 16px;background:var(--color-brand);color:var(--color-on-brand);border:none;border-radius:2px;font-size:13px;font-weight:600;cursor:pointer;transition:opacity .15s}
         .pc-submit:hover{opacity:.9}
         .pc-submit:disabled{opacity:.5;cursor:not-allowed}
         .pc-name-input{width:100%;padding:8px 14px;border:none;border-bottom:1px solid var(--color-border);background:var(--color-bg);color:var(--color-text-primary);font-size:13px;font-family:inherit;outline:none}

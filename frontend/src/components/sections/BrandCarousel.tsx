@@ -72,7 +72,7 @@ export function BrandCarousel({ brands }: { brands: BrandItem[] }) {
                     width={180}
                     height={64}
                     style={{ height: 60, width: 'auto', objectFit: 'contain' }}
-                    unoptimized={logoSrc.endsWith('.svg')}
+                    unoptimized
                   />
                 ) : (
                   <span

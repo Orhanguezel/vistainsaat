@@ -116,6 +116,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const locales = AVAILABLE_LOCALES;
 
   const entries: MetadataRoute.Sitemap = [];
+  const staticLastModified = new Date();
 
   const staticRoutes = [
     { path: '', changeFrequency: 'weekly' as const, priority: 1.0 },
@@ -140,6 +141,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     for (const route of staticRoutes) {
       entries.push({
         url: localizedUrl(locale, route.path || '/'),
+        lastModified: staticLastModified,
         changeFrequency: route.changeFrequency,
         priority: route.priority,
       });

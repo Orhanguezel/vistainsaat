@@ -233,7 +233,7 @@ export default async function ProjectDetailPage({
         .pd-sidebar-title{font-size:14px;font-weight:600;color:var(--color-text-primary);line-height:1.3}
         .pd-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:20px}
         .pd-tag{padding:4px 12px;border-radius:2px;border:1px solid var(--color-border);font-size:12px;color:var(--color-text-secondary);text-decoration:none}
-        .pd-tag:hover{border-color:var(--color-brand);color:var(--color-brand)}
+        .pd-tag:hover{border-color:var(--color-brand-text);color:var(--color-brand-text)}
         @media(min-width:1024px){.pd-layout{display:grid;grid-template-columns:1fr 340px;gap:40px}}
       `}</style>
 
@@ -299,7 +299,7 @@ export default async function ProjectDetailPage({
             {/* ── Category + Location line ── */}
             <div style={{ marginTop: 20, fontSize: 14 }}>
               {projectType && (
-                <span style={{ fontWeight: 700, color: 'var(--color-brand)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                <span style={{ fontWeight: 700, color: 'var(--color-brand-text)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                   {projectType}
                 </span>
               )}
@@ -391,7 +391,7 @@ export default async function ProjectDetailPage({
                 style={{
                   padding: '10px 24px',
                   background: 'var(--color-brand)',
-                  color: '#fff',
+                  color: 'var(--color-on-brand)',
                   fontWeight: 600,
                   fontSize: 14,
                   textDecoration: 'none',
@@ -500,7 +500,7 @@ export default async function ProjectDetailPage({
                       justifyContent: 'center',
                       fontSize: 20,
                       fontWeight: 700,
-                      color: 'var(--color-brand)',
+                      color: 'var(--color-brand-text)',
                       flexShrink: 0,
                     }}
                   >
@@ -551,7 +551,7 @@ export default async function ProjectDetailPage({
                   marginTop: 12,
                   padding: '8px 20px',
                   background: 'var(--color-brand)',
-                  color: '#fff',
+                  color: 'var(--color-on-brand)',
                   fontWeight: 600,
                   fontSize: 13,
                   textDecoration: 'none',
@@ -613,7 +613,7 @@ function SidebarSection({
       {moreHref && moreLabel && (
         <Link
           href={moreHref}
-          style={{ fontSize: 13, color: 'var(--color-brand)', textDecoration: 'none', marginTop: 10, display: 'inline-block' }}
+          style={{ fontSize: 13, color: 'var(--color-brand-text)', textDecoration: 'none', marginTop: 10, display: 'inline-block' }}
         >
           {moreLabel}
         </Link>
@@ -639,7 +639,7 @@ function TagBasedSection({
   return (
     <div className="pd-sidebar-card" style={{ borderColor: 'var(--color-brand)', borderWidth: 1 }}>
       <h3 style={{ fontSize: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
-        <span style={{ fontSize: 18 }}>&#9733;</span>
+        <span style={{ fontSize: 18 }}>★</span>
         {title}
       </h3>
       <p style={{ fontSize: 12, color: 'var(--color-text-muted)', margin: '-8px 0 14px', lineHeight: 1.4 }}>
@@ -658,7 +658,7 @@ function TagBasedSection({
                 fontWeight: 600,
                 borderRadius: 2,
                 background: 'var(--color-bg-muted)',
-                color: 'var(--color-brand)',
+                color: 'var(--color-brand-text)',
                 letterSpacing: '0.02em',
               }}
             >

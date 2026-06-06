@@ -64,7 +64,7 @@ export function SplashScreen({ companyName, tagline }: { companyName?: string; t
           align-items: center;
           justify-content: center;
           flex-direction: column;
-          background: #0f0e0d;
+          background: var(--color-bg-dark);
           overflow: hidden;
         }
 
@@ -207,7 +207,7 @@ export function SplashScreen({ companyName, tagline }: { companyName?: string; t
           font-weight: 800;
           letter-spacing: 0.18em;
           text-transform: uppercase;
-          background: linear-gradient(135deg, #e8dcc8 0%, #b8a98a 30%, #d4c4a0 60%, #9e8f6f 100%);
+          background: linear-gradient(135deg, var(--gold-200) 0%, var(--gold-500) 30%, var(--gold-400) 60%, var(--gold-600) 100%);
           background-size: 300% 100%;
           -webkit-background-clip: text;
           background-clip: text;

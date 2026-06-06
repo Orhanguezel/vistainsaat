@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { absoluteAssetUrl, API_BASE_URL, SITE_URL } from '@/lib/utils';
 import { normalizeRichContent } from '@/lib/rich-content';
-import { JsonLd, buildPageMetadata, jsonld, localizedPath, localizedUrl, organizationJsonLd } from '@/seo';
+import { JsonLd, buildPageMetadata, jsonld, localizedPath, localizedUrl, organizationJsonLd, absoluteAssetLikeUrl } from '@/seo';
 import { OptimizedImage } from '@/components/ui/OptimizedImage';
 import { buildMediaAlt } from '@/lib/media-seo';
 import { SocialShare } from '@/components/projects/SocialShare';
@@ -129,7 +129,7 @@ export default async function NewsDetailPage({
   const content = normalizeRichContent(post.content);
   const org = organizationJsonLd(locale);
   const coverImage = post.featured_image || post.image_url;
-  const imageSrc = absoluteAssetUrl(coverImage) || NEWS_PLACEHOLDER;
+  const imageSrc = absoluteAssetLikeUrl(absoluteAssetUrl(coverImage) || NEWS_PLACEHOLDER) || NEWS_PLACEHOLDER;
   const shareUrl = `${SITE_URL}/${locale}/haberler/${slug}`;
   const rawImages: string[] = Array.isArray(post.images) ? post.images : [];
   const author = post.author_name || 'Vista İnşaat';
@@ -161,7 +161,7 @@ export default async function NewsDetailPage({
         .nd-content{margin-top:24px;font-size:15px;line-height:1.8;color:var(--color-text-secondary)}
         .nd-content p{margin-bottom:16px}
         .nd-content h2,.nd-content h3{font-family:var(--font-heading);color:var(--color-text-primary);margin:28px 0 12px}
-        .nd-content a{color:var(--color-brand);text-decoration:none}
+        .nd-content a{color:var(--color-brand-text);text-decoration:none}
         .nd-content a:hover{text-decoration:underline}
         .nd-content img{max-width:100%;height:auto;margin:16px 0}
         .nd-thumbstrip{display:flex;gap:6px;margin-top:20px;overflow-x:auto}
@@ -169,14 +169,14 @@ export default async function NewsDetailPage({
         .nd-thumbstrip-more{display:flex;align-items:center;justify-content:center;width:120px;height:80px;flex-shrink:0;background:var(--color-bg-muted);font-size:18px;font-weight:700;color:var(--color-text-muted)}
         .nd-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:24px}
         .nd-tag{padding:4px 12px;border-radius:2px;border:1px solid var(--color-border);font-size:12px;color:var(--color-text-secondary);text-decoration:none}
-        .nd-tag:hover{border-color:var(--color-brand);color:var(--color-brand)}
+        .nd-tag:hover{border-color:var(--color-brand-text);color:var(--color-brand-text)}
         .nd-sidebar-card{border:1px solid var(--color-border);padding:20px;margin-bottom:20px}
         .nd-sidebar-card h3{font-family:var(--font-heading);font-size:18px;font-weight:700;color:var(--color-text-primary);margin:0 0 16px}
         .nd-sidebar-item{display:flex;gap:12px;text-decoration:none;margin-bottom:14px}
         .nd-sidebar-item:last-child{margin-bottom:0}
         .nd-sidebar-thumb{position:relative;width:80px;height:60px;flex-shrink:0;overflow:hidden;background:var(--color-bg-muted)}
         .nd-sidebar-title{font-size:14px;font-weight:600;color:var(--color-text-primary);line-height:1.3}
-        .nd-sidebar-item:hover .nd-sidebar-title{color:var(--color-brand)}
+        .nd-sidebar-item:hover .nd-sidebar-title{color:var(--color-brand-text)}
         .nd-related-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--color-text-muted);margin-bottom:16px}
         @media(min-width:1024px){.nd-layout{display:grid;grid-template-columns:1fr 340px;gap:40px}}
       `}</style>
@@ -187,13 +187,14 @@ export default async function NewsDetailPage({
           jsonld.article({
             headline: post.title,
             description: post.description,
-            image: post.image_url,
-            datePublished: post.created_at,
-            dateModified: post.updated_at,
-            publisher: {
-              name: org.name,
-              logo: org.logo as string | undefined,
-            },
+            image: imageSrc,
+            datePublished: post.created_at ? new Date(post.created_at).toISOString() : undefined,
+            dateModified: post.updated_at ? new Date(post.updated_at).toISOString() : undefined,
+            author,
+            publisher: { '@id': jsonld.ORGANIZATION_ID },
+            mainEntityOfPage: localizedUrl(locale, `/haberler/${slug}`),
+            articleSection: post.category_name || (isEn ? 'Architecture News' : 'Mimarlık Haberleri'),
+            inLanguage: locale,
           }),
           jsonld.breadcrumb(
             breadcrumbs.map((item) => ({
@@ -222,7 +223,7 @@ export default async function NewsDetailPage({
               fontWeight: 600,
               textTransform: 'uppercase',
               letterSpacing: '.04em',
-              color: 'var(--color-brand)',
+              color: 'var(--color-brand-text)',
               border: '1px solid var(--color-brand)',
               textDecoration: 'none',
               marginBottom: 8,
@@ -330,7 +331,7 @@ export default async function NewsDetailPage({
                 style={{
                   padding: '10px 24px',
                   background: 'var(--color-brand)',
-                  color: '#fff',
+                  color: 'var(--color-on-brand)',
                   fontWeight: 600,
                   fontSize: 14,
                   textDecoration: 'none',
@@ -447,7 +448,7 @@ export default async function NewsDetailPage({
                   marginTop: 12,
                   padding: '8px 20px',
                   background: 'var(--color-brand)',
-                  color: '#fff',
+                  color: 'var(--color-on-brand)',
                   fontWeight: 600,
                   fontSize: 13,
                   textDecoration: 'none',

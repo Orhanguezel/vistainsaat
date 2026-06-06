@@ -144,8 +144,8 @@ export default async function NewsPage({
         .nw-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
         .nw-chip{display:inline-block;padding:6px 16px;border:1px solid var(--color-border);font-size:13px;font-weight:500;color:var(--color-text-secondary);text-decoration:none;border-radius:2px;transition:all .15s}
         .nw-chip:hover{border-color:var(--color-brand);color:var(--color-brand)}
-        .nw-chip-active{border-color:var(--color-brand);background:var(--color-brand);color:#fff}
-        .nw-chip-active:hover{background:var(--color-brand-dark);border-color:var(--color-brand-dark);color:#fff}
+        .nw-chip-active{border-color:var(--color-brand);background:var(--color-brand);color:var(--color-on-brand)}
+        .nw-chip-active:hover{background:var(--color-brand-dark);border-color:var(--color-brand-dark);color:var(--color-on-brand)}
         .nw-featured{display:block;text-decoration:none;margin-bottom:32px}
         .nw-featured-img{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;background:var(--color-bg-muted)}
         .nw-featured-title{font-family:var(--font-heading);font-size:22px;font-weight:700;color:var(--color-text-primary);line-height:1.3;margin:12px 0 4px}
@@ -421,7 +421,7 @@ export default async function NewsPage({
                   marginTop: 12,
                   padding: '8px 20px',
                   background: 'var(--color-brand)',
-                  color: '#fff',
+                  color: 'var(--color-on-brand)',
                   fontWeight: 600,
                   fontSize: 13,
                   textDecoration: 'none',

@@ -142,7 +142,7 @@ export function ProjectFeed({
                 {/* Title + time */}
                 <Link href={projectHref}>
                   <h2
-                    className="text-xl font-bold text-(--color-text-primary) hover:text-(--color-brand) lg:text-2xl"
+                    className="text-xl font-bold text-(--color-text-primary) hover:text-(--color-brand-text) lg:text-2xl"
                     style={{ fontFamily: 'var(--font-heading)' }}
                   >
                     {project.title}
@@ -171,7 +171,7 @@ export function ProjectFeed({
                 {/* Category tags + location */}
                 <div className="mt-3 flex flex-wrap items-center gap-x-1.5 text-xs font-semibold uppercase tracking-wide">
                   {categoryName && (
-                    <span className="text-(--color-brand)">{categoryName}</span>
+                    <span className="text-(--color-brand-text)">{categoryName}</span>
                   )}
                   {categoryName && location && (
                     <span className="text-(--color-text-muted)">·</span>
@@ -186,7 +186,7 @@ export function ProjectFeed({
                   {architects && (
                     <div className="flex items-center gap-1.5">
                       <span className="text-xs text-(--color-text-muted)">{t('projects.filters.architects')}:</span>
-                      <span className="font-medium text-(--color-brand)">{architects}</span>
+                      <span className="font-medium text-(--color-brand-text)">{architects}</span>
                     </div>
                   )}
                   {area && (
@@ -198,7 +198,7 @@ export function ProjectFeed({
                   {year && (
                     <div className="flex items-center gap-1.5">
                       <span className="text-xs text-(--color-text-muted)">{t('projects.filters.year')}:</span>
-                      <span className="font-medium text-(--color-brand)">{year}</span>
+                      <span className="font-medium text-(--color-brand-text)">{year}</span>
                     </div>
                   )}
                   {manufacturers && (
@@ -217,7 +217,7 @@ export function ProjectFeed({
                   />
                   <Link
                     href={projectHref}
-                    className="text-xs font-medium text-(--color-brand) hover:underline"
+                    className="text-xs font-medium text-(--color-brand-text) hover:underline"
                   >
                     {finalReadMore} »
                   </Link>
@@ -267,7 +267,7 @@ export function ProjectFeed({
                             />
                           </div>
                         )}
-                        <h4 className="text-sm font-semibold leading-snug text-(--color-text-primary) group-hover:text-(--color-brand)">
+                        <h4 className="text-sm font-semibold leading-snug text-(--color-text-primary) group-hover:text-(--color-brand-text)">
                           {p.title}
                           {p.specifications?.mimarlar ? ` / ${p.specifications.mimarlar}` : ''}
                         </h4>
@@ -291,7 +291,7 @@ export function ProjectFeed({
               </p>
               <Link
                 href={localePath(locale, '/teklif')}
-                className="mt-3 inline-block bg-(--color-brand) px-4 py-2 text-xs font-semibold text-white transition-opacity hover:opacity-90"
+                className="mt-3 inline-block bg-(--color-brand) px-4 py-2 text-xs font-semibold text-(--color-on-brand) transition-opacity hover:opacity-90"
               >
                 {t('nav.offer')}
               </Link>

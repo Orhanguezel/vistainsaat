@@ -79,7 +79,7 @@ export default async function GalleryPage({
         .gl-featured-img img{transition:transform .4s ease}
         .gl-featured:hover .gl-featured-img img{transform:scale(1.03)}
         .gl-featured-overlay{position:absolute;bottom:0;left:0;right:0;padding:24px 20px;background:linear-gradient(transparent,rgba(0,0,0,.6))}
-        .gl-featured-title{font-family:var(--font-heading);font-size:22px;font-weight:700;color:#fff;line-height:1.3;margin:0}
+        .gl-featured-title{font-family:var(--font-heading);font-size:22px;font-weight:700;color:var(--color-text-on-dark);line-height:1.3;margin:0}
         .gl-featured-meta{display:flex;gap:16px;margin-top:6px;font-size:13px;color:rgba(255,255,255,.75)}
         .gl-grid{display:grid;grid-template-columns:1fr;gap:16px}
         @media(min-width:640px){.gl-grid{grid-template-columns:repeat(2,1fr)}}
@@ -94,7 +94,7 @@ export default async function GalleryPage({
         .gl-card-title{font-family:var(--font-heading);font-size:16px;font-weight:700;color:var(--color-text-primary);line-height:1.3;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
         .gl-card:hover .gl-card-title{color:var(--color-brand)}
         .gl-card-count{font-size:12px;color:var(--color-text-muted);margin-top:2px}
-        .gl-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:rgba(0,0,0,.55);color:#fff;font-size:12px;font-weight:600;position:absolute;top:12px;right:12px;z-index:2;backdrop-filter:blur(4px)}
+        .gl-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:rgba(0,0,0,.55);color:var(--color-text-on-dark);font-size:12px;font-weight:600;position:absolute;top:12px;right:12px;z-index:2;backdrop-filter:blur(4px)}
       `}</style>
 
       <div style={{ maxWidth: 1280, margin: '0 auto', padding: '16px 16px 60px' }}>
@@ -211,7 +211,7 @@ export default async function GalleryPage({
                     </span>
                   )}
                   <div className="gl-card-overlay">
-                    <span style={{ fontSize: 14, fontWeight: 600, color: '#fff' }}>
+                    <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--color-text-on-dark)' }}>
                       {g.title}
                     </span>
                   </div>

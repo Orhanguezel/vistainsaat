@@ -92,7 +92,7 @@ export function HeroVideoPlayer({ src, mobileSrc, poster, badge, title, descript
             <div className="absolute inset-0 h-full w-full bg-(--color-bg-muted)" />
           )}
           {/* Video badge — top left */}
-          <div className="absolute left-4 top-4 z-10 flex items-center gap-1.5 rounded-sm bg-white px-3 py-1.5 text-xs font-semibold text-(--color-text-primary)">
+          <div className="absolute left-4 top-4 z-10 flex items-center gap-1.5 rounded-sm bg-(--color-bg-secondary) px-3 py-1.5 text-xs font-semibold text-(--color-text-primary)">
             <Play className="size-3 fill-current" />
             Video
           </div>
@@ -100,12 +100,12 @@ export function HeroVideoPlayer({ src, mobileSrc, poster, badge, title, descript
         {/* Title area — below video */}
         <div className="bg-(--color-bg) pt-3 pb-1">
           {badge && (
-            <p className="text-xs font-medium uppercase tracking-wider text-(--color-brand)">
+            <p className="text-xs font-medium uppercase tracking-wider text-(--color-brand-text)">
               {badge}
             </p>
           )}
           <h1
-            className="mt-1 text-lg font-semibold leading-snug text-(--color-brand) lg:text-xl"
+            className="mt-1 text-lg font-semibold leading-snug text-(--color-brand-text) lg:text-xl"
             style={{ fontFamily: 'var(--font-heading)' }}
           >
             {title}
@@ -116,7 +116,7 @@ export function HeroVideoPlayer({ src, mobileSrc, poster, badge, title, descript
           {ctaText && ctaUrl && (
              <a 
                href={ctaUrl}
-               className="mt-3 inline-flex items-center text-xs font-bold uppercase tracking-wider text-(--color-text-primary) hover:text-(--color-brand) transition-colors"
+               className="mt-3 inline-flex items-center text-xs font-bold uppercase tracking-wider text-(--color-text-primary) hover:text-(--color-brand-text) transition-colors"
                onClick={(e) => e.stopPropagation()}
              >
                {ctaText} →
@@ -133,7 +133,7 @@ export function HeroVideoPlayer({ src, mobileSrc, poster, badge, title, descript
         >
           <button
             onClick={closeFullscreen}
-            className="absolute right-6 top-6 z-10 flex size-10 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20"
+            className="absolute right-6 top-6 z-10 flex size-10 items-center justify-center rounded-full bg-(--color-bg-secondary)/10 text-white transition-colors hover:bg-(--color-bg-secondary)/20"
             aria-label="Kapat"
           >
             <X className="size-5" />

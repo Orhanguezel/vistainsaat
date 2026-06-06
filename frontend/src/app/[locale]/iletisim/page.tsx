@@ -7,7 +7,20 @@ import { InfoListPanel } from '@/components/patterns/InfoListPanel';
 import { ContactFormClient } from '@/components/sections/ContactForm';
 import { GoogleMap } from '@/components/widgets/GoogleMap';
 import { fetchSetting } from '@/i18n/server';
-import { JsonLd, buildPageMetadata, jsonld, localizedPath, localizedUrl, organizationJsonLd, readSettingValue } from '@/seo';
+import {
+  JsonLd,
+  buildPageMetadata,
+  jsonld,
+  localizedPath,
+  localizedUrl,
+  organizationJsonLd,
+  readSettingValue,
+  socialsToSameAs,
+  businessAddressJsonLd,
+  businessOpeningHoursJsonLd,
+  businessGeoJsonLd,
+  absoluteAssetLikeUrl,
+} from '@/seo';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs';
 
 async function fetchContactInfo(locale: string) {
@@ -48,13 +61,15 @@ export default async function ContactPage({
 }) {
   const { locale } = await params;
   const t = await getTranslations({ locale });
-  const [contactSetting, companyProfileSetting] = await Promise.all([
+  const [contactSetting, companyProfileSetting, socialsSetting] = await Promise.all([
      fetchContactInfo(locale),
-     fetchSetting('company_profile', locale)
+     fetchSetting('company_profile', locale),
+     fetchSetting('socials', locale),
   ]);
 
   const info = readSettingValue(contactSetting) as Record<string, string>;
   const companyProfile = readSettingValue(companyProfileSetting) as Record<string, string>;
+  const sameAs = socialsToSameAs(readSettingValue(socialsSetting));
 
   const companyName = info.company_name || companyProfile?.company_name || 'Vista İnşaat';
   const address = info.address || '';
@@ -79,6 +94,7 @@ export default async function ContactPage({
                 email,
                 telephone: phone,
                 address,
+                sameAs,
               }),
             ),
             jsonld.localBusiness({
@@ -87,8 +103,13 @@ export default async function ContactPage({
               description: t('contact.description'),
               email,
               telephone: phone,
-              address,
-              openingHours: hours,
+              address: businessAddressJsonLd(info),
+              openingHours: businessOpeningHoursJsonLd(info),
+              geo: businessGeoJsonLd(info),
+              priceRange: String(info.price_range ?? '').trim() || undefined,
+              areaServed: 'Antalya',
+              image: absoluteAssetLikeUrl('/opengraph-image'),
+              sameAs,
             }),
           ])}
         />

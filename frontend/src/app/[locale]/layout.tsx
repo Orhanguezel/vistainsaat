@@ -197,7 +197,7 @@ export default async function LocaleLayout({
             position: 'fixed',
             inset: 0,
             zIndex: 99998,
-            background: '#0f0e0d',
+            background: 'var(--color-bg-dark)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
