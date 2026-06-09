@@ -81,3 +81,10 @@ Yapılacaklar:
 ---
 
 *Kaynak altyapı: Ensotek workspace (`/home/orhan/Documents/Projeler/Ensotek`)*
+
+## Ekran Görüntüleri
+<p align="center">
+  <img src="preview.png" width="600" alt="Vista İnşaat preview" />
+  <img src="Screenshot from 2026-03-14 20-30-28.png" width="600" alt="Vista İnşaat desktop screenshot" />
+  <img src="Screenshot from 2026-03-15 06-23-02.png" width="240" alt="Vista İnşaat mobile screenshot" />
+</p>
